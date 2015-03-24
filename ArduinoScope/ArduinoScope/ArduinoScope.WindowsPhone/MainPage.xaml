@@ -10,5 +10,20 @@
 
     <Grid>
 
+        <TextBlock x:Name="txtHeader" HorizontalAlignment="Center" Margin="88,7,88,0" TextWrapping="Wrap" Text="ArduinoScope" VerticalAlignment="Top" FontSize="36"/>
+
+        <Button x:Name="btnStartAcq" Content="Start Acquisition" HorizontalAlignment="Stretch" Margin="0,40,0,0" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="7,88,0,0" TextWrapping="Wrap" Text="Packet Stack (Used for debug)" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textOutput" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" Width="288" Text="Output window" Margin="7,102,0,0"/>
+
+        <TextBlock HorizontalAlignment="Right" Margin="0,96,45,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="100"/>
+        <Rectangle x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="20" Margin="0,92,20,0" Stroke="Black" VerticalAlignment="Top" Width="20"/>
+        <TextBlock HorizontalAlignment="Right" Margin="0,123,45,0" TextWrapping="Wrap" Text="Valid Packet" VerticalAlignment="Top" Height="20" TextAlignment="Right" Width="100"/>
+        <Rectangle x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="20" Margin="0,119,20,0" Stroke="Black" VerticalAlignment="Top" Width="20"/>
+
+        <TextBlock HorizontalAlignment="Left" Margin="7,140,0,0" TextWrapping="Wrap" Text="Position, meters" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Image x:Name="LineGraphScope0" Height="95" Margin="7,158,0,0" VerticalAlignment="Top" Width="Auto"/>
+
     </Grid>
 </Page>

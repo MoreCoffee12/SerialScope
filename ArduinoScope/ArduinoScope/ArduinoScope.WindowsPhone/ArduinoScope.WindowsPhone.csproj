@@ -81,6 +81,14 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\DataBus\DataBus.vcxproj">
+      <Project>{19d86709-1307-401a-b3fe-b0de07a7ea44}</Project>
+      <Name>DataBus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VisualizationTools\VisualizationTools.vcxproj">
+      <Project>{17cd4630-34c4-4212-b4fb-0dfadda1e405}</Project>
+      <Name>VisualizationTools</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainPage.xaml.cs">

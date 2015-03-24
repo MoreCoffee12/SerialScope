@@ -44,5 +44,39 @@ namespace ArduinoScope
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
         }
+
+        # region Private Methods
+
+        private void btnStartAcq_Click(object sender, RoutedEventArgs e)
+        {
+
+            // Toggle the data acquisition state and update the controls
+            bCollectData = !bCollectData;
+
+            if (bCollectData)
+            {
+                btnStartAcq.Content = "Stop Acquisition";
+            }
+            else
+            {
+                btnStartAcq.Content = "Start Acquisition";
+            }
+
+            bClearOutput = true;
+
+        }
+
+        #endregion
+
+        #region private fields
+
+        // graphs, controls, and variables related to plotting
+        private bool bClearOutput = false;
+
+        // Buffer and controls for the data from the instrumentation
+        private bool bCollectData;
+
+        #endregion
+
     }
 }
