@@ -22,8 +22,8 @@
         <TextBlock HorizontalAlignment="Right" Margin="0,123,45,0" TextWrapping="Wrap" Text="Valid Packet" VerticalAlignment="Top" Height="20" TextAlignment="Right" Width="100"/>
         <Rectangle x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="20" Margin="0,119,20,0" Stroke="Black" VerticalAlignment="Top" Width="20"/>
 
-        <TextBlock HorizontalAlignment="Left" Margin="7,140,0,0" TextWrapping="Wrap" Text="Position, meters" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Image x:Name="LineGraphScope0" Height="95" Margin="7,158,0,0" VerticalAlignment="Top" Width="Auto"/>
+        <TextBlock HorizontalAlignment="Left" Margin="7,140,0,0" TextWrapping="Wrap" Text="Channel 1" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Image x:Name="LineGraphScope1" Height="95" Margin="7,158,0,0" VerticalAlignment="Top" Width="Auto"/>
 
     </Grid>
 </Page>
