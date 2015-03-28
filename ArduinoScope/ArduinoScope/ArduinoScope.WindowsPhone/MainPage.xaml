@@ -23,7 +23,44 @@
         <Rectangle x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="20" Margin="0,119,20,0" Stroke="Black" VerticalAlignment="Top" Width="20"/>
 
         <TextBlock HorizontalAlignment="Left" Margin="7,140,0,0" TextWrapping="Wrap" Text="Channel 1" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Image x:Name="LineGraphScope1" Height="95" Margin="7,158,0,0" VerticalAlignment="Top" Width="Auto"/>
+        <Image x:Name="LineGraphScope1" Height="200" Margin="7,158,0,0" VerticalAlignment="Top" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1"/>
+        <Grid x:Name="Scope1Grid" Margin="7,158,0,0"  Height="200" VerticalAlignment="Top" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="2" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+                <ColumnDefinition Width="25" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
 
+
+            <!-- Line-->
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="0" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="1"  />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="2" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="3" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="4" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="5" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="6" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="7" />
+            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="8" VerticalAlignment="Center"/>
+
+        </Grid>
     </Grid>
 </Page>

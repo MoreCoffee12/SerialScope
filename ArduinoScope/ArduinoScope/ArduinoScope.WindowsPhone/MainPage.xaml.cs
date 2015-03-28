@@ -41,9 +41,12 @@ namespace ArduinoScope
             // This is a royal pain...since in XAML the "auto" width is always a NaN in C#,
             // you have to grab the actual device width and then manually set the width to
             // match that of the device.  In effect, you have to hard code the "auto" value.
-            var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-            LineGraphScope1.Height = 95;
-            LineGraphScope1.Width = Windows.UI.Xaml.Window.Current.Bounds.Width;
+            if( Double.IsNaN(LineGraphScope1.Width))
+            {
+                var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+                LineGraphScope1.Height = 95;
+                LineGraphScope1.Width = Windows.UI.Xaml.Window.Current.Bounds.Width;
+            }
 
             // Create our LineGraph and hook the up to their respective images
             graphScope1 = new VisualizationTools.LineGraph((int)LineGraphScope1.Width, (int)LineGraphScope1.Height);
@@ -65,10 +68,19 @@ namespace ArduinoScope
             // Data buffers
             dataScope1 = new float[iBuffLength];
             dataScope2 = new float[iBuffLength];
+            for (int idx = 0; idx<iBuffLength; idx++)
+            {
+                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
+                dataScope2[idx] = -dataScope1[idx];
+            }
 
             // Scale factors
             fScope1Scale = 5.0f / 1024.0f;
             fScope2Scale = 5.0f / 1024.0f;
+
+            // Update scope
+            graphScope1.setArray(dataScope1);
+
         }
 
 
