@@ -41,6 +41,7 @@ SurfaceImageSource(pixelWidth, pixelHeight, true)
 	yMin = -1.0f;
 	yMax = 1.0f;
 	color = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	color2 = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	colorBackground = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.000f);
 	buffer_lock = CreateMutexEx(NULL, FALSE, NULL, MUTEX_ALL_ACCESS);
 
@@ -229,24 +230,15 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 
 		}
 
-		// The center vertex has to the same color as the
-		// background or there will be a line connecting 
-		// the two buffers
-		lineVerts[this->N / 2].pos.x = (this->N / 2) / (this->N / 4.0f) - 1;
-		lineVerts[this->N / 2].pos.z = 0.0f;
-		lineVerts[this->N / 2].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z );
-
-		lineVerts[this->N / 2+1].pos.x = (this->N / 2) / (this->N / 4.0f) - 1;
-		lineVerts[this->N / 2+1].pos.z = 0.0f;
-		lineVerts[this->N / 2+1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
-
-		for (unsigned int i = (this->N / 2)+2; i<this->N; ++i)
+		for (unsigned int i = (this->N / 2); i<this->N; ++i)
 		{
 			lineVerts[i].pos.x = (i - this->N / 2) / (this->N / 4.0f) - 1;
 			lineVerts[i].pos.z = 0.0f;
-			lineVerts[i].color = DirectX::XMFLOAT3(1.0, 0.0, 0.0);
+			lineVerts[i].color = color2;
 
 		}
+
+		makeMarkers();
 
 		this->vbSizeDirty = true;
 	}
@@ -339,21 +331,52 @@ void LineGraph::appendToArray(float sample) {
 
 void LineGraph::setColor(float r, float g, float b) 
 {
+	// Make everthing the same
+	setColor(r, g, b, r, g, b);
+}
+
+void LineGraph::setColor(float r, float g, float b, float r2, float g2, float b2)
+{
 	this->color = XMFLOAT3(r, g, b);
-	if (this->lineVerts) {
-		for (unsigned int i = 0; i<N; ++i) {
+	this->color2 = XMFLOAT3(r2, g2, b2);
+	if (this->lineVerts)
+	{
+		for (unsigned int i = 0; i<N / 2; ++i)
+		{
 			lineVerts[i].color = this->color;
 		}
+		for (unsigned int i = N / 2; i<N; ++i)
+		{
+			lineVerts[i].color = this->color2;
+		}
 	}
+	makeMarkers();
 	this->vbDirty = true;
 }
+
 
 void LineGraph::setColorBackground(float r, float g, float b, float a)
 {
 	this->colorBackground = XMFLOAT4(r, g, b, a);
+	makeMarkers();
 	this->vbDirty = true;
 }
 
+void LineGraph::makeMarkers()
+{
+	if (this->lineVerts)
+	{
+
+		// These markers separate the data sets
+		lineVerts[N / 2 - 1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+		lineVerts[N / 2].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+		lineVerts[N / 2 + 1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+		lineVerts[N / 2 + 2].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+
+		this->vbDirty = true;
+	}
+
+}
 
 void LineGraph::Render(Platform::Object^ sender, Platform::Object^ e)
 {

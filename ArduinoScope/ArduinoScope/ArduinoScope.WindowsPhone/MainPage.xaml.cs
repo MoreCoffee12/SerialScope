@@ -106,7 +106,7 @@ namespace ArduinoScope
             }
 
             // Initialize the buffer for the frame timebase and set the color
-            graphScope1.setColor(0.0f, 0.5f + fOffset, 0.0f);
+            graphScope1.setColor(0.0f, 0.5f + fOffset, 0.0f, 0.0f, 0.5f + fOffset, 0.5f + fOffset);
             graphScope1.setColorBackground(fR, fG, fB, 0.0f);
 
             // Configure the line plots scaling

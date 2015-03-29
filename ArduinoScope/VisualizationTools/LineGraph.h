@@ -45,6 +45,7 @@ namespace VisualizationTools
 
 		// Set the color of the drawn line
 		void setColor(float r, float g, float b);
+		void setColor(float r, float g, float b, float r2, float g2, float b2);
 
 		// Set the color of the background
 		void setColorBackground(float r, float g, float b, float a);
@@ -64,10 +65,13 @@ namespace VisualizationTools
 		void updateVertexBuffer();
 		void makeConstantBuffers();
 
+		void makeMarkers();
+
 		VertexPositionColor * lineVerts;
 		float * data;
 		unsigned int N;
 		DirectX::XMFLOAT3 color;
+		DirectX::XMFLOAT3 color2;
 		DirectX::XMFLOAT4 colorBackground;
 		bool vbDirty, vbSizeDirty, constantBufferDirty;
 		float yMin, yMax;
