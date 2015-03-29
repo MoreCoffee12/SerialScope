@@ -24,7 +24,7 @@
 
         <TextBlock HorizontalAlignment="Left" Margin="7,140,0,0" TextWrapping="Wrap" Text="Channel 1" VerticalAlignment="Top" FontWeight="Bold"/>
         <Image x:Name="LineGraphScope1" Height="200" Margin="7,158,0,0" VerticalAlignment="Top" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1"/>
-        <Grid x:Name="Scope1Grid" Margin="7,158,0,0"  Height="200" VerticalAlignment="Top" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="2" >
+        <Grid x:Name="Scope1Grid" Margin="7,158,0,0"  Height="200" VerticalAlignment="Top" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="25" />
                 <ColumnDefinition Width="25" />
@@ -59,7 +59,19 @@
             <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="5" />
             <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="6" />
             <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="7" />
-            <Line X1="0" Y1="0" X2="300" Y2="0" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="8" VerticalAlignment="Center"/>
+            <Line X1="0" Y1="25" X2="300" Y2="25" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Column="0" Grid.ColumnSpan ="10" Grid.Row="7" />
+
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="0" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="1" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="2" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="3" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="4" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="5" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="6" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="7" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="8" />
+            <Line X1="0" Y1="0" X2="0" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="9" />
+            <Line X1="25" Y1="0" X2="25" Y2="300" Stroke="White" StrokeDashArray="4,4" StrokeThickness="0.5" Grid.Row="0" Grid.RowSpan ="8" Grid.Column="9" />
 
         </Grid>
     </Grid>

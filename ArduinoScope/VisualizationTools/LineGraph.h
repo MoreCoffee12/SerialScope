@@ -35,6 +35,7 @@ namespace VisualizationTools
 
 		// Set entire array to new data
 		void setArray(const Platform::Array<float>^ data);
+		void setArray(const Platform::Array<float>^ data, const Platform::Array<float>^ data2);
 
 		// Get entire internal array stored so far
 		Platform::Array<float>^ getArray();
@@ -50,6 +51,7 @@ namespace VisualizationTools
 
 		// Set Y-limits on what is plotted
 		void setYLim(float yMin, float yMax);
+
 	private protected:
 		void BeginDraw();
 		void EndDraw();

@@ -71,7 +71,7 @@ namespace ArduinoScope
             for (int idx = 0; idx<iBuffLength; idx++)
             {
                 dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
-                dataScope2[idx] = -dataScope1[idx];
+                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
             }
 
             // Scale factors
@@ -79,7 +79,7 @@ namespace ArduinoScope
             fScope2Scale = 5.0f / 1024.0f;
 
             // Update scope
-            graphScope1.setArray(dataScope1);
+            graphScope1.setArray(dataScope1,dataScope2);
 
         }
 
@@ -110,7 +110,7 @@ namespace ArduinoScope
             graphScope1.setColorBackground(fR, fG, fB, 0.0f);
 
             // Configure the line plots scaling
-            graphScope1.setYLim(0.0f, 5.0f);
+            graphScope1.setYLim(0.0f, 8.0f);
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
@@ -369,8 +369,7 @@ namespace ArduinoScope
                         if (bCollectData)
                         {
                             // Update the plots
-                            graphScope1.setArray(dataScope1);
-                            //graphScope2.setArray(dataScope2);
+                            graphScope1.setArray(dataScope1, dataScope2);
                         }
 
                     }

@@ -191,42 +191,110 @@ void LineGraph::setYLim(float yMin, float yMax) {
 	unlockBuffers();
 }
 
-void LineGraph::setArray(const Platform::Array<float>^ padata) {
+void LineGraph::setArray(const Platform::Array<float>^ padata) 
+{
+
+	// Call the root method
+	setArray(padata, padata);
+
+}
+
+void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2)
+{
+	int idxData;
+
+	// The two arrays have to have to the same length!
+	if (padata->Length != padata2->Length)
+	{
+		return;
+	}
+
 	// Recreate lineVerts, if need be
 	lockBuffers();
-	if (padata->Length != this->N) {
-		this->N = padata->Length;
+	if (padata->Length != this->N/2) 
+	{
+		this->N = padata->Length*2;
 		if (this->lineVerts)
+		{
 			delete[] this->lineVerts;
+		}
 
 		this->lineVerts = new VertexPositionColor[this->N];
-		for (unsigned int i = 0; i<this->N; ++i) {
-			lineVerts[i].pos.x = i / (this->N / 2.0f) - 1;
+
+		for (unsigned int i = 0; i<this->N/2; ++i) 
+		{
+			lineVerts[i].pos.x = i / (this->N / 4.0f) - 1;
 			lineVerts[i].pos.z = 0.0f;
 			lineVerts[i].color = color;
+
 		}
+
+		// The center vertex has to the same color as the
+		// background or there will be a line connecting 
+		// the two buffers
+		lineVerts[this->N / 2].pos.x = (this->N / 2) / (this->N / 4.0f) - 1;
+		lineVerts[this->N / 2].pos.z = 0.0f;
+		lineVerts[this->N / 2].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z );
+
+		lineVerts[this->N / 2+1].pos.x = (this->N / 2) / (this->N / 4.0f) - 1;
+		lineVerts[this->N / 2+1].pos.z = 0.0f;
+		lineVerts[this->N / 2+1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+
+		for (unsigned int i = (this->N / 2)+2; i<this->N; ++i)
+		{
+			lineVerts[i].pos.x = (i - this->N / 2) / (this->N / 4.0f) - 1;
+			lineVerts[i].pos.z = 0.0f;
+			lineVerts[i].color = DirectX::XMFLOAT3(1.0, 0.0, 0.0);
+
+		}
+
 		this->vbSizeDirty = true;
 	}
 
 	// Copy data over
-	for (unsigned int i = 0; i<this->N; ++i) {
+	for (unsigned int i = 0; i<this->N/2; ++i)
+	{
 		float * data = padata->Data;
 		// Check for NaN and +- Inf
-		if (_isnan(data[i]) || !_finite(data[i])) {
+		if (_isnan(data[i]) || !_finite(data[i])) 
+		{
 			if (data[i] > 0.0f)
 				lineVerts[i].pos.y = yMax*1.1f;
 			if (data[i] < 0.0f)
 				lineVerts[i].pos.y = yMin*1.1f;
 		}
-		else {
+		else 
+		{
 			lineVerts[i].pos.y = data[i];
 		}
+
 	}
+
+	for (unsigned int i = this->N / 2; i<this->N; ++i)
+	{
+		idxData = i - this->N / 2;
+		float * data = padata2->Data;
+		// Check for NaN and +- Inf
+		if (_isnan(data[idxData]) || !_finite(data[idxData]))
+		{
+			if (data[idxData] > 0.0f)
+				lineVerts[i].pos.y = yMax*1.1f;
+			if (data[idxData] < 0.0f)
+				lineVerts[i].pos.y = yMin*1.1f;
+		}
+		else
+		{
+			lineVerts[i].pos.y = data[idxData];
+		}
+
+	}
+
 	this->vbDirty = true;
 	unlockBuffers();
 }
 
-Platform::Array<float>^ LineGraph::getArray() {
+Platform::Array<float>^ LineGraph::getArray() 
+{
 	Platform::Array<float>^ data = ref new Platform::Array<float>(this->N);
 	for (unsigned int i = 0; i<this->N; ++i) {
 		data->Data[i] = lineVerts[i].pos.y;
