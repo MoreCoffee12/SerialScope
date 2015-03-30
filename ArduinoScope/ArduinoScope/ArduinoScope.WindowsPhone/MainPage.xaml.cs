@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 using Windows.Graphics.Display;
 using VisualizationTools;
 using DataBus;
@@ -38,9 +39,8 @@ namespace ArduinoScope
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
-            // This is a royal pain...since in XAML the "auto" width is always a NaN in C#,
-            // you have to grab the actual device width and then manually set the width to
-            // match that of the device.  In effect, you have to hard code the "auto" value.
+            // Grab the actual device width and then manually set the width to
+            // match that of the device.
             if( Double.IsNaN(LineGraphScope1.Width))
             {
                 var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
@@ -94,9 +94,12 @@ namespace ArduinoScope
 
             float fOffset = 0.0f;
 
+            // Control appearance features
+            Color colorCurrentBackground = (Color)Application.Current.Resources["PhoneBackgroundColor"];
+            Color colorCurrentForeground = (Color)Application.Current.Resources["PhoneForegroundColor"];
+
             // Retrieve the phone theme settings so that the plots can 
             // be tailored to match
-            Color colorCurrentBackground = (Color)Application.Current.Resources["PhoneBackgroundColor"];
             float fR = Convert.ToSingle(colorCurrentBackground.R) / 255.0f;
             float fG = Convert.ToSingle(colorCurrentBackground.G) / 255.0f;
             float fB = Convert.ToSingle(colorCurrentBackground.B) / 255.0f;
@@ -109,8 +112,30 @@ namespace ArduinoScope
             graphScope1.setColor(0.0f, 0.5f + fOffset, 0.0f, 0.0f, 0.5f + fOffset, 0.5f + fOffset);
             graphScope1.setColorBackground(fR, fG, fB, 0.0f);
 
-            // Configure the line plots scaling
-            graphScope1.setYLim(0.0f, 8.0f);
+            // Features from the grid, defined in XAML
+            iGridRowCount = ScopeGrid.RowDefinitions.Count();
+            iGridColCount = ScopeGrid.ColumnDefinitions.Count();
+
+            // Render the horizontal lines for the oscilliscope screen
+            for (int iRows = 0; iRows < iGridRowCount; iRows++)
+            {
+                addScopeGridLine(ScopeGrid, 0, 0, 300, 0, 
+                    colorCurrentForeground, iRows, 0, 1, iGridColCount);
+            }
+            addScopeGridLine(ScopeGrid, 0, 25, 300, 25,
+                colorCurrentForeground, iGridRowCount, 0, 1, iGridColCount);
+
+            // Render the vertical lines for the oscilliscope screen
+            for (int iCols = 0; iCols < iGridColCount; iCols++)
+            {
+                addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
+                    colorCurrentForeground, 0, iCols, iGridRowCount, 1);
+            }
+            addScopeGridLine(ScopeGrid, 25, 0, 25, 300,
+                colorCurrentForeground, 0, iGridColCount, iGridRowCount, 1);
+
+            // Configure the line plots scaling based on the grid
+            graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
@@ -331,8 +356,6 @@ namespace ArduinoScope
             return true;
         }
 
-
-
         private async void ReadData(Task<bool> setupOK)
         {
             bool bTemp;
@@ -402,6 +425,27 @@ namespace ArduinoScope
 
         }
 
+        // Helper function to plot the lines on the scope grid
+        private void addScopeGridLine(Grid ScopeGrid, double X1, double Y1, double X2, double Y2, 
+            Color colorLineColor, int iRow, int iCol, int iRowSpan, int iColSpan)
+        {
+            Line myline = new Line();
+            myline.X1 = X1;
+            myline.Y1 = Y1;
+            myline.X2 = X2;
+            myline.Y2 = Y2;
+            myline.Stroke = new SolidColorBrush(colorLineColor);
+            myline.StrokeDashArray = new DoubleCollection() { 4 };
+            myline.SetValue(Grid.RowProperty, iRow);
+            myline.SetValue(Grid.ColumnProperty, iCol);
+            myline.SetValue(Grid.RowSpanProperty, iRowSpan);
+            myline.SetValue(Grid.ColumnSpanProperty, iColSpan);
+
+            ScopeGrid.Children.Add(myline);
+
+        }
+
+
         #endregion
 
         #region private fields
@@ -410,6 +454,8 @@ namespace ArduinoScope
         private StreamSocket s;
 
         // graphs, controls, and variables related to plotting
+        int iGridRowCount;
+        int iGridColCount;
         private bool bClearOutput = false;
         private VisualizationTools.LineGraph graphScope1;
         private float[] dataScope1;

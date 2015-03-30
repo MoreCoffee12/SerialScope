@@ -203,6 +203,7 @@ void LineGraph::setArray(const Platform::Array<float>^ padata)
 void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2)
 {
 	int idxData;
+	float fScaleHorz;
 
 	// The two arrays have to have to the same length!
 	if (padata->Length != padata2->Length)
@@ -212,30 +213,48 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 
 	// Recreate lineVerts, if need be
 	lockBuffers();
-	if (padata->Length != this->N/2) 
+	if (padata->Length != this->N/4) 
 	{
-		this->N = padata->Length*2;
+		this->N = padata->Length*4;
 		if (this->lineVerts)
 		{
 			delete[] this->lineVerts;
 		}
 
+		fScaleHorz = ((float)this->N / 4.0f);
 		this->lineVerts = new VertexPositionColor[this->N];
 
-		for (unsigned int i = 0; i<this->N/2; ++i) 
+		// Leading line segment
+		lineVerts[0].pos.x = -1.0f;
+		lineVerts[0].pos.z = 0.0f;
+		lineVerts[0].color = color;
+
+		lineVerts[1].pos.x = (1.0f / fScaleHorz) - 1.0f;
+		lineVerts[1].pos.z = 0.0f;
+		lineVerts[1].color = color;
+
+		for (unsigned int i = 2; i<this->N/2; i=i+2) 
 		{
-			lineVerts[i].pos.x = i / (this->N / 4.0f) - 1;
+
+			lineVerts[i].pos.x = lineVerts[i-1].pos.x;
 			lineVerts[i].pos.z = 0.0f;
 			lineVerts[i].color = color;
 
+			lineVerts[i+1].pos.x = ((float)i / fScaleHorz) - 1.0f;
+			lineVerts[i+1].pos.z = 0.0f;
+			lineVerts[i+1].color = color;
+
 		}
 
-		for (unsigned int i = (this->N / 2); i<this->N; ++i)
+		for (unsigned int i = (this->N/2); i<this->N; i=i+2)
 		{
-			lineVerts[i].pos.x = (i - this->N / 2) / (this->N / 4.0f) - 1;
+			lineVerts[i].pos.x = lineVerts[i - this->N / 2].pos.x;
 			lineVerts[i].pos.z = 0.0f;
 			lineVerts[i].color = color2;
 
+			lineVerts[i + 1].pos.x = lineVerts[i - this->N / 2 + 1].pos.x;
+			lineVerts[i+1].pos.z = 0.0f;
+			lineVerts[i+1].color = color2;
 		}
 
 		makeMarkers();
@@ -244,42 +263,60 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 	}
 
 	// Copy data over
-	for (unsigned int i = 0; i<this->N/2; ++i)
+	for (unsigned int i = 0; i<this->N/2-1; i=i+2)
 	{
+		idxData = i / 2;
 		float * data = padata->Data;
 		// Check for NaN and +- Inf
-		if (_isnan(data[i]) || !_finite(data[i])) 
+		if (_isnan(data[idxData]) || !_finite(data[idxData]))
 		{
-			if (data[i] > 0.0f)
+			if (data[idxData] > 0.0f)
+			{
 				lineVerts[i].pos.y = yMax*1.1f;
-			if (data[i] < 0.0f)
+				lineVerts[i+1].pos.y = yMax*1.1f;
+			}
+			if (data[idxData] < 0.0f)
+			{
 				lineVerts[i].pos.y = yMin*1.1f;
+				lineVerts[i+1].pos.y = yMin*1.1f;
+			}
 		}
 		else 
 		{
-			lineVerts[i].pos.y = data[i];
+			lineVerts[i].pos.y = data[idxData];
+			lineVerts[i+1].pos.y = data[idxData+1];
 		}
 
 	}
+	lineVerts[this->N / 2-1] = lineVerts[this->N / 2 - 2];
 
-	for (unsigned int i = this->N / 2; i<this->N; ++i)
+	for (unsigned int i = this->N / 2; i<this->N -1; i=i+2)
 	{
-		idxData = i - this->N / 2;
+		idxData = (i - this->N / 2)/2;
 		float * data = padata2->Data;
 		// Check for NaN and +- Inf
 		if (_isnan(data[idxData]) || !_finite(data[idxData]))
 		{
 			if (data[idxData] > 0.0f)
+			{
 				lineVerts[i].pos.y = yMax*1.1f;
+				lineVerts[i+1].pos.y = yMax*1.1f;
+			}
 			if (data[idxData] < 0.0f)
+			{
 				lineVerts[i].pos.y = yMin*1.1f;
+				lineVerts[i+1].pos.y = yMin*1.1f;
+
+			}
 		}
 		else
 		{
 			lineVerts[i].pos.y = data[idxData];
+			lineVerts[i+1].pos.y = data[idxData+1];
 		}
 
 	}
+	lineVerts[this->N-1] = lineVerts[this->N - 2];
 
 	this->vbDirty = true;
 	unlockBuffers();
@@ -423,7 +460,7 @@ void LineGraph::Render(Platform::Object^ sender, Platform::Object^ e)
 		&offset
 		);
 
-	m_d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	m_d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	m_d3dContext->IASetInputLayout(m_inputLayout.Get());
 
