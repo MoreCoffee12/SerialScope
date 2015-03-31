@@ -47,6 +47,8 @@ SurfaceImageSource(pixelWidth, pixelHeight, true)
 
 	CreateDeviceResources();
 
+	_iMarkerIndex = -1;
+
 	Application::Current->Suspending += ref new SuspendingEventHandler(this, &LineGraph::OnSuspending);
 }
 
@@ -203,7 +205,6 @@ void LineGraph::setArray(const Platform::Array<float>^ padata)
 void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2)
 {
 	int idxData;
-	float fScaleHorz;
 
 	// The two arrays have to have to the same length!
 	if (padata->Length != padata2->Length)
@@ -221,43 +222,9 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 			delete[] this->lineVerts;
 		}
 
-		fScaleHorz = ((float)this->N / 4.0f);
 		this->lineVerts = new VertexPositionColor[this->N];
 
-		// Leading line segment
-		lineVerts[0].pos.x = -1.0f;
-		lineVerts[0].pos.z = 0.0f;
-		lineVerts[0].color = color;
-
-		lineVerts[1].pos.x = (1.0f / fScaleHorz) - 1.0f;
-		lineVerts[1].pos.z = 0.0f;
-		lineVerts[1].color = color;
-
-		for (unsigned int i = 2; i<this->N/2; i=i+2) 
-		{
-
-			lineVerts[i].pos.x = lineVerts[i-1].pos.x;
-			lineVerts[i].pos.z = 0.0f;
-			lineVerts[i].color = color;
-
-			lineVerts[i+1].pos.x = ((float)i / fScaleHorz) - 1.0f;
-			lineVerts[i+1].pos.z = 0.0f;
-			lineVerts[i+1].color = color;
-
-		}
-
-		for (unsigned int i = (this->N/2); i<this->N; i=i+2)
-		{
-			lineVerts[i].pos.x = lineVerts[i - this->N / 2].pos.x;
-			lineVerts[i].pos.z = 0.0f;
-			lineVerts[i].color = color2;
-
-			lineVerts[i + 1].pos.x = lineVerts[i - this->N / 2 + 1].pos.x;
-			lineVerts[i+1].pos.z = 0.0f;
-			lineVerts[i+1].color = color2;
-		}
-
-		makeMarkers();
+		_makeMarkers();
 
 		this->vbSizeDirty = true;
 	}
@@ -387,7 +354,7 @@ void LineGraph::setColor(float r, float g, float b, float r2, float g2, float b2
 			lineVerts[i].color = this->color2;
 		}
 	}
-	makeMarkers();
+	_makeMarkers();
 	this->vbDirty = true;
 }
 
@@ -395,14 +362,50 @@ void LineGraph::setColor(float r, float g, float b, float r2, float g2, float b2
 void LineGraph::setColorBackground(float r, float g, float b, float a)
 {
 	this->colorBackground = XMFLOAT4(r, g, b, a);
-	makeMarkers();
+	_makeMarkers();
 	this->vbDirty = true;
 }
 
-void LineGraph::makeMarkers()
+void LineGraph::_makeMarkers()
 {
+	float fScaleHorz;
+
 	if (this->lineVerts)
 	{
+		fScaleHorz = ((float)this->N / 4.0f);
+
+		// Leading line segment
+		lineVerts[0].pos.x = -1.0f;
+		lineVerts[0].pos.z = 0.0f;
+		lineVerts[0].color = color;
+
+		lineVerts[1].pos.x = (1.0f / fScaleHorz) - 1.0f;
+		lineVerts[1].pos.z = 0.0f;
+		lineVerts[1].color = color;
+
+		for (unsigned int i = 2; i<this->N / 2; i = i + 2)
+		{
+
+			lineVerts[i].pos.x = lineVerts[i - 1].pos.x;
+			lineVerts[i].pos.z = 0.0f;
+			lineVerts[i].color = color;
+
+			lineVerts[i + 1].pos.x = ((float)i / fScaleHorz) - 1.0f;
+			lineVerts[i + 1].pos.z = 0.0f;
+			lineVerts[i + 1].color = color;
+
+		}
+
+		for (unsigned int i = (this->N / 2); i<this->N; i = i + 2)
+		{
+			lineVerts[i].pos.x = lineVerts[i - this->N / 2].pos.x;
+			lineVerts[i].pos.z = 0.0f;
+			lineVerts[i].color = color2;
+
+			lineVerts[i + 1].pos.x = lineVerts[i - this->N / 2 + 1].pos.x;
+			lineVerts[i + 1].pos.z = 0.0f;
+			lineVerts[i + 1].color = color2;
+		}
 
 		// These markers separate the data sets
 		lineVerts[N / 2 - 1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
@@ -410,9 +413,27 @@ void LineGraph::makeMarkers()
 		lineVerts[N / 2 + 1].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
 		lineVerts[N / 2 + 2].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
 
+		// This creates the blank spot 
+		int iMarkerWidth = (int)((double)N * 0.01);
+		if (_iMarkerIndex >= 0)
+		{
+			for (int idxMarker = 0; idxMarker < iMarkerWidth; idxMarker++)
+			{
+				lineVerts[(_iMarkerIndex + idxMarker) % N].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+				lineVerts[(_iMarkerIndex + (N/2) + idxMarker) % N].color = DirectX::XMFLOAT3(colorBackground.x, colorBackground.y, colorBackground.z);
+			}
+		}
+
 		this->vbDirty = true;
 	}
 
+}
+
+void LineGraph::setMarkIndex(int iMarkerIndex)
+{
+	_iMarkerIndex = (unsigned int)iMarkerIndex*2;
+	_makeMarkers();
+	return;
 }
 
 void LineGraph::Render(Platform::Object^ sender, Platform::Object^ e)

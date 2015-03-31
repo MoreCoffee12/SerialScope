@@ -60,7 +60,8 @@ namespace ArduinoScope
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
-            cBuff = new byte[iBuffLength];
+            iStreamBuffLength = 128;
+            cBuff = new byte[iStreamBuffLength];
             Array.Clear(cBuff, 0, cBuff.Length);
             iPreLoad = 48;
             idxData = 0;
@@ -80,7 +81,7 @@ namespace ArduinoScope
 
             // Update scope
             graphScope1.setArray(dataScope1,dataScope2);
-
+            graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
         }
 
 
@@ -119,20 +120,37 @@ namespace ArduinoScope
             // Render the horizontal lines for the oscilliscope screen
             for (int iRows = 0; iRows < iGridRowCount; iRows++)
             {
-                addScopeGridLine(ScopeGrid, 0, 0, 300, 0, 
-                    colorCurrentForeground, iRows, 0, 1, iGridColCount);
+                if( iRows == iGridRowCount/2)
+                {
+                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
+                        colorCurrentForeground, 2, iRows, 0, 1, iGridColCount);
+                }
+                else
+                {
+                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
+                        colorCurrentForeground, 1, iRows, 0, 1, iGridColCount);
+
+                }
             }
             addScopeGridLine(ScopeGrid, 0, 25, 300, 25,
-                colorCurrentForeground, iGridRowCount, 0, 1, iGridColCount);
+                colorCurrentForeground, 1, iGridRowCount, 0, 1, iGridColCount);
 
             // Render the vertical lines for the oscilliscope screen
             for (int iCols = 0; iCols < iGridColCount; iCols++)
             {
-                addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
-                    colorCurrentForeground, 0, iCols, iGridRowCount, 1);
+                if(iCols == iGridColCount/2)
+                {
+                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
+                        colorCurrentForeground, 2, 0, iCols, iGridRowCount, 1);
+                }
+                else
+                {
+                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
+                        colorCurrentForeground, 1, 0, iCols, iGridRowCount, 1);
+                }
             }
             addScopeGridLine(ScopeGrid, 25, 0, 25, 300,
-                colorCurrentForeground, 0, iGridColCount, iGridRowCount, 1);
+                colorCurrentForeground, 1, 0, iGridColCount, iGridRowCount, 1);
 
             // Configure the line plots scaling based on the grid
             graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
@@ -241,7 +259,7 @@ namespace ArduinoScope
             byte[] cFrame;
 
             // Read in the data
-            for (k = 0; k < iBuffLength; k++)
+            for (k = 0; k < iStreamBuffLength; k++)
             {
 
 
@@ -261,21 +279,21 @@ namespace ArduinoScope
                 }
 
                 // Construct the byte array, look for the beginning byte
-                if (cBuff[(k - iPreLoad) % iBuffLength] == 0 && cBuff[(k - iPreLoad + 1) % iBuffLength] == 0 && iBuffStart < 0)
+                if (cBuff[(k - iPreLoad) % iStreamBuffLength] == 0 && cBuff[(k - iPreLoad + 1) % iStreamBuffLength] == 0 && iBuffStart < 0)
                 {
 
                     // This could be the start of a frame or it could just be a zero
                     // value passed in.  The following sequence checks that it is a
                     // valid data frame.
-                    iFrameSize = cBuff[(k - iPreLoad + 2) % iBuffLength];
+                    iFrameSize = cBuff[(k - iPreLoad + 2) % iStreamBuffLength];
 
                     // The frame size is bounded to 256 bytes and must be at last 11
-                    if (iFrameSize < iPreLoad && iFrameSize > 11 && k < (iBuffLength - (uint)iFrameSize))
+                    if (iFrameSize < iPreLoad && iFrameSize > 11 && k < (iStreamBuffLength - (uint)iFrameSize))
                     {
 
                         // This is beginning and ending of the region of interest
-                        iBuffStart = Convert.ToInt32((k - iPreLoad) % iBuffLength);
-                        iBuffEnd = (iBuffStart + iFrameSize - 1) % Convert.ToInt16(iBuffLength);
+                        iBuffStart = Convert.ToInt32((k - iPreLoad) % iStreamBuffLength);
+                        iBuffEnd = (iBuffStart + iFrameSize - 1) % Convert.ToInt16(iStreamBuffLength);
 
                         // extract the possible frame including the end mark zeros. 
                         // There is some logic here to handle the wrapping
@@ -288,10 +306,10 @@ namespace ArduinoScope
                         }
                         else
                         {
-                            int iFrameLength = iBuffEnd + (Convert.ToInt32(iBuffLength) - iBuffStart) + 1;
+                            int iFrameLength = iBuffEnd + (Convert.ToInt32(iStreamBuffLength) - iBuffStart) + 1;
                             cFrame = new byte[iFrameLength];
-                            Array.Copy(cBuff, iBuffStart, cFrame, 0, (Convert.ToInt32(iBuffLength) - iBuffStart));
-                            Array.Copy(cBuff, 0, cFrame, (Convert.ToInt32(iBuffLength) - iBuffStart), iBuffEnd + 1);
+                            Array.Copy(cBuff, iBuffStart, cFrame, 0, (Convert.ToInt32(iStreamBuffLength) - iBuffStart));
+                            Array.Copy(cBuff, 0, cFrame, (Convert.ToInt32(iStreamBuffLength) - iBuffStart), iBuffEnd + 1);
                         }
 
                         // Check crc
@@ -391,6 +409,9 @@ namespace ArduinoScope
                     {
                         if (bCollectData)
                         {
+                            // Update the blank space
+                            graphScope1.setMarkIndex(Convert.ToInt32(idxData));
+
                             // Update the plots
                             graphScope1.setArray(dataScope1, dataScope2);
                         }
@@ -427,15 +448,16 @@ namespace ArduinoScope
 
         // Helper function to plot the lines on the scope grid
         private void addScopeGridLine(Grid ScopeGrid, double X1, double Y1, double X2, double Y2, 
-            Color colorLineColor, int iRow, int iCol, int iRowSpan, int iColSpan)
+            Color colorLineColor, int StrokeThickness, int iRow, int iCol, int iRowSpan, int iColSpan)
         {
             Line myline = new Line();
             myline.X1 = X1;
             myline.Y1 = Y1;
             myline.X2 = X2;
             myline.Y2 = Y2;
+            myline.StrokeThickness = StrokeThickness;
             myline.Stroke = new SolidColorBrush(colorLineColor);
-            myline.StrokeDashArray = new DoubleCollection() { 4 };
+            myline.StrokeDashArray = new DoubleCollection() { 4 / StrokeThickness };
             myline.SetValue(Grid.RowProperty, iRow);
             myline.SetValue(Grid.ColumnProperty, iCol);
             myline.SetValue(Grid.RowSpanProperty, iRowSpan);
@@ -466,6 +488,7 @@ namespace ArduinoScope
         // Buffer and controls for the data from the instrumentation
         private bool bCollectData;
         uint iBuffLength;
+        uint iStreamBuffLength;
         byte[] cBuff;
         uint iChannelCount;
         int iBuffStart;

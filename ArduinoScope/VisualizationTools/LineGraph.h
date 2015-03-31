@@ -26,6 +26,7 @@ namespace VisualizationTools
 	public ref class LineGraph sealed : Windows::UI::Xaml::Media::Imaging::SurfaceImageSource
 	{
 	public:
+
 		// Initialize our object with a given width/height in pixels
 		LineGraph(int pixelWidth, int pixelHeight);
 
@@ -50,6 +51,9 @@ namespace VisualizationTools
 		// Set the color of the background
 		void setColorBackground(float r, float g, float b, float a);
 
+		// Set the marker index
+		void setMarkIndex(int iMarkerIndex);
+
 		// Set Y-limits on what is plotted
 		void setYLim(float yMin, float yMax);
 
@@ -65,7 +69,8 @@ namespace VisualizationTools
 		void updateVertexBuffer();
 		void makeConstantBuffers();
 
-		void makeMarkers();
+		void _makeMarkers();
+		int _iMarkerIndex;
 
 		VertexPositionColor * lineVerts;
 		float * data;
