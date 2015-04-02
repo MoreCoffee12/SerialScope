@@ -109,13 +109,33 @@ namespace ArduinoScope
                 fOffset = 0.5f;
             }
 
+            // Initilize colors for the traces
+            clrTrace1 = new Color();
+            byte btRed = 0;
+            byte btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
+            byte btBlue = 0;
+            clrTrace1 = Color.FromArgb(255, btRed, btGreen, btBlue);
+            
+            clrTrace2 = new Color();
+            btRed = 0;
+            btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
+            btBlue = Convert.ToByte((0.5f + fOffset) * 255.0f);
+            clrTrace2 = Color.FromArgb(255, btRed, btGreen, btBlue);
+
+
             // Initialize the buffer for the frame timebase and set the color
-            graphScope1.setColor(0.0f, 0.5f + fOffset, 0.0f, 0.0f, 0.5f + fOffset, 0.5f + fOffset);
+            graphScope1.setColor(Convert.ToSingle(clrTrace1.R) / 255.0f, Convert.ToSingle(clrTrace1.G) / 255.0f, Convert.ToSingle(clrTrace1.B) / 255.0f, 0.0f, 0.5f + fOffset, 0.5f + fOffset);
             graphScope1.setColorBackground(fR, fG, fB, 0.0f);
 
             // Features from the grid, defined in XAML
             iGridRowCount = ScopeGrid.RowDefinitions.Count();
             iGridColCount = ScopeGrid.ColumnDefinitions.Count();
+            SolidColorBrush Brush1 = new SolidColorBrush();
+            Brush1.Color = clrTrace1;
+            tbCh1VertDiv.Foreground = Brush1;
+            SolidColorBrush Brush2 = new SolidColorBrush();
+            Brush2.Color = clrTrace2;
+            tbCh2VertDiv.Foreground = Brush2;
 
             // Render the horizontal lines for the oscilliscope screen
             for (int iRows = 0; iRows < iGridRowCount; iRows++)
@@ -484,6 +504,8 @@ namespace ArduinoScope
         private float fScope1Scale;
         private float[] dataScope2;
         private float fScope2Scale;
+        private Color clrTrace1;
+        private Color clrTrace2;
 
         // Buffer and controls for the data from the instrumentation
         private bool bCollectData;

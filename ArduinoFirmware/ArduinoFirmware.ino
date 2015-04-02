@@ -59,10 +59,8 @@ void setup()
   // Set timer0 interrupt at 2 kHz.
   TCCR0A = 0;   // Set entire TCCR0A register to 0
   TCCR0B = 0;   // Same for TCCR0B
-  // Set compare match register for 1kHz increments
-  //OCR0A = 249;  // = (16*10^6) / (1000*64) - 1 (must be < 256)
-  // Set compare match register for 400Hz increments
-  OCR0A = 155;  // = (16*10^6) / (400*256) - 1 (must be < 256)
+  // Set compare match register for 500Hz increments
+  OCR0A = 124;  // = (16*10^6) / (500*256) - 1 (must be < 256)
   // Turn on the CTC mode
   TCCR0A |= (1 << WGM01);
   // Set CS01 and CS00 bits for 256 prescaler
