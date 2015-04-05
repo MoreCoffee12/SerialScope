@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Globalization;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Foundation;
@@ -79,6 +80,10 @@ namespace ArduinoScope
             fScope1Scale = 5.0f / 1024.0f;
             fScope2Scale = 5.0f / 1024.0f;
 
+            // Default scope parameters
+            fDivVert1 = 1.0f;
+            fDivVert2 = 1.0f;
+
             // Update scope
             graphScope1.setArray(dataScope1,dataScope2);
             graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
@@ -133,9 +138,14 @@ namespace ArduinoScope
             SolidColorBrush Brush1 = new SolidColorBrush();
             Brush1.Color = clrTrace1;
             tbCh1VertDiv.Foreground = Brush1;
+            tbCh1VertDivValue.Foreground = Brush1;
+            tbCh1VertDivEU.Foreground = Brush1;
+
             SolidColorBrush Brush2 = new SolidColorBrush();
             Brush2.Color = clrTrace2;
             tbCh2VertDiv.Foreground = Brush2;
+            tbCh2VertDivValue.Foreground = Brush2;
+            tbCh2VertDivEU.Foreground = Brush2;
 
             // Render the horizontal lines for the oscilliscope screen
             for (int iRows = 0; iRows < iGridRowCount; iRows++)
@@ -173,7 +183,7 @@ namespace ArduinoScope
                 colorCurrentForeground, 1, 0, iGridColCount, iGridRowCount, 1);
 
             // Configure the line plots scaling based on the grid
-            graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
+            bUpdateScopeParams();
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
@@ -191,6 +201,18 @@ namespace ArduinoScope
         }
 
         # region Private Methods
+
+        private bool bUpdateScopeParams()
+        {
+            // Set the limits of the graph correctly
+            graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
+
+            // Update the scope vertical divisions scale factor
+            tbCh1VertDivValue.Text = fDivVert1.ToString("F", CultureInfo.InvariantCulture);
+            tbCh2VertDivValue.Text = fDivVert2.ToString("F", CultureInfo.InvariantCulture);
+
+            return true;
+        }
 
         private async Task<bool> SetupBluetoothLink()
         {
@@ -506,6 +528,8 @@ namespace ArduinoScope
         private float fScope2Scale;
         private Color clrTrace1;
         private Color clrTrace2;
+        private float fDivVert1;
+        private float fDivVert2;
 
         // Buffer and controls for the data from the instrumentation
         private bool bCollectData;
