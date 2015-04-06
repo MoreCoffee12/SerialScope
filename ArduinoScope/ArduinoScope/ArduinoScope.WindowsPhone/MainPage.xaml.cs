@@ -53,10 +53,13 @@ namespace ArduinoScope
             graphScope1 = new VisualizationTools.LineGraph((int)LineGraphScope1.Width, (int)LineGraphScope1.Height);
             LineGraphScope1.Source = graphScope1;
 
+            // The sampling frequency here must match that configured in the Arduino firmware
+            fSamplingFreq_Hz = 500;
+
             // Initialize the buffers that recieve the data from the Arduino
             bCollectData = false;
             iChannelCount = 2;
-            iBuffLength = 1024;
+            iBuffLength = 1000;
             iBuffStart = -1;
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
@@ -64,7 +67,6 @@ namespace ArduinoScope
             iStreamBuffLength = 128;
             cBuff = new byte[iStreamBuffLength];
             Array.Clear(cBuff, 0, cBuff.Length);
-            iPreLoad = 48;
             idxData = 0;
 
             // Data buffers
@@ -184,6 +186,7 @@ namespace ArduinoScope
 
             // Configure the line plots scaling based on the grid
             bUpdateScopeParams();
+            bUpdateDateTime();
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
@@ -200,7 +203,22 @@ namespace ArduinoScope
 
         }
 
+        protected override void OnNavigatedFrom(Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            this.input.DetachStream();
+        }
+
         # region Private Methods
+
+        private bool bUpdateDateTime()
+        {
+            // Get the current date.
+            DateTime thisDay = DateTime.Today;
+
+            tbDateTime.Text = thisDay.ToString("d-MMM-yy");
+            
+            return true;
+        }
 
         private bool bUpdateScopeParams()
         {
@@ -208,8 +226,22 @@ namespace ArduinoScope
             graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
 
             // Update the scope vertical divisions scale factor
-            tbCh1VertDivValue.Text = fDivVert1.ToString("F", CultureInfo.InvariantCulture);
-            tbCh2VertDivValue.Text = fDivVert2.ToString("F", CultureInfo.InvariantCulture);
+            tbCh1VertDivValue.Text = fDivVert1.ToString("F2", CultureInfo.InvariantCulture);
+            tbCh2VertDivValue.Text = fDivVert2.ToString("F2", CultureInfo.InvariantCulture);
+
+            // Update the horizontal divisions
+            float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(iGridColCount));
+            if( fDivRaw < 1 )
+            {
+                tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
+                tbHorzDivEU.Text = "ms";
+            }
+            else
+            {
+                tbHorzDivValue.Text = fDivRaw.ToString("F2", CultureInfo.InvariantCulture);
+                tbHorzDivEU.Text = "s";
+            }
+
 
             return true;
         }
@@ -221,6 +253,7 @@ namespace ArduinoScope
                 // Reset the OK indicator
                 rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
                 rectBTOK.Fill = new SolidColorBrush(Colors.Black);
+                rectFrameSequence.Fill = new SolidColorBrush(Colors.Red);
 
                 // Tell PeerFinder that we're a pair to anyone that has been paried with us over BT
                 PeerFinder.AlternateIdentities["Bluetooth:PAIRED"] = "";
@@ -289,12 +322,9 @@ namespace ArduinoScope
         // Read in iBuffLength number of samples
         private async Task<bool> bReadSource(DataReader input)
         {
-            uint k;
-            UInt16 idxChannel;
-            UInt16 idxFrame;
+            UInt32 k;
             UInt16 i;
             UInt16 iStoredCRC;
-            int iBuffEnd;
             byte iFrameSize;
             UInt16 crc;
             mbus = new MinSegBus();
@@ -321,21 +351,23 @@ namespace ArduinoScope
                 }
 
                 // Construct the byte array, look for the beginning byte
-                if (cBuff[(k - iPreLoad) % iStreamBuffLength] == 0 && cBuff[(k - iPreLoad + 1) % iStreamBuffLength] == 0 && iBuffStart < 0)
+                UInt32 iStart = (k - 1) % iStreamBuffLength;
+
+                if (cBuff[iStart] == 0 && cBuff[k] == 0 && iBuffStart < 0)
                 {
 
                     // This could be the start of a frame or it could just be a zero
                     // value passed in.  The following sequence checks that it is a
                     // valid data frame.
-                    iFrameSize = cBuff[(k - iPreLoad + 2) % iStreamBuffLength];
+                    iFrameSize = cBuff[(k + 1) % iStreamBuffLength];
 
-                    // The frame size is bounded to 256 bytes and must be at last 11
-                    if (iFrameSize < iPreLoad && iFrameSize > 11 && k < (iStreamBuffLength - (uint)iFrameSize))
+                    // The frame size is bounded to 64 bytes and must be at last 11
+                    if (iFrameSize < 64 && iFrameSize > 11 )
                     {
 
                         // This is beginning and ending of the region of interest
-                        iBuffStart = Convert.ToInt32((k - iPreLoad) % iStreamBuffLength);
-                        iBuffEnd = (iBuffStart + iFrameSize - 1) % Convert.ToInt16(iStreamBuffLength);
+                        iBuffStart = Convert.ToInt32(iStart);
+                        iBuffEnd = Convert.ToInt32((iBuffStart + Convert.ToInt32(iFrameSize) - 1) % iStreamBuffLength);
 
                         // extract the possible frame including the end mark zeros. 
                         // There is some logic here to handle the wrapping
@@ -371,8 +403,6 @@ namespace ArduinoScope
                         // Check that this is 16-bit unsigned integer value
                         if (cFrame[4] == 0x01)
                         {
-                            // Reset the channel count
-                            idxChannel = 0;
 
                             // Point to the next location in the buffer
                             if (idxData < (iBuffLength - 1))
@@ -433,10 +463,11 @@ namespace ArduinoScope
             }
 
             // Construct a dataReader so we can read junk in
-            DataReader input = new DataReader(s.InputStream);
+            input = new DataReader(s.InputStream);
 
             // Made it this far so status is ok
             rectBTOK.Fill = new SolidColorBrush(Colors.Green);
+            //rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
 
             // Loop forever
             while (true)
@@ -532,19 +563,23 @@ namespace ArduinoScope
         private float fDivVert2;
 
         // Buffer and controls for the data from the instrumentation
+        private float fSamplingFreq_Hz;
         private bool bCollectData;
         uint iBuffLength;
-        uint iStreamBuffLength;
+        UInt32 iStreamBuffLength;
         byte[] cBuff;
         uint iChannelCount;
-        int iBuffStart;
+        Int32 iBuffStart;
+        Int32 iBuffEnd;
         int[] iBuffData;
         uint idxData;
 
+        // Bluetooth controls
+        DataReader input;
+
         // Data bus structures used to pull data off of the Arduino
         DataBus.MinSegBus mbus;
-        uint iPreLoad;
-
+ 
         #endregion
 
     }

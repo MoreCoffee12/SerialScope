@@ -46,7 +46,7 @@ void setup()
   BTSerial.begin(115200);
 
   // Definitions for the MinSegBus
-  iAddress = 0x001;
+  iAddress = 0x000;
   
   // Tattle tale pins, used to confirm timing
   pinMode(9, OUTPUT);
@@ -96,6 +96,7 @@ ISR(TIMER0_COMPA_vect){
   iUnsignedShortArray[0] = analogRead(analogPinCh1);
   iUnsignedShortArray[1] = analogRead(analogPinCh2);
   iBytesReturned = 0;
+  iAddress++;
   mbus.ToByteArray(iAddress, iUnsignedShortArray, ADCChannels, maxbuffer, &cBuff[0], &iBytesReturned);
   for (iIdx = 0; iIdx<iBytesReturned; iIdx++)
   {
