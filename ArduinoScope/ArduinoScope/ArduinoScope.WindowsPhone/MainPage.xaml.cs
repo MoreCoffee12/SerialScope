@@ -65,9 +65,9 @@ namespace ArduinoScope
             Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
             iStreamBuffLength = 128;
-            cBuff = new byte[iStreamBuffLength];
-            Array.Clear(cBuff, 0, cBuff.Length);
             idxData = 0;
+            byteAddress = 0;
+            iUnsignedShortArray = new UInt16[2];
 
             // Data buffers
             dataScope1 = new float[iBuffLength];
@@ -324,11 +324,9 @@ namespace ArduinoScope
         {
             UInt32 k;
             UInt16 i;
-            UInt16 iStoredCRC;
-            byte iFrameSize;
-            UInt16 crc;
             mbus = new MinSegBus();
-            byte[] cFrame;
+            byte byteInput;
+            uint iErrorCount;
 
             // Read in the data
             for (k = 0; k < iStreamBuffLength; k++)
@@ -342,92 +340,31 @@ namespace ArduinoScope
                     await input.LoadAsync(1);
 
                     // Read in the byte
-                    cBuff[k] = input.ReadByte();
+                    byteInput = input.ReadByte();
 
-                }
-                catch (Exception ex)
-                {
-                    this.textOutput.Text = "Exception:  " + ex.ToString();
-                }
+                    // Update the ring buffer and see if there is a value
+                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, 2);
+                    iErrorCount = mbus.iGetErrorCount();
 
-                // Construct the byte array, look for the beginning byte
-                UInt32 iStart = (k - 1) % iStreamBuffLength;
-
-                if (cBuff[iStart] == 0 && cBuff[k] == 0 && iBuffStart < 0)
-                {
-
-                    // This could be the start of a frame or it could just be a zero
-                    // value passed in.  The following sequence checks that it is a
-                    // valid data frame.
-                    iFrameSize = cBuff[(k + 1) % iStreamBuffLength];
-
-                    // The frame size is bounded to 64 bytes and must be at last 11
-                    if (iFrameSize < 64 && iFrameSize > 11 )
+                    if ( iErrorCount == 0 )
                     {
+                        // The frame was valid
+                        rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
 
-                        // This is beginning and ending of the region of interest
-                        iBuffStart = Convert.ToInt32(iStart);
-                        iBuffEnd = Convert.ToInt32((iBuffStart + Convert.ToInt32(iFrameSize) - 1) % iStreamBuffLength);
-
-                        // extract the possible frame including the end mark zeros. 
-                        // There is some logic here to handle the wrapping
-                        if (iBuffStart < iBuffEnd)
+                        // Point to the next location in the buffer
+                        if (idxData < (iBuffLength - 1))
                         {
-
-                            cFrame = new byte[iBuffEnd - iBuffStart];
-                            Array.Copy(cBuff, iBuffStart, cFrame, 0, (iBuffEnd - iBuffStart));
-
+                            idxData++;
                         }
                         else
                         {
-                            int iFrameLength = iBuffEnd + (Convert.ToInt32(iStreamBuffLength) - iBuffStart) + 1;
-                            cFrame = new byte[iFrameLength];
-                            Array.Copy(cBuff, iBuffStart, cFrame, 0, (Convert.ToInt32(iStreamBuffLength) - iBuffStart));
-                            Array.Copy(cBuff, 0, cFrame, (Convert.ToInt32(iStreamBuffLength) - iBuffStart), iBuffEnd + 1);
+                            idxData = 0;
+                            //Array.Clear(iBuffData, 0, iBuffData.Length);
                         }
 
-                        // Check crc
-                        crc = 0xFFFF;
-                        for (i = 0; i < (iFrameSize - 4); i++)
-                        {
-                            crc = mbus.bUpdateCRC(crc, cFrame[i]);
-                        }
-
-                        // Compare with the recorded crc
-                        iStoredCRC = BitConverter.ToUInt16(cFrame, iFrameSize - 4);
-                        if (crc == iStoredCRC)
-                        {
-                            rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
-                        }
-
-                        // Check that this is 16-bit unsigned integer value
-                        if (cFrame[4] == 0x01)
-                        {
-
-                            // Point to the next location in the buffer
-                            if (idxData < (iBuffLength - 1))
-                            {
-                                idxData++;
-                            }
-                            else
-                            {
-                                idxData = 0;
-                                //Array.Clear(iBuffData, 0, iBuffData.Length);
-                            }
-
-                            // Fill the spaces in the buffer with data
-                            dataScope1[idxData] = Convert.ToSingle(BitConverter.ToUInt16(cFrame, 5)) * fScope1Scale;
-                            dataScope2[idxData] = Convert.ToSingle(BitConverter.ToUInt16(cFrame, 7)) * fScope2Scale;
-
-                            // Debugging ->
-                            //for (idxFrame = 0; idxFrame < (iFrameSize - 9); idxFrame = Convert.ToUInt16(idxFrame + 2))
-                            //{
-
-                            //iBuffDataSet(idxChannel, idxData, BitConverter.ToUInt16(cFrame, idxFrame + 5));
-                            //idxChannel++;
-                            //}
-                            //<- End debug code
-                        }
+                        // Fill the spaces in the buffer with data
+                        dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1Scale;
+                        dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2Scale;
 
                     }
                     else
@@ -435,10 +372,13 @@ namespace ArduinoScope
                         rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
                     }
 
-                    // Reset the buffer pointer
-                    iBuffStart = -1;
 
                 }
+                catch (Exception ex)
+                {
+                    this.textOutput.Text = "Exception:  " + ex.ToString();
+                }
+
 
             }
 
@@ -567,12 +507,13 @@ namespace ArduinoScope
         private bool bCollectData;
         uint iBuffLength;
         UInt32 iStreamBuffLength;
-        byte[] cBuff;
         uint iChannelCount;
         Int32 iBuffStart;
         Int32 iBuffEnd;
         int[] iBuffData;
         uint idxData;
+        byte byteAddress;
+        UInt16[] iUnsignedShortArray;
 
         // Bluetooth controls
         DataReader input;
