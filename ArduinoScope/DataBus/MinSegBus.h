@@ -84,6 +84,8 @@ namespace DataBus
         buffer cRingBuffer;
 		unsigned int _iRingBufferCount;
         unsigned short *_iUnsignedShortArray;
+        unsigned char _cBuff[BUFF_SIZE];
+
 
 	};
 

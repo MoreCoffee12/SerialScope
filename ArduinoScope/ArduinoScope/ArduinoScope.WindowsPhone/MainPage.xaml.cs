@@ -66,6 +66,7 @@ namespace ArduinoScope
             idxData = 0;
             iStreamBuffLength = 128;
             idxData = 0;
+            iCharCount = 0;
             byteAddress = 0;
             iUnsignedShortArray = new UInt16[2];
 
@@ -323,7 +324,6 @@ namespace ArduinoScope
         private async Task<bool> bReadSource(DataReader input)
         {
             UInt32 k;
-            UInt16 i;
             mbus = new MinSegBus();
             byte byteInput;
             uint iErrorCount;
@@ -341,10 +341,19 @@ namespace ArduinoScope
 
                     // Read in the byte
                     byteInput = input.ReadByte();
+                    ++iCharCount;
 
                     // Update the ring buffer and see if there is a value
-                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, 2);
-                    iErrorCount = mbus.iGetErrorCount();
+                    if( iCharCount > 12)
+                    {
+                        iUnsignedShortArray = mbus.writeRingBuff(byteInput, 2);
+                        iErrorCount = mbus.iGetErrorCount();
+                    }
+                    else
+                    {
+                        mbus.writeRingBuff(byteInput);
+                        iErrorCount = 1;
+                    }
 
                     if ( iErrorCount == 0 )
                     {
@@ -365,6 +374,9 @@ namespace ArduinoScope
                         // Fill the spaces in the buffer with data
                         dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1Scale;
                         dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2Scale;
+
+                        // Reset the character count
+                        iCharCount = 0;
 
                     }
                     else
@@ -512,6 +524,7 @@ namespace ArduinoScope
         Int32 iBuffEnd;
         int[] iBuffData;
         uint idxData;
+        uint iCharCount;
         byte byteAddress;
         UInt16[] iUnsignedShortArray;
 
