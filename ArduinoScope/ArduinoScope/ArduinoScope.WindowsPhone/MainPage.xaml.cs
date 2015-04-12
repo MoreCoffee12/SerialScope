@@ -331,53 +331,41 @@ namespace ArduinoScope
             for (k = 0; k < iStreamBuffLength; k++)
             {
 
+                // Wait until we have 1 byte available to read
+                await input.LoadAsync(1);
 
-                // Read in one byte
-                try
+                // Read in the byte
+                byteInput = input.ReadByte();
+
+                // Save to the ring buffer and see if the frame can be parsed
+                mbus.writeRingBuff(byteInput, 2);
+                iErrorCount = mbus.iGetErrorCount();
+
+                if ( iErrorCount == 0 )
                 {
-                    // Wait until we have 1 byte available to read
-                    await input.LoadAsync(1);
+                    // The frame was valid
+                    rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
 
-                    // Read in the byte
-                    byteInput = input.ReadByte();
-
-                    // Save to the ring buffer and see if the frame can be parsed
-                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, 2);
-                    iErrorCount = mbus.iGetErrorCount();
-
-                    if ( iErrorCount == 0 )
+                    // Point to the next location in the buffer
+                    if (idxData < (iBuffLength - 1))
                     {
-                        // The frame was valid
-                        rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
-
-                        // Point to the next location in the buffer
-                        if (idxData < (iBuffLength - 1))
-                        {
-                            idxData++;
-                        }
-                        else
-                        {
-                            idxData = 0;
-                            //Array.Clear(iBuffData, 0, iBuffData.Length);
-                        }
-
-                        // Fill the spaces in the buffer with data
-                        dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1Scale;
-                        dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2Scale;
-
+                        idxData++;
                     }
                     else
                     {
-                        rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
+                        idxData = 0;
+                        //Array.Clear(iBuffData, 0, iBuffData.Length);
                     }
 
+                    // Fill the spaces in the buffer with data
+                    dataScope1[idxData] = Convert.ToSingle(mbus.iGetInt1()) * fScope1Scale;
+                    dataScope2[idxData] = Convert.ToSingle(mbus.iGetInt2()) * fScope2Scale;
 
                 }
-                catch (Exception ex)
+                else
                 {
-                    this.textOutput.Text = "Exception:  " + ex.ToString();
+                    rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
                 }
-
 
             }
 
