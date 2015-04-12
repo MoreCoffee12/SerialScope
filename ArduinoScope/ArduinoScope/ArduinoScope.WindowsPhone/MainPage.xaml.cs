@@ -25,8 +25,6 @@ using VisualizationTools;
 using DataBus;
 
 
-// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
-
 namespace ArduinoScope
 {
     /// <summary>
@@ -42,7 +40,7 @@ namespace ArduinoScope
 
             // Grab the actual device width and then manually set the width to
             // match that of the device.
-            if( Double.IsNaN(LineGraphScope1.Width))
+            if (Double.IsNaN(LineGraphScope1.Width))
             {
                 var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
                 LineGraphScope1.Height = 95;
@@ -55,6 +53,9 @@ namespace ArduinoScope
 
             // The sampling frequency here must match that configured in the Arduino firmware
             fSamplingFreq_Hz = 500;
+
+            // Initialize the data bus
+            mbus = new MinSegBus();
 
             // Initialize the buffers that recieve the data from the Arduino
             bCollectData = false;
@@ -71,7 +72,7 @@ namespace ArduinoScope
             // Data buffers
             dataScope1 = new float[iBuffLength];
             dataScope2 = new float[iBuffLength];
-            for (int idx = 0; idx<iBuffLength; idx++)
+            for (int idx = 0; idx < iBuffLength; idx++)
             {
                 dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
                 dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
@@ -86,7 +87,7 @@ namespace ArduinoScope
             fDivVert2 = 1.0f;
 
             // Update scope
-            graphScope1.setArray(dataScope1,dataScope2);
+            graphScope1.setArray(dataScope1, dataScope2);
             graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
         }
 
@@ -100,6 +101,9 @@ namespace ArduinoScope
         {
 
             float fOffset = 0.0f;
+
+            // Reset the debug window
+            this.textOutput.Text = "";
 
             // Control appearance features
             Color colorCurrentBackground = (Color)Application.Current.Resources["PhoneBackgroundColor"];
@@ -121,7 +125,7 @@ namespace ArduinoScope
             byte btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
             byte btBlue = 0;
             clrTrace1 = Color.FromArgb(255, btRed, btGreen, btBlue);
-            
+
             clrTrace2 = new Color();
             btRed = 0;
             btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
@@ -151,7 +155,7 @@ namespace ArduinoScope
             // Render the horizontal lines for the oscilliscope screen
             for (int iRows = 0; iRows < iGridRowCount; iRows++)
             {
-                if( iRows == iGridRowCount/2)
+                if (iRows == iGridRowCount / 2)
                 {
                     addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
                         colorCurrentForeground, 2, iRows, 0, 1, iGridColCount);
@@ -169,7 +173,7 @@ namespace ArduinoScope
             // Render the vertical lines for the oscilliscope screen
             for (int iCols = 0; iCols < iGridColCount; iCols++)
             {
-                if(iCols == iGridColCount/2)
+                if (iCols == iGridColCount / 2)
                 {
                     addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
                         colorCurrentForeground, 2, 0, iCols, iGridRowCount, 1);
@@ -190,21 +194,11 @@ namespace ArduinoScope
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
 
-            // Arduino bluetooth
-            try
-            {
-                ReadData(SetupBluetoothLink());
-            }
-            catch (Exception ex)
-            {
-                this.textOutput.Text = "Exception:  " + ex.ToString();
-            }
-
         }
 
         protected override void OnNavigatedFrom(Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            this.input.DetachStream();
+            btHelper.Disconnect();
         }
 
         # region Private Methods
@@ -215,7 +209,7 @@ namespace ArduinoScope
             DateTime thisDay = DateTime.Today;
 
             tbDateTime.Text = thisDay.ToString("d-MMM-yy");
-            
+
             return true;
         }
 
@@ -230,7 +224,7 @@ namespace ArduinoScope
 
             // Update the horizontal divisions
             float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(iGridColCount));
-            if( fDivRaw < 1 )
+            if (fDivRaw < 1)
             {
                 tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
                 tbHorzDivEU.Text = "ms";
@@ -247,80 +241,72 @@ namespace ArduinoScope
 
         private async Task<bool> SetupBluetoothLink()
         {
+
+            // Tell PeerFinder that we're a pair to anyone that has been paried with us over BT
+            PeerFinder.AlternateIdentities["Bluetooth:PAIRED"] = "";
+
+            // Find all peers
+            System.Collections.Generic.IReadOnlyList<Windows.Networking.Proximity.PeerInformation> devices;
             try
             {
-                // Reset the OK indicator
-                rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
-                rectBTOK.Fill = new SolidColorBrush(Colors.Black);
-                rectFrameSequence.Fill = new SolidColorBrush(Colors.Red);
-
-                // Tell PeerFinder that we're a pair to anyone that has been paried with us over BT
-                PeerFinder.AlternateIdentities["Bluetooth:PAIRED"] = "";
-
-                // Find all peers
-                var devices = await PeerFinder.FindAllPeersAsync();
-
-                // If there are no peers, then complain
-                if (devices.Count == 0)
-                {
-                    await new MessageDialog("No bluetooth devices are paired, please pair your Arduino").ShowAsync();
-
-                    // Neat little line to open the bluetooth settings
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
-                    return false;
-                }
-                this.textOutput.Text = "Found paired bluetooth devices\n";
-
-                // Convert peers to array from strange datatype return from PeerFinder.FindAllPeersAsync()
-                PeerInformation[] peers = devices.ToArray();
-
-                // Find paired peer that is the default device name for the Arduino
-                PeerInformation peerInfo = devices.FirstOrDefault(c => c.DisplayName.Contains("HC"));
-
-                // If that doesn't exist, complain!
-                if (peerInfo == null)
-                {
-                    //await new MessageDialog("No bluetooth devices are paired, please pair your FoneAstra").ShowAsync();
-                    await new MessageDialog("No bluetooth devices are paired, please pair your HC").ShowAsync();
-                    await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
-                    return false;
-                }
-                this.textOutput.Text += ("Found the HC bluetooth device:" + peerInfo.HostName + "\n");
-
-                // Otherwise, create our StreamSocket and connect it!
-                s = new StreamSocket();
-                try
-                {
-                    await s.ConnectAsync(peerInfo.HostName, "1");
-                }
-                catch (Exception ex)
-                {
-                    this.textOutput.Text = "ConnectAsync Failed\n";
-                    this.textOutput.Text += "Exception:  " + ex.ToString();
-                    return false;
-                }
-
-                // At this point, open the writer
-                //output = new DataWriter(s.OutputStream);
-                return true;
-
-
+                devices = await PeerFinder.FindAllPeersAsync();
             }
             catch (Exception ex)
             {
-                this.textOutput.Text = ("Error: " + ex.HResult.ToString() + " - " + ex.Message + "\n");
-                this.textOutput.Text += "Is your bluetooth turned on?\n";
+                this.textOutput.Text = "Failed to find any Bluetooth devices.  Is your Bluetooth turned on?\n";
+                this.textOutput.Text += "Exception:  " + ex.ToString();
                 return false;
             }
 
+            // If there are no peers, then complain
+            if (devices.Count == 0)
+            {
+                await new MessageDialog("No bluetooth devices are paired, please pair your Arduino").ShowAsync();
+
+                // Neat little line to open the bluetooth settings
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
+                return false;
+            }
+            this.textOutput.Text = "Found paired bluetooth devices\n";
+
+            // Convert peers to array from strange datatype return from PeerFinder.FindAllPeersAsync()
+            PeerInformation[] peers = devices.ToArray();
+
+            // Find paired peer that is the default device name for the Arduino
+            PeerInformation peerInfo = devices.FirstOrDefault(c => c.DisplayName.Contains("HC"));
+
+            // If that doesn't exist, complain!
+            if (peerInfo == null)
+            {
+                await new MessageDialog("No bluetooth devices are paired, please pair your HC").ShowAsync();
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
+                return false;
+            }
+            this.textOutput.Text += ("Found the HC bluetooth device:" + peerInfo.HostName + "\n");
+
+            // Otherwise, create our StreamSocket and connect it!
+            btHelper.s = new StreamSocket();
+            try
+            {
+                await btHelper.s.ConnectAsync(peerInfo.HostName, "1");
+            }
+            catch (Exception ex)
+            {
+                this.textOutput.Text = "ConnectAsync Failed\n";
+                this.textOutput.Text += "Exception:  " + ex.ToString();
+                return false;
+            }
+
+            // At this point, open the writer
+            //output = new DataWriter(s.OutputStream);
             return true;
+
         }
 
         // Read in iBuffLength number of samples
         private async Task<bool> bReadSource(DataReader input)
         {
             UInt32 k;
-            mbus = new MinSegBus();
             byte byteInput;
             uint iErrorCount;
 
@@ -338,7 +324,7 @@ namespace ArduinoScope
                 iUnsignedShortArray = mbus.writeRingBuff(byteInput, 4);
                 iErrorCount = mbus.iGetErrorCount();
 
-                if ( iErrorCount == 0 )
+                if (iErrorCount == 0)
                 {
                     // The frame was valid
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
@@ -386,17 +372,17 @@ namespace ArduinoScope
             }
 
             // Construct a dataReader so we can read junk in
-            input = new DataReader(s.InputStream);
+            btHelper.input = new DataReader(btHelper.s.InputStream);
 
             // Made it this far so status is ok
             rectBTOK.Fill = new SolidColorBrush(Colors.Green);
             //rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
 
-            // Loop forever
-            while (true)
+            // Loop so long as the collect data button is enabled
+            while (bCollectData)
             {
                 // Read a line from the input, once again using await to translate a "Task<xyz>" to an "xyz"
-                bTemp = (await bReadSource(input));
+                bTemp = (await bReadSource(btHelper.input));
                 if (bTemp == true)
                 {
 
@@ -423,6 +409,14 @@ namespace ArduinoScope
 
         }
 
+        private void ResetLEDs()
+        {
+            rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
+            rectBTOK.Fill = new SolidColorBrush(Colors.Black);
+            rectFrameSequence.Fill = new SolidColorBrush(Colors.Black);
+
+        }
+
         private void btnStartAcq_Click(object sender, RoutedEventArgs e)
         {
 
@@ -431,18 +425,35 @@ namespace ArduinoScope
 
             if (bCollectData)
             {
+
                 btnStartAcq.Content = "Stop Acquisition";
+                ResetLEDs();
+                // Reset the debug window
+                this.textOutput.Text = "";
+
+                // Arduino bluetooth
+                try
+                {
+                    ReadData(SetupBluetoothLink());
+                }
+                catch (Exception ex)
+                {
+                    this.textOutput.Text = "Exception:  " + ex.ToString();
+                }
+
             }
             else
             {
+                
                 btnStartAcq.Content = "Start Acquisition";
+                ResetLEDs();
             }
 
 
         }
 
         // Helper function to plot the lines on the scope grid
-        private void addScopeGridLine(Grid ScopeGrid, double X1, double Y1, double X2, double Y2, 
+        private void addScopeGridLine(Grid ScopeGrid, double X1, double Y1, double X2, double Y2,
             Color colorLineColor, int StrokeThickness, int iRow, int iCol, int iRowSpan, int iColSpan)
         {
             Line myline = new Line();
@@ -468,7 +479,7 @@ namespace ArduinoScope
         #region private fields
 
         // The socket we'll use to pull data from the the Aurduino
-        private StreamSocket s;
+        private BluetoothHelper btHelper = new BluetoothHelper();
 
         // graphs, controls, and variables related to plotting
         int iGridRowCount;
@@ -494,12 +505,9 @@ namespace ArduinoScope
         byte byteAddress;
         UInt16[] iUnsignedShortArray;
 
-        // Bluetooth controls
-        DataReader input;
-
         // Data bus structures used to pull data off of the Arduino
         DataBus.MinSegBus mbus;
- 
+
         #endregion
 
     }
