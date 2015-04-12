@@ -60,14 +60,13 @@ namespace ArduinoScope
             bCollectData = false;
             iChannelCount = 2;
             iBuffLength = 1000;
-            iBuffStart = -1;
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
             iStreamBuffLength = 128;
             idxData = 0;
             byteAddress = 0;
-            iUnsignedShortArray = new UInt16[2];
+            iUnsignedShortArray = new UInt16[4];
 
             // Data buffers
             dataScope1 = new float[iBuffLength];
@@ -275,9 +274,7 @@ namespace ArduinoScope
                 // Convert peers to array from strange datatype return from PeerFinder.FindAllPeersAsync()
                 PeerInformation[] peers = devices.ToArray();
 
-                // Find paired peer that is the FoneAstra.  Modified to look for the default device
-                // name for the Arduino
-                //PeerInformation peerInfo = devices.FirstOrDefault(c => c.DisplayName.Contains("FoneAstra"));
+                // Find paired peer that is the default device name for the Arduino
                 PeerInformation peerInfo = devices.FirstOrDefault(c => c.DisplayName.Contains("HC"));
 
                 // If that doesn't exist, complain!
@@ -338,7 +335,7 @@ namespace ArduinoScope
                 byteInput = input.ReadByte();
 
                 // Save to the ring buffer and see if the frame can be parsed
-                mbus.writeRingBuff(byteInput, 4);
+                iUnsignedShortArray = mbus.writeRingBuff(byteInput, 4);
                 iErrorCount = mbus.iGetErrorCount();
 
                 if ( iErrorCount == 0 )
@@ -351,15 +348,15 @@ namespace ArduinoScope
                     idxData = idxData % iBuffLength;
 
                     // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(mbus.iGetInt1()) * fScope1Scale;
-                    dataScope2[idxData] = Convert.ToSingle(mbus.iGetInt2()) * fScope2Scale;
+                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1Scale;
+                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2Scale;
 
                     ++idxData;
                     idxData = idxData % iBuffLength;
 
                     // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(mbus.iGetInt3()) * fScope1Scale;
-                    dataScope2[idxData] = Convert.ToSingle(mbus.iGetInt4()) * fScope2Scale;
+                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1Scale;
+                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[3]) * fScope2Scale;
                 }
                 else
                 {
@@ -441,7 +438,6 @@ namespace ArduinoScope
                 btnStartAcq.Content = "Start Acquisition";
             }
 
-            bClearOutput = true;
 
         }
 
@@ -477,7 +473,6 @@ namespace ArduinoScope
         // graphs, controls, and variables related to plotting
         int iGridRowCount;
         int iGridColCount;
-        private bool bClearOutput = false;
         private VisualizationTools.LineGraph graphScope1;
         private float[] dataScope1;
         private float fScope1Scale;
@@ -494,8 +489,6 @@ namespace ArduinoScope
         uint iBuffLength;
         UInt32 iStreamBuffLength;
         uint iChannelCount;
-        Int32 iBuffStart;
-        Int32 iBuffEnd;
         int[] iBuffData;
         uint idxData;
         byte byteAddress;

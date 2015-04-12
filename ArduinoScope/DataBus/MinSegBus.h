@@ -54,8 +54,8 @@ namespace DataBus
 		unsigned int iGetRingBuffCount();
 		void clearRingBuff();
 
-		[DefaultOverload] void writeRingBuff(unsigned char cValue);
-        void writeRingBuff(unsigned char cValue,
+		void writeRingBuff(unsigned char cValue);
+        [DefaultOverload] Array<uint16>^  writeRingBuff(unsigned char cValue,
             unsigned int iShortCount);
         void writeRingBuff(unsigned char cValue, unsigned char *iAddress,
 			unsigned short *iUnsignedShortArray,
@@ -66,11 +66,6 @@ namespace DataBus
         // Access functions
         unsigned int iGetErrorCount();
         unsigned int iGetAddress();
-        unsigned int iGetInt1();
-        unsigned int iGetInt2();
-        unsigned int iGetInt3();
-        unsigned int iGetInt4();
-
 
 	private:
 
@@ -91,10 +86,6 @@ namespace DataBus
 		unsigned int _iRingBufferCount;
         unsigned short *_iUnsignedShortArray;
         unsigned char _cBuff[BUFF_SIZE];
-        unsigned int _iInt1;
-        unsigned int _iInt2;
-        unsigned int _iInt3;
-        unsigned int _iInt4;
 
 	};
 

@@ -21,8 +21,6 @@ MinSegBus::MinSegBus()
     _iErrorCount = 100;
     _iAddress = 0x00;
 
-    _iInt1 = 0;
-    _iInt2 = 0;
 }
 
 
@@ -352,25 +350,6 @@ unsigned int MinSegBus::iGetAddress()
     return _iAddress;
 }
 
-unsigned int MinSegBus::iGetInt1()
-{
-    return _iInt1;
-}
-
-unsigned int MinSegBus::iGetInt2()
-{
-    return _iInt2;
-}
-
-unsigned int MinSegBus::iGetInt3()
-{
-    return _iInt3;
-}
-
-unsigned int MinSegBus::iGetInt4()
-{
-    return _iInt4;
-}
 
 void MinSegBus::clearRingBuff()
 {
@@ -392,7 +371,7 @@ unsigned char MinSegBus::readRingBuff(int iXn)
 }
 
 
-void MinSegBus::writeRingBuff(unsigned char cValue,
+[DefaultOverload] Array<uint16>^ MinSegBus::writeRingBuff(unsigned char cValue,
     unsigned int iShortCount)
 {
     unsigned int iFrameSize = 9 + (iShortCount * 2);
@@ -411,7 +390,7 @@ void MinSegBus::writeRingBuff(unsigned char cValue,
     // the frame size is correct
     if ((cValue + readRingBuff(1) + readRingBuff(idxStart) + readRingBuff(idxStart - 1) + readRingBuff(idxStart - 2)) != iFrameSize)
     {
-        return;
+        return  ref new Array<uint16>(_iUnsignedShortArray, iShortCount);
     }
 
     // Calculate the CRC
@@ -425,27 +404,27 @@ void MinSegBus::writeRingBuff(unsigned char cValue,
     // be at least a valid frame
     if (crc != (unsigned short)((readRingBuff(2) << 8) + readRingBuff(3)))
     {
-        return;
+        return  ref new Array<uint16>(_iUnsignedShortArray, iShortCount);
     }
 
     // Retrieve the function (type descriptor), it must be one
     // to contain a 16-bit integer.
     if (readRingBuff(idxStart - 4) != 0x01)
     {
-        return;
+        return  ref new Array<uint16>(_iUnsignedShortArray, iShortCount);
     }
 
     // Copy the data over
-    _iInt1 = (unsigned short)((readRingBuff(idxStart - 6) << 8) + readRingBuff(idxStart - 5));
-    _iInt2 = (unsigned short)((readRingBuff(idxStart - 8) << 8) + readRingBuff(idxStart - 7));
-    _iInt3 = (unsigned short)((readRingBuff(idxStart - 10) << 8) + readRingBuff(idxStart - 9));
-    _iInt4 = (unsigned short)((readRingBuff(idxStart - 12) << 8) + readRingBuff(idxStart - 11));
+    _iUnsignedShortArray[0] = (unsigned short)((readRingBuff(idxStart - 6) << 8) + readRingBuff(idxStart - 5));
+    _iUnsignedShortArray[1] = (unsigned short)((readRingBuff(idxStart - 8) << 8) + readRingBuff(idxStart - 7));
+    _iUnsignedShortArray[2] = (unsigned short)((readRingBuff(idxStart - 10) << 8) + readRingBuff(idxStart - 9));
+    _iUnsignedShortArray[3] = (unsigned short)((readRingBuff(idxStart - 12) << 8) + readRingBuff(idxStart - 11));
 
     // Success
     _iErrorCount = 0x00;
 
     // Done
-    return;
+    return ref new Array<uint16>(_iUnsignedShortArray, iShortCount*2);
 
 }
 
