@@ -338,7 +338,7 @@ namespace ArduinoScope
                 byteInput = input.ReadByte();
 
                 // Save to the ring buffer and see if the frame can be parsed
-                mbus.writeRingBuff(byteInput, 2);
+                mbus.writeRingBuff(byteInput, 4);
                 iErrorCount = mbus.iGetErrorCount();
 
                 if ( iErrorCount == 0 )
@@ -347,20 +347,19 @@ namespace ArduinoScope
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
 
                     // Point to the next location in the buffer
-                    if (idxData < (iBuffLength - 1))
-                    {
-                        idxData++;
-                    }
-                    else
-                    {
-                        idxData = 0;
-                        //Array.Clear(iBuffData, 0, iBuffData.Length);
-                    }
+                    ++idxData;
+                    idxData = idxData % iBuffLength;
 
                     // Fill the spaces in the buffer with data
                     dataScope1[idxData] = Convert.ToSingle(mbus.iGetInt1()) * fScope1Scale;
                     dataScope2[idxData] = Convert.ToSingle(mbus.iGetInt2()) * fScope2Scale;
 
+                    ++idxData;
+                    idxData = idxData % iBuffLength;
+
+                    // Fill the spaces in the buffer with data
+                    dataScope1[idxData] = Convert.ToSingle(mbus.iGetInt3()) * fScope1Scale;
+                    dataScope2[idxData] = Convert.ToSingle(mbus.iGetInt4()) * fScope2Scale;
                 }
                 else
                 {

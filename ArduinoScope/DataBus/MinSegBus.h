@@ -68,6 +68,8 @@ namespace DataBus
         unsigned int iGetAddress();
         unsigned int iGetInt1();
         unsigned int iGetInt2();
+        unsigned int iGetInt3();
+        unsigned int iGetInt4();
 
 
 	private:
@@ -91,6 +93,8 @@ namespace DataBus
         unsigned char _cBuff[BUFF_SIZE];
         unsigned int _iInt1;
         unsigned int _iInt2;
+        unsigned int _iInt3;
+        unsigned int _iInt4;
 
 	};
 

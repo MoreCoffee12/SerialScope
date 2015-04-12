@@ -25,9 +25,10 @@ boolean toggle0 = 0;
 // Define the ADC
 int analogPinCh1 = 0;
 int analogPinCh2 = 1;
+bool bOutput;
 
 // Buffers
-unsigned short iUnsignedShortArray[ADCChannels];
+unsigned short iUnsignedShortArray[ADCChannels*2];
 unsigned char cBuff[maxbuffer];
 
 // MinSegBus vaiiables
@@ -50,6 +51,9 @@ void setup()
   
   // Tattle tale pins, used to confirm timing
   pinMode(9, OUTPUT);
+  
+  // Get two samples before sending the frame
+  bOutput = false;
   
   // Timer setup.  Begin by disabling the interrupts
   // Reference:  http://www.instructables.com/id/Arduino-Timer-Interrupts/?ALLSTEPS
@@ -93,17 +97,28 @@ ISR(TIMER0_COMPA_vect){
     digitalWrite(9,LOW);
     toggle0 = 1;
   }
-  
-  iUnsignedShortArray[0] = analogRead(analogPinCh1);
-  iUnsignedShortArray[1] = analogRead(analogPinCh2);
-  iBytesReturned = 0;
-  iAddress++;
-  mbus.ToByteArray(iAddress, iUnsignedShortArray, ADCChannels, maxbuffer, &cBuff[0], &iBytesReturned);
-  for (iIdx = 0; iIdx<iBytesReturned; iIdx++)
+
+  if( bOutput)
   {
-    // Uncomment this line to write to the serial port. Useful
-    // only for debugging
-    //Serial.write(cBuff[iIdx]);
-    BTSerial.write(cBuff[iIdx]);
+    iUnsignedShortArray[2] = analogRead(analogPinCh1);
+    iUnsignedShortArray[3] = analogRead(analogPinCh2);
+    iBytesReturned = 0;
+    iAddress++;
+    mbus.ToByteArray(iAddress, iUnsignedShortArray, ADCChannels*2, maxbuffer, &cBuff[0], &iBytesReturned);
+    for (iIdx = 0; iIdx<iBytesReturned; iIdx++)
+    {
+      // Uncomment this line to write to the serial port. Useful
+      // only for debugging
+      //Serial.write(cBuff[iIdx]);
+      BTSerial.write(cBuff[iIdx]);
+    }
+    bOutput = false;
   }
+  else
+  {
+    iUnsignedShortArray[0] = analogRead(analogPinCh1);
+    iUnsignedShortArray[1] = analogRead(analogPinCh2);
+    bOutput = true;
+  }
+
 }

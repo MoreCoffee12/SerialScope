@@ -362,6 +362,16 @@ unsigned int MinSegBus::iGetInt2()
     return _iInt2;
 }
 
+unsigned int MinSegBus::iGetInt3()
+{
+    return _iInt3;
+}
+
+unsigned int MinSegBus::iGetInt4()
+{
+    return _iInt4;
+}
+
 void MinSegBus::clearRingBuff()
 {
     cRingBuffer.iWriteIndex = 0x00;
@@ -395,7 +405,7 @@ void MinSegBus::writeRingBuff(unsigned char cValue,
     _iErrorCount = 1;
 
     // Save the value to ring buffer
-    cRingBuffer.cRingBuff[(cRingBuffer.iWriteIndex++) & BUFF_SIZE_MASK] = cValue;
+    writeRingBuff(cValue);
 
     // Check that leading and lagging zeros are in place and that
     // the frame size is correct
@@ -428,6 +438,8 @@ void MinSegBus::writeRingBuff(unsigned char cValue,
     // Copy the data over
     _iInt1 = (unsigned short)((readRingBuff(idxStart - 6) << 8) + readRingBuff(idxStart - 5));
     _iInt2 = (unsigned short)((readRingBuff(idxStart - 8) << 8) + readRingBuff(idxStart - 7));
+    _iInt3 = (unsigned short)((readRingBuff(idxStart - 10) << 8) + readRingBuff(idxStart - 9));
+    _iInt4 = (unsigned short)((readRingBuff(idxStart - 12) << 8) + readRingBuff(idxStart - 11));
 
     // Success
     _iErrorCount = 0x00;
