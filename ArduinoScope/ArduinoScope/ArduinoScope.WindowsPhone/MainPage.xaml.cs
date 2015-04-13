@@ -441,10 +441,14 @@ namespace ArduinoScope
                     this.textOutput.Text = "Exception:  " + ex.ToString();
                 }
 
+                // Update with any errors
+                textOutput.Text = btHelper.strException;
+
             }
             else
             {
-                
+
+                textOutput.Text = "";
                 btnStartAcq.Content = "Start Acquisition";
                 ResetLEDs();
                 textOutput.Text = btHelper.strException;

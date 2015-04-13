@@ -30,10 +30,11 @@ namespace ArduinoScope
         /// <param name="invokerRect">for example: connectButton.GetElementRect();</param>
         public async Task EnumerateDevicesAsync(Rect invokerRect)
         {
+            strException = "";
+
             // Only force the user to select a device once
             if( _serviceInfo == null)
             {
-                strException = "";
                 this.State = BluetoothConnectionState.Enumerating;
                 var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
                 PopupMenu menu = new PopupMenu();
@@ -79,6 +80,8 @@ namespace ArduinoScope
             catch (Exception ex)
             {
                 this.State = BluetoothConnectionState.Disconnected;
+                strException += "ConnectToServiceAsync Failed";
+                strException += ex.ToString();
                 OnExceptionOccuredEvent(this, ex);
             }
         }
@@ -183,10 +186,6 @@ namespace ArduinoScope
         private IAsyncAction _connectAction;
         private String _StrException;
         DeviceInformation _serviceInfo;
-
-
-
-
 
         #endregion
     }

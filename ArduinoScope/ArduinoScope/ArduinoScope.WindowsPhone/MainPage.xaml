@@ -15,7 +15,7 @@
         <Button x:Name="btnStartAcq" Content="Start Acquisition" HorizontalAlignment="Stretch" Margin="337,5,10,0" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto"/>
 
         <TextBlock HorizontalAlignment="Left" Margin="0,51,0,0" TextWrapping="Wrap" Text="Packet Stack (Used for debug)" VerticalAlignment="Top"/>
-        <TextBlock x:Name="textOutput" HorizontalAlignment="Left" Margin="0,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" Width="288" Text="Output window" />
+        <TextBlock x:Name="textOutput" HorizontalAlignment="Left" Margin="0,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" Width="488" Text="Output window" />
 
         <TextBlock HorizontalAlignment="Right" Margin="0,59,45,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="100"/>
         <Rectangle x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,55,20,0" Stroke="Black" VerticalAlignment="Top" Width="15"/>
