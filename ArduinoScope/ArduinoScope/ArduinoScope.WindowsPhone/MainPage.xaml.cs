@@ -394,6 +394,9 @@ namespace ArduinoScope
                 }
 
             }
+            
+            // close the connection
+            btHelper.Disconnect();
 
         }
 
@@ -425,8 +428,10 @@ namespace ArduinoScope
                     //displays a PopupMenu above the ConnectButton - uses debug window
                     Rect rect = new Rect(100, 100, 100, 100);
                     await btHelper.EnumerateDevicesAsync(rect);
+                    textOutput.Text = btHelper.strException;
                     await btHelper.ConnectToServiceAsync();
-                    if(btHelper.State == BluetoothConnectionState.Connected)
+                    textOutput.Text = btHelper.strException;
+                    if (btHelper.State == BluetoothConnectionState.Connected)
                     {
                         ReadData();
                     }
@@ -442,6 +447,8 @@ namespace ArduinoScope
                 
                 btnStartAcq.Content = "Start Acquisition";
                 ResetLEDs();
+                textOutput.Text = btHelper.strException;
+
             }
 
 

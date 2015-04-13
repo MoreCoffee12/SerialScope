@@ -30,14 +30,19 @@ namespace ArduinoScope
         /// <param name="invokerRect">for example: connectButton.GetElementRect();</param>
         public async Task EnumerateDevicesAsync(Rect invokerRect)
         {
-            this.State = BluetoothConnectionState.Enumerating;
-            var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-            PopupMenu menu = new PopupMenu();
-            foreach (var serviceInfo in serviceInfoCollection)
-                menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));
-            var result = await menu.ShowForSelectionAsync(invokerRect);
-            if (result == null)
-                this.State = BluetoothConnectionState.Disconnected;
+            // Only force the user to select a device once
+            if( _serviceInfo == null)
+            {
+                strException = "";
+                this.State = BluetoothConnectionState.Enumerating;
+                var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+                PopupMenu menu = new PopupMenu();
+                foreach (var serviceInfo in serviceInfoCollection)
+                    menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));
+                var result = await menu.ShowForSelectionAsync(invokerRect);
+                if (result == null)
+                    this.State = BluetoothConnectionState.Disconnected;
+            }
         }
 
 
