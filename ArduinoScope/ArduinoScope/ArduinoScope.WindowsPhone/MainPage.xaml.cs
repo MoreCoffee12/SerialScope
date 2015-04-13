@@ -51,6 +51,9 @@ namespace ArduinoScope
             graphScope1 = new VisualizationTools.LineGraph((int)LineGraphScope1.Width, (int)LineGraphScope1.Height);
             LineGraphScope1.Source = graphScope1;
 
+            // Initialize the helper functions for the scope user interface (UI)
+            uihelper = new ScopeUIHelper();
+
             // The sampling frequency here must match that configured in the Arduino firmware
             fSamplingFreq_Hz = 500;
 
@@ -104,92 +107,17 @@ namespace ArduinoScope
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
 
-            float fOffset = 0.0f;
-
             // Reset the debug window
             this.textOutput.Text = "";
 
-            // Control appearance features
-            Color colorCurrentBackground = (Color)Application.Current.Resources["PhoneBackgroundColor"];
-            Color colorCurrentForeground = (Color)Application.Current.Resources["PhoneForegroundColor"];
-
-            // Retrieve the phone theme settings so that the plots can 
-            // be tailored to match
-            float fR = Convert.ToSingle(colorCurrentBackground.R) / 255.0f;
-            float fG = Convert.ToSingle(colorCurrentBackground.G) / 255.0f;
-            float fB = Convert.ToSingle(colorCurrentBackground.B) / 255.0f;
-            if (fR + fG + fB < 1.5)
-            {
-                fOffset = 0.5f;
-            }
-
-            // Initilize colors for the traces
-            clrTrace1 = new Color();
-            byte btRed = 0;
-            byte btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
-            byte btBlue = 0;
-            clrTrace1 = Color.FromArgb(255, btRed, btGreen, btBlue);
-
-            clrTrace2 = new Color();
-            btRed = 0;
-            btGreen = Convert.ToByte((0.5f + fOffset) * 255.0f);
-            btBlue = Convert.ToByte((0.5f + fOffset) * 255.0f);
-            clrTrace2 = Color.FromArgb(255, btRed, btGreen, btBlue);
-
+            // Initialize the UI
+            uihelper.Initialize(ScopeGrid, 
+            tbCh1VertDiv, tbCh1VertDivValue, tbCh1VertDivEU,
+            tbCh2VertDiv, tbCh2VertDivValue, tbCh2VertDivEU);
 
             // Initialize the buffer for the frame timebase and set the color
-            graphScope1.setColor(Convert.ToSingle(clrTrace1.R) / 255.0f, Convert.ToSingle(clrTrace1.G) / 255.0f, Convert.ToSingle(clrTrace1.B) / 255.0f, 0.0f, 0.5f + fOffset, 0.5f + fOffset);
-            graphScope1.setColorBackground(fR, fG, fB, 0.0f);
-
-            // Features from the grid, defined in XAML
-            iGridRowCount = ScopeGrid.RowDefinitions.Count();
-            iGridColCount = ScopeGrid.ColumnDefinitions.Count();
-            SolidColorBrush Brush1 = new SolidColorBrush();
-            Brush1.Color = clrTrace1;
-            tbCh1VertDiv.Foreground = Brush1;
-            tbCh1VertDivValue.Foreground = Brush1;
-            tbCh1VertDivEU.Foreground = Brush1;
-
-            SolidColorBrush Brush2 = new SolidColorBrush();
-            Brush2.Color = clrTrace2;
-            tbCh2VertDiv.Foreground = Brush2;
-            tbCh2VertDivValue.Foreground = Brush2;
-            tbCh2VertDivEU.Foreground = Brush2;
-
-            // Render the horizontal lines for the oscilliscope screen
-            for (int iRows = 0; iRows < iGridRowCount; iRows++)
-            {
-                if (iRows == iGridRowCount / 2)
-                {
-                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
-                        colorCurrentForeground, 2, iRows, 0, 1, iGridColCount);
-                }
-                else
-                {
-                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
-                        colorCurrentForeground, 1, iRows, 0, 1, iGridColCount);
-
-                }
-            }
-            addScopeGridLine(ScopeGrid, 0, 25, 300, 25,
-                colorCurrentForeground, 1, iGridRowCount, 0, 1, iGridColCount);
-
-            // Render the vertical lines for the oscilliscope screen
-            for (int iCols = 0; iCols < iGridColCount; iCols++)
-            {
-                if (iCols == iGridColCount / 2)
-                {
-                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
-                        colorCurrentForeground, 2, 0, iCols, iGridRowCount, 1);
-                }
-                else
-                {
-                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
-                        colorCurrentForeground, 1, 0, iCols, iGridRowCount, 1);
-                }
-            }
-            addScopeGridLine(ScopeGrid, 25, 0, 25, 300,
-                colorCurrentForeground, 1, 0, iGridColCount, iGridRowCount, 1);
+            graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 255.0f, 0.0f, 0.5f + uihelper.fOffset, 0.5f + uihelper.fOffset);
+            graphScope1.setColorBackground(uihelper.fR, uihelper.fG, uihelper.fB, 0.0f);
 
             // Configure the line plots scaling based on the grid
             bUpdateScopeParams();
@@ -220,14 +148,14 @@ namespace ArduinoScope
         private bool bUpdateScopeParams()
         {
             // Set the limits of the graph correctly
-            graphScope1.setYLim(0.0f, Convert.ToSingle(iGridRowCount));
+            graphScope1.setYLim(0.0f, Convert.ToSingle(uihelper.iGridRowCount));
 
             // Update the scope vertical divisions scale factor
             tbCh1VertDivValue.Text = fDivVert1.ToString("F2", CultureInfo.InvariantCulture);
             tbCh2VertDivValue.Text = fDivVert2.ToString("F2", CultureInfo.InvariantCulture);
 
             // Update the horizontal divisions
-            float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(iGridColCount));
+            float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(uihelper.iGridColCount));
             if (fDivRaw < 1)
             {
                 tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
@@ -283,7 +211,7 @@ namespace ArduinoScope
                     }
                     else
                     {
-                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Black);
+                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Red);
                         byteAddress = Convert.ToByte(mbus.iGetAddress());
                     }
 
@@ -309,7 +237,9 @@ namespace ArduinoScope
                 if(idxCharCount>(iFrameSize>>1))
                 {
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
+
                 }
+
 
             }
 
@@ -430,28 +360,6 @@ namespace ArduinoScope
 
         }
 
-        // Helper function to plot the lines on the scope grid
-        private void addScopeGridLine(Grid ScopeGrid, double X1, double Y1, double X2, double Y2,
-            Color colorLineColor, int StrokeThickness, int iRow, int iCol, int iRowSpan, int iColSpan)
-        {
-            Line myline = new Line();
-            myline.X1 = X1;
-            myline.Y1 = Y1;
-            myline.X2 = X2;
-            myline.Y2 = Y2;
-            myline.StrokeThickness = StrokeThickness;
-            myline.Stroke = new SolidColorBrush(colorLineColor);
-            myline.StrokeDashArray = new DoubleCollection() { 4 / StrokeThickness };
-            myline.SetValue(Grid.RowProperty, iRow);
-            myline.SetValue(Grid.ColumnProperty, iCol);
-            myline.SetValue(Grid.RowSpanProperty, iRowSpan);
-            myline.SetValue(Grid.ColumnSpanProperty, iColSpan);
-
-            ScopeGrid.Children.Add(myline);
-
-        }
-
-
         #endregion
 
         #region private fields
@@ -460,15 +368,12 @@ namespace ArduinoScope
         private BluetoothHelper btHelper = new BluetoothHelper();
 
         // graphs, controls, and variables related to plotting
-        int iGridRowCount;
-        int iGridColCount;
+        ScopeUIHelper uihelper;
         private VisualizationTools.LineGraph graphScope1;
         private float[] dataScope1;
         private float fScope1Scale;
         private float[] dataScope2;
         private float fScope2Scale;
-        private Color clrTrace1;
-        private Color clrTrace2;
         private float fDivVert1;
         private float fDivVert2;
 

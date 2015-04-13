@@ -68,5 +68,10 @@
 
         <TextBlock x:Name ="tbDateTime" HorizontalAlignment="Left" Margin="120,340,45,0" TextWrapping="Wrap" Text="DD-MMM-YY HH:SS" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="110"/>
 
+        <Grid x:Name="VerticalControlsGrid" Margin="320,123,0,0"  Height="200" VerticalAlignment="Top" Width="250"  HorizontalAlignment="Left"  >
+            <Rectangle x:Name="rectVerticalControls" RadiusX="15" RadiusY="15" Stroke="{ThemeResource ApplicationForegroundThemeBrush}"/>
+            <Rectangle /> 
+        </Grid>
+        
     </Grid>
 </Page>
