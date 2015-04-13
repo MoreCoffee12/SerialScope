@@ -59,18 +59,37 @@ namespace ArduinoScope
             {
                 // Initialize the target Bluetooth RFCOMM device service
                 _connectService = await RfcommDeviceService.FromIdAsync(_serviceInfo.Id);
+                await Task.Delay(100);
+
                 if (_connectService == null)
                 {
                     strException = "Access to the device is denied because the application was not granted access";
                     return;
                 }
 
+            }
+            catch (TaskCanceledException)
+            {
+                this.State = BluetoothConnectionState.Disconnected;
+            }
+            catch (Exception ex)
+            {
+                this.State = BluetoothConnectionState.Disconnected;
+                strException += "ConnectToServiceAsync (connectService) Failed";
+                strException += ex.ToString();
+                OnExceptionOccuredEvent(this, ex);
+            }
+
+            try
+            {
+                // Initialize the target Bluetooth RFCOMM device service
                 lock (this)
                 {
                     s = new StreamSocket();
                 }
-
+                await Task.Delay(100);
                 await s.ConnectAsync(_connectService.ConnectionHostName, _connectService.ConnectionServiceName);
+
                 this.State = BluetoothConnectionState.Connected;
             }
             catch (TaskCanceledException)
@@ -80,15 +99,17 @@ namespace ArduinoScope
             catch (Exception ex)
             {
                 this.State = BluetoothConnectionState.Disconnected;
-                strException += "ConnectToServiceAsync Failed";
+                strException += "ConnectToServiceAsync (StreamSocket) Failed";
                 strException += ex.ToString();
                 OnExceptionOccuredEvent(this, ex);
             }
+
+        
         }
 
         
         // end the session
-        public void Disconnect()
+        public async Task Disconnect()
         {
             if (input != null)
             {
@@ -96,6 +117,7 @@ namespace ArduinoScope
                 input = null;
 
             }
+            await Task.Delay(100);
             lock (this)
             {
                 if (s != null)
@@ -105,11 +127,14 @@ namespace ArduinoScope
                 }
 
             }
+            await Task.Delay(100);
             if (_connectService != null)
             {
                 _connectService = null;
             }
+            await Task.Delay(100);
             this.State = BluetoothConnectionState.Disconnected;
+            await Task.Delay(100);
         }
 
 

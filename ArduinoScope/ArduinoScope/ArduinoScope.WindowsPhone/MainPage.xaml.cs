@@ -66,6 +66,7 @@ namespace ArduinoScope
             idxData = 0;
             iStreamBuffLength = 128;
             idxData = 0;
+            idxCharCount = 0;
             byteAddress = 0;
             iUnsignedShortArray = new UInt16[4];
 
@@ -244,7 +245,7 @@ namespace ArduinoScope
         {
             UInt32 k;
             byte byteInput;
-            uint iErrorCount;
+            uint iErrorCount = 0;
 
             // Read in the data
             for (k = 0; k < iStreamBuffLength; k++)
@@ -257,10 +258,19 @@ namespace ArduinoScope
                 byteInput = input.ReadByte();
 
                 // Save to the ring buffer and see if the frame can be parsed
-                iUnsignedShortArray = mbus.writeRingBuff(byteInput, 4);
-                iErrorCount = mbus.iGetErrorCount();
+                if(idxCharCount < 16)
+                {
+                    mbus.writeRingBuff(byteInput);
+                    ++idxCharCount;
+                }
+                else
+                {
+                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, 4);
+                    iErrorCount = mbus.iGetErrorCount();
+                    ++idxCharCount;
+                }
 
-                if (iErrorCount == 0)
+                if (iErrorCount == 0 && idxCharCount > 16)
                 {
                     // The frame was valid
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
@@ -332,7 +342,7 @@ namespace ArduinoScope
             }
             
             // close the connection
-            btHelper.Disconnect();
+            await btHelper.Disconnect();
 
         }
 
@@ -342,6 +352,14 @@ namespace ArduinoScope
             rectBTOK.Fill = new SolidColorBrush(Colors.Black);
             rectFrameSequence.Fill = new SolidColorBrush(Colors.Black);
 
+        }
+
+        private void ResetBuffers()
+        {
+            Array.Clear(dataScope1, 0, dataScope1.Length);
+            Array.Clear(dataScope2, 0, dataScope2.Length);
+            idxData = 0;
+            graphScope1.setArray(dataScope1, dataScope2);
         }
 
         private async void btnStartAcq_Click(object sender, RoutedEventArgs e)
@@ -355,7 +373,7 @@ namespace ArduinoScope
 
                 btnStartAcq.Content = "Stop Acquisition";
                 ResetLEDs();
-                // Reset the debug window
+                ResetBuffers();
                 this.textOutput.Text = "";
 
                 // Arduino bluetooth
@@ -444,6 +462,7 @@ namespace ArduinoScope
         uint iChannelCount;
         int[] iBuffData;
         uint idxData;
+        uint idxCharCount;
         byte byteAddress;
         UInt16[] iUnsignedShortArray;
 
