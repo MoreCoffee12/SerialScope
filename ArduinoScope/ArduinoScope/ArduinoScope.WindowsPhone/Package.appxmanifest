@@ -28,6 +28,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClientServer" />
+    <DeviceCapability Name="proximity" />
     <m2:DeviceCapability Name="bluetooth.rfcomm">
       <m2:Device Id="any">
         <m2:Function Type="name:serialPort" />

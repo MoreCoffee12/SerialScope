@@ -355,21 +355,9 @@ namespace ArduinoScope
             return true;
         }
 
-        private async void ReadData(Task<bool> setupOK)
+        private async void ReadData()
         {
             bool bTemp;
-
-            // Wait for the setup function to finish, when it does, it returns a boolean
-            // If the boolean is false, then something failed and we shouldn't attempt to read data
-            try
-            {
-                if (!await setupOK)
-                    return;
-            }
-            catch (Exception ex)
-            {
-                this.textOutput.Text = "Exception:  " + ex.ToString();
-            }
 
             // Construct a dataReader so we can read junk in
             btHelper.input = new DataReader(btHelper.s.InputStream);
@@ -417,7 +405,7 @@ namespace ArduinoScope
 
         }
 
-        private void btnStartAcq_Click(object sender, RoutedEventArgs e)
+        private async void btnStartAcq_Click(object sender, RoutedEventArgs e)
         {
 
             // Toggle the data acquisition state and update the controls
@@ -434,7 +422,14 @@ namespace ArduinoScope
                 // Arduino bluetooth
                 try
                 {
-                    ReadData(SetupBluetoothLink());
+                    //displays a PopupMenu above the ConnectButton - uses debug window
+                    Rect rect = new Rect(100, 100, 100, 100);
+                    await btHelper.EnumerateDevicesAsync(rect);
+                    await btHelper.ConnectToServiceAsync();
+                    if(btHelper.State == BluetoothConnectionState.Connected)
+                    {
+                        ReadData();
+                    }
                 }
                 catch (Exception ex)
                 {
