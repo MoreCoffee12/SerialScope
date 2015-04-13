@@ -60,6 +60,9 @@ namespace ArduinoScope
             // Initialize the buffers that recieve the data from the Arduino
             bCollectData = false;
             iChannelCount = 2;
+            iStreamSampleCount = 2;
+            iShortCount = iChannelCount * iStreamSampleCount;
+            iFrameSize = mbus.iGetFrameCount_Short(iShortCount);
             iBuffLength = 1000;
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
@@ -68,7 +71,7 @@ namespace ArduinoScope
             idxData = 0;
             idxCharCount = 0;
             byteAddress = 0;
-            iUnsignedShortArray = new UInt16[4];
+            iUnsignedShortArray = new UInt16[iShortCount];
 
             // Data buffers
             dataScope1 = new float[iBuffLength];
@@ -258,22 +261,31 @@ namespace ArduinoScope
                 byteInput = input.ReadByte();
 
                 // Save to the ring buffer and see if the frame can be parsed
-                if(idxCharCount < 16)
+                if (++idxCharCount < iFrameSize)
                 {
                     mbus.writeRingBuff(byteInput);
-                    ++idxCharCount;
                 }
                 else
                 {
-                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, 4);
+                    iUnsignedShortArray = mbus.writeRingBuff(byteInput, iShortCount);
                     iErrorCount = mbus.iGetErrorCount();
-                    ++idxCharCount;
                 }
 
-                if (iErrorCount == 0 && idxCharCount > 16)
+                if (iErrorCount == 0 && idxCharCount >= iFrameSize)
                 {
                     // The frame was valid
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
+
+                    // Was it the next one in the sequence?
+                    if( ++byteAddress == Convert.ToByte(mbus.iGetAddress()))
+                    {
+                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
+                    }
+                    else
+                    {
+                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Black);
+                        byteAddress = Convert.ToByte(mbus.iGetAddress());
+                    }
 
                     // Point to the next location in the buffer
                     ++idxData;
@@ -289,8 +301,12 @@ namespace ArduinoScope
                     // Fill the spaces in the buffer with data
                     dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1Scale;
                     dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[3]) * fScope2Scale;
+
+                    // Reset the character counter
+                    idxCharCount = 0;
                 }
-                else
+
+                if(idxCharCount>(iFrameSize>>1))
                 {
                     rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
                 }
@@ -343,6 +359,9 @@ namespace ArduinoScope
             
             // close the connection
             await btHelper.Disconnect();
+
+            // Clear LEDs
+            ResetLEDs();
 
         }
 
@@ -404,7 +423,6 @@ namespace ArduinoScope
 
                 textOutput.Text = "";
                 btnStartAcq.Content = "Start Acquisition";
-                ResetLEDs();
                 textOutput.Text = btHelper.strException;
 
             }
@@ -460,6 +478,9 @@ namespace ArduinoScope
         uint iBuffLength;
         UInt32 iStreamBuffLength;
         uint iChannelCount;
+        uint iStreamSampleCount;
+        uint iShortCount;
+        uint iFrameSize;
         int[] iBuffData;
         uint idxData;
         uint idxCharCount;

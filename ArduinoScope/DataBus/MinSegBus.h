@@ -43,6 +43,8 @@ namespace DataBus
 			unsigned char *cBuff,
 			unsigned int *iErrorCount);
 
+        unsigned int iGetFrameCount_Short(unsigned int iShortCount);
+
 		void FloatFromByteArray(unsigned char *iAddress,
 			float *fValueArray,
 			unsigned int iMaxFloatCount,
