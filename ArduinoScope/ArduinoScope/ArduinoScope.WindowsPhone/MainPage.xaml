@@ -7,8 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" >
 
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
@@ -40,8 +39,18 @@
         <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,28,45,0" TextWrapping="Wrap" Text="Packet Sequence OK" VerticalAlignment="Top" Height="20" TextAlignment="Right" Width="100"/>
         <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,28,20,0" Stroke="Black" VerticalAlignment="Top" Width="15"/>
 
-        <Image Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Center" Canvas.ZIndex="1"/>
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Center"  Canvas.ZIndex="1" >
+        <Border  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  BorderBrush="#FFFF00" BorderThickness="0"/>
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CRTGrid" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" x:Name="_CRTCol" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" x:Name="_CRTRow" />
+        </Grid.RowDefinitions>
+
+        <Image x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Center" Canvas.ZIndex="1"/>
+        <Grid x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Center"  Canvas.ZIndex="1" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -66,9 +75,9 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
         </Grid>
+    </Grid>
 
-        <Rectangle Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="rectVerticalControls" RadiusX="15" RadiusY="15" Stroke="{ThemeResource ApplicationForegroundThemeBrush}"/>
-        <Rectangle />
+        <Rectangle Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="rectVerticalControls" RadiusX="15" RadiusY="15" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10"/>
 
         <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="VerticalControlsGrid" VerticalAlignment="Top"  HorizontalAlignment="Left"  >
             <Grid.ColumnDefinitions>

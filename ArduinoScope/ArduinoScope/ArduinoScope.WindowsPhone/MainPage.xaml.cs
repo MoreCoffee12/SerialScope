@@ -35,17 +35,9 @@ namespace ArduinoScope
         public MainPage()
         {
             this.InitializeComponent();
+            this.Loaded += MainPage_Loaded;
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
-
-            // Grab the actual device width and then manually set the width to
-            // match that of the device.
-            if (Double.IsNaN(LineGraphScope1.Width))
-            {
-                var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
-                LineGraphScope1.Height = 95;
-                LineGraphScope1.Width = Windows.UI.Xaml.Window.Current.Bounds.Width;
-            }
 
             // Create our LineGraph and hook the up to their respective images
             graphScope1 = new VisualizationTools.LineGraph((int)LineGraphScope1.Width, (int)LineGraphScope1.Height);
@@ -98,20 +90,19 @@ namespace ArduinoScope
             graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
         }
 
-
-        /// <summary>
-        /// Invoked when this page is about to be displayed in a Frame.
-        /// </summary>
-        /// <param name="e">Event data that describes how this page was reached.
-        /// This parameter is typically used to configure the page.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            double dCRT_Horz = CRTGrid.ActualWidth;
+            double dCRT_Vert = CRTGrid.ActualHeight;
 
-            // Reset the debug window
-            this.textOutput.Text = "";
+            LineGraphScope1.Width = dCRT_Horz-50;
+            LineGraphScope1.Height = dCRT_Vert-50;
+            
+            ScopeGrid.Width = dCRT_Horz-50;
+            ScopeGrid.Height = dCRT_Vert-50;
 
             // Initialize the UI
-            uihelper.Initialize(ScopeGrid, 
+            uihelper.Initialize(ScopeGrid,
             tbCh1VertDiv, tbCh1VertDivValue, tbCh1VertDivEU,
             tbCh2VertDiv, tbCh2VertDivValue, tbCh2VertDivEU);
 
@@ -125,6 +116,19 @@ namespace ArduinoScope
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
+        }
+
+        /// <summary>
+        /// Invoked when this page is about to be displayed in a Frame.
+        /// </summary>
+        /// <param name="e">Event data that describes how this page was reached.
+        /// This parameter is typically used to configure the page.</param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+
+            // Reset the debug window
+            this.textOutput.Text = "";
+
 
         }
 
