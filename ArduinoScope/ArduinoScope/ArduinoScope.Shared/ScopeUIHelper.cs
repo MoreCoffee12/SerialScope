@@ -74,6 +74,10 @@ namespace ArduinoScope
             // Features from the grid, defined in XAML
             iGridRowCount = ScopeGrid.RowDefinitions.Count;
             iGridColCount = ScopeGrid.ColumnDefinitions.Count;
+            double dGridWidth = ScopeGrid.Width;
+            double dGridCellWidth = dGridWidth / Convert.ToDouble(iGridColCount);
+            double dGridHeight = ScopeGrid.Height;
+            double dGridCellHeight = dGridHeight / Convert.ToDouble(iGridRowCount);
             SolidColorBrush Brush1 = new SolidColorBrush();
             Brush1.Color = clrTrace1;
             tbCh1VertDiv.Foreground = Brush1;
@@ -91,17 +95,17 @@ namespace ArduinoScope
             {
                 if (iRows == iGridRowCount / 2)
                 {
-                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
+                    addScopeGridLine(ScopeGrid, 0, 0, dGridWidth, 0,
                         colorCurrentForeground, 2, iRows, 0, 1, iGridColCount);
                 }
                 else
                 {
-                    addScopeGridLine(ScopeGrid, 0, 0, 300, 0,
+                    addScopeGridLine(ScopeGrid, 0, 0, dGridWidth, 0,
                         colorCurrentForeground, 1, iRows, 0, 1, iGridColCount);
 
                 }
             }
-            addScopeGridLine(ScopeGrid, 0, 25, 300, 25,
+            addScopeGridLine(ScopeGrid, 0, dGridCellHeight, dGridWidth, dGridCellHeight,
                 colorCurrentForeground, 1, iGridRowCount, 0, 1, iGridColCount);
 
             // Render the vertical lines for the oscilliscope screen
@@ -109,16 +113,16 @@ namespace ArduinoScope
             {
                 if (iCols == iGridColCount / 2)
                 {
-                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
+                    addScopeGridLine(ScopeGrid, 0, 0, 0, dGridHeight,
                         colorCurrentForeground, 2, 0, iCols, iGridRowCount, 1);
                 }
                 else
                 {
-                    addScopeGridLine(ScopeGrid, 0, 0, 0, 300,
+                    addScopeGridLine(ScopeGrid, 0, 0, 0, dGridHeight,
                         colorCurrentForeground, 1, 0, iCols, iGridRowCount, 1);
                 }
             }
-            addScopeGridLine(ScopeGrid, 25, 0, 25, 300,
+            addScopeGridLine(ScopeGrid, dGridCellWidth, 0, dGridCellWidth, dGridHeight,
                 colorCurrentForeground, 1, 0, iGridColCount, iGridRowCount, 1);
 
 

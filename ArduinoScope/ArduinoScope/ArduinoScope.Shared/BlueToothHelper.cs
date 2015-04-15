@@ -80,6 +80,7 @@ namespace ArduinoScope
                 OnExceptionOccuredEvent(this, ex);
             }
 
+
             try
             {
                 // Initialize the target Bluetooth RFCOMM device service
@@ -103,6 +104,7 @@ namespace ArduinoScope
                 strException += ex.ToString();
                 OnExceptionOccuredEvent(this, ex);
             }
+            strException = "Connected to " + _serviceInfo.Name + " " +_connectService.ConnectionHostName;
 
         
         }
@@ -208,7 +210,6 @@ namespace ArduinoScope
         private DataReader _input;
         private DataWriter _output;
         private RfcommDeviceService _connectService;
-        private IAsyncAction _connectAction;
         private String _StrException;
         DeviceInformation _serviceInfo;
 

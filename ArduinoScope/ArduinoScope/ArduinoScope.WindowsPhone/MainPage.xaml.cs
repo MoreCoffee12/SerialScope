@@ -73,8 +73,8 @@ namespace ArduinoScope
             dataScope2 = new float[iBuffLength];
             for (int idx = 0; idx < iBuffLength; idx++)
             {
-                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
-                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / 1024.0)));
+                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
+                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
             }
 
             // Scale factors
@@ -92,14 +92,14 @@ namespace ArduinoScope
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            double dCRT_Horz = CRTGrid.ActualWidth;
-            double dCRT_Vert = CRTGrid.ActualHeight;
+            double dCRT_Horz = CRTGrid.ActualWidth-25;
+            double dCRT_Vert = CRTGrid.ActualHeight-50;
 
-            LineGraphScope1.Width = dCRT_Horz-50;
-            LineGraphScope1.Height = dCRT_Vert-50;
+            LineGraphScope1.Width = dCRT_Horz;
+            LineGraphScope1.Height = dCRT_Vert;
             
-            ScopeGrid.Width = dCRT_Horz-50;
-            ScopeGrid.Height = dCRT_Vert-50;
+            ScopeGrid.Width = dCRT_Horz;
+            ScopeGrid.Height = dCRT_Vert;
 
             // Initialize the UI
             uihelper.Initialize(ScopeGrid,
