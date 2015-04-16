@@ -107,18 +107,43 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,1" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
                 <Rectangle Grid.Row="0" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,1" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
                 <Rectangle Grid.Row="1" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
-                <Button Grid.Row="2" Grid.Column="0" Content="1" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
-                <Rectangle x:Name="rectCh1button"   Grid.Row="2" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+                <Rectangle Grid.Row="2" Grid.Column="0"  x:Name="rectCh1button"  RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF1EC725"/>
+                <Button Grid.Row="2" Grid.Column="0" x:Name="btnCh1"  Content="1" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,3" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Foreground="#FF010101" Click="btnCh1_Click" />
 
-                <Button Grid.Row="3" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,1" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="3" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
                 <Rectangle Grid.Row="3" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="4" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,1" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="4" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
                 <Rectangle Grid.Row="4" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+                <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  Text="P  o   s   i   t   i   o   n  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+
+                <TextBlock Grid.Row="3" Grid.RowSpan="2" Grid.Column="1"  Text="S  c   a   l   e   " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+
+                <Button Grid.Row="0" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="0" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+                <Button Grid.Row="1" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="1" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+                <Rectangle   Grid.Row="2" Grid.Column="2" x:Name="rectCh2button" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF0DE0F5"/>
+                <Button Grid.Row="2" Grid.Column="2"  x:Name="btnCh2" Content="2" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,3" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Foreground="#FF010101" Click="btnCh2_Click" />
+
+                <Button Grid.Row="3" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="3" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+                <Button Grid.Row="4" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="4" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
             </Grid>
 

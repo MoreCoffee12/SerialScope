@@ -71,10 +71,12 @@ namespace ArduinoScope
             // Data buffers
             dataScope1 = new float[iBuffLength];
             dataScope2 = new float[iBuffLength];
+            dataNull = new float[iBuffLength];
             for (int idx = 0; idx < iBuffLength; idx++)
             {
                 dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
                 dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
+                dataNull[idx] = -100.0f;
             }
 
             // Scale factors
@@ -84,9 +86,11 @@ namespace ArduinoScope
             // Default scope parameters
             fDivVert1 = 1.0f;
             fDivVert2 = 1.0f;
+            bTrace1Active = true;
+            bTrace2Active = true;
 
             // Update scope
-            graphScope1.setArray(dataScope1, dataScope2);
+            UpdateTraces();
             graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
         }
 
@@ -104,7 +108,8 @@ namespace ArduinoScope
             // Initialize the UI
             uihelper.Initialize(ScopeGrid,
             tbCh1VertDiv, tbCh1VertDivValue, tbCh1VertDivEU,
-            tbCh2VertDiv, tbCh2VertDivValue, tbCh2VertDivEU);
+            tbCh2VertDiv, tbCh2VertDivValue, tbCh2VertDivEU,
+            rectCh1button);
 
             // Initialize the buffer for the frame timebase and set the color
             graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 255.0f, 0.0f, 0.5f + uihelper.fOffset, 0.5f + uihelper.fOffset);
@@ -275,11 +280,9 @@ namespace ArduinoScope
                     {
                         if (bCollectData)
                         {
-                            // Update the blank space
+                            // Update the blank space and plot the data
                             graphScope1.setMarkIndex(Convert.ToInt32(idxData));
-
-                            // Update the plots
-                            graphScope1.setArray(dataScope1, dataScope2);
+                            UpdateTraces();
                         }
 
                     }
@@ -299,6 +302,38 @@ namespace ArduinoScope
 
         }
 
+        private void UpdateTraces()
+        {
+            // Update the plots
+            if (bTrace1Active && bTrace2Active)
+            {
+                graphScope1.setArray(dataScope1, dataScope2);
+            }
+            if (bTrace1Active && !bTrace2Active)
+            {
+                graphScope1.setArray(dataScope1, dataNull);
+            }
+            if (!bTrace1Active && bTrace2Active)
+            {
+                graphScope1.setArray(dataNull, dataScope2);
+            }
+            if (!bTrace1Active && !bTrace2Active)
+            {
+                graphScope1.setArray(dataNull, dataNull);
+            }
+
+        }
+
+        private void btnCh1_Click(object sender, RoutedEventArgs e)
+        {
+            bTrace1Active = !bTrace1Active;
+        }
+
+        private void btnCh2_Click(object sender, RoutedEventArgs e)
+        {
+            bTrace2Active = !bTrace2Active;
+        }
+
         private void ResetLEDs()
         {
             rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
@@ -312,7 +347,7 @@ namespace ArduinoScope
             Array.Clear(dataScope1, 0, dataScope1.Length);
             Array.Clear(dataScope2, 0, dataScope2.Length);
             idxData = 0;
-            graphScope1.setArray(dataScope1, dataScope2);
+            UpdateTraces();
         }
 
         private async void btnStartAcq_Click(object sender, RoutedEventArgs e)
@@ -376,10 +411,13 @@ namespace ArduinoScope
         private VisualizationTools.LineGraph graphScope1;
         private float[] dataScope1;
         private float fScope1Scale;
+        private float fDivVert1;
+        private bool bTrace1Active;
         private float[] dataScope2;
         private float fScope2Scale;
-        private float fDivVert1;
         private float fDivVert2;
+        private bool bTrace2Active;
+        private float[] dataNull;
 
         // Buffer and controls for the data from the instrumentation
         private float fSamplingFreq_Hz;
@@ -400,6 +438,8 @@ namespace ArduinoScope
         DataBus.MinSegBus mbus;
 
         #endregion
+
+
 
     }
 }

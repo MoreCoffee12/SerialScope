@@ -69,7 +69,8 @@ namespace ArduinoScope
 
         public void Initialize(Grid ScopeGrid,
             TextBlock tbCh1VertDiv, TextBlock tbCh1VertDivValue, TextBlock tbCh1VertDivEU,
-            TextBlock tbCh2VertDiv, TextBlock tbCh2VertDivValue, TextBlock tbCh2VertDivEU)
+            TextBlock tbCh2VertDiv, TextBlock tbCh2VertDivValue, TextBlock tbCh2VertDivEU,
+            Rectangle rectCh1button)
         {
             // Features from the grid, defined in XAML
             iGridRowCount = ScopeGrid.RowDefinitions.Count;
@@ -125,8 +126,8 @@ namespace ArduinoScope
             addScopeGridLine(ScopeGrid, dGridCellWidth, 0, dGridCellWidth, dGridHeight,
                 colorCurrentForeground, 1, 0, iGridColCount, iGridRowCount, 1);
 
-
-
+            // Render vertical controls
+            rectCh1button.Fill = new SolidColorBrush(clrTrace1);
 
 
         }
