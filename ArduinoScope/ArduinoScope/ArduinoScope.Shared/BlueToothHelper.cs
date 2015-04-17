@@ -33,46 +33,68 @@ namespace ArduinoScope
         {
             strException = "";
 
-            // Tell PeerFinder that we're a pair to anyone that has been paried with us over BT
-            PeerFinder.AlternateIdentities["Bluetooth:PAIRED"] = "";
-            var devices = await PeerFinder.FindAllPeersAsync();
+            // Neat little line to open the bluetooth settings
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
 
-            // If there are no peers, then complain
-            if (devices.Count == 0)
+            // Only force the user to select a device once
+            if( _serviceInfo == null)
             {
-                await new MessageDialog("No bluetooth devices are paired, please pair your Arduino").ShowAsync();
+                this.State = BluetoothConnectionState.Enumerating;
+                var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
 
-                // Neat little line to open the bluetooth settings
-                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
-                return;
+                PopupMenu menu = new PopupMenu();
+                foreach (var serviceInfo in serviceInfoCollection)
+                    menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));
+                var result = await menu.ShowForSelectionAsync(invokerRect);
+                if (result == null)
+                    this.State = BluetoothConnectionState.Disconnected;
             }
-            strException = "Found paired bluetooth devices\n";
-
-            foreach ( var device in devices)
-            {
-                if( device.DisplayName.Contains("HC"))
-                {
-                    HostName = device.HostName;
-                    strServiceName = "1";
-                    break;
-                }
-            }
-
         }
 
 
         public async Task ConnectToServiceAsync()
         {
+            if(_serviceInfo == null)
+            {
+                return;
+            }
 
             this.State = BluetoothConnectionState.Connecting;
-
-            // Initialize the target Bluetooth RFCOMM device service
-            s = new StreamSocket();
-            await s.ConnectAsync(HostName, strServiceName);
-
-            /*
             try
             {
+                // Initialize the target Bluetooth RFCOMM device service
+                _connectService = await RfcommDeviceService.FromIdAsync(_serviceInfo.Id);
+                await Task.Delay(100);
+
+                if (_connectService == null)
+                {
+                    strException = "Access to the device is denied because the application was not granted access";
+                    return;
+                }
+
+            }
+            catch (TaskCanceledException)
+            {
+                this.State = BluetoothConnectionState.Disconnected;
+            }
+            catch (Exception ex)
+            {
+                this.State = BluetoothConnectionState.Disconnected;
+                strException += "ConnectToServiceAsync (connectService) Failed";
+                strException += ex.ToString();
+                OnExceptionOccuredEvent(this, ex);
+            }
+
+
+            try
+            {
+                // Initialize the target Bluetooth RFCOMM device service
+                lock (this)
+                {
+                    s = new StreamSocket();
+                }
+                await Task.Delay(100);
+                await s.ConnectAsync(_connectService.ConnectionHostName, _connectService.ConnectionServiceName);
 
                 this.State = BluetoothConnectionState.Connected;
             }
@@ -88,9 +110,8 @@ namespace ArduinoScope
                 OnExceptionOccuredEvent(this, ex);
             }
             strException = "Connected to " + _serviceInfo.Name + " " +_connectService.ConnectionHostName;
-            */
 
-            this.State = BluetoothConnectionState.Connected;
+        
         }
 
         
@@ -184,30 +205,6 @@ namespace ArduinoScope
             }
         }
 
-        public Windows.Networking.HostName HostName
-        {
-            get
-            {
-                return _HostName;
-            }
-            set
-            {
-                _HostName = value;
-            }
-        }
-
-        public string strServiceName
-        {
-            get
-            {
-                return _strServiceName;
-            }
-            set
-            {
-                _strServiceName = value;
-            }
-        }
-
         
         #endregion
 
@@ -220,8 +217,6 @@ namespace ArduinoScope
         private RfcommDeviceService _connectService;
         private String _StrException;
         DeviceInformation _serviceInfo;
-        private Windows.Networking.HostName _HostName;
-        private String _strServiceName;
 
         #endregion
     }
