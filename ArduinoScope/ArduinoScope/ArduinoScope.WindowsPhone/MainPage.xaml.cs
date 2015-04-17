@@ -372,25 +372,29 @@ namespace ArduinoScope
                 this.textOutput.Text = "";
 
                 // Arduino bluetooth
-                try
+                if ( btHelper.State != BluetoothConnectionState.Connected )
                 {
-                    // Displays a PopupMenu above the ConnectButton - uses debug window
-                    await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
-                    textOutput.Text = btHelper.strException;
-                    await btHelper.ConnectToServiceAsync();
-                    textOutput.Text = btHelper.strException;
-                    if (btHelper.State == BluetoothConnectionState.Connected)
+                    try
                     {
-                        ReadData();
+                        // Displays a PopupMenu above the ConnectButton - uses debug window
+                        await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
+                        textOutput.Text = btHelper.strException;
+                        await btHelper.ConnectToServiceAsync();
+                        textOutput.Text = btHelper.strException;
+                        if (btHelper.State == BluetoothConnectionState.Connected)
+                        {
+                            ReadData();
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    this.textOutput.Text = "Exception:  " + ex.ToString();
-                }
+                    catch (Exception ex)
+                    {
+                        this.textOutput.Text = "Exception:  " + ex.ToString();
+                    }
 
-                // Update with any errors
-                textOutput.Text = btHelper.strException;
+                    // Update with any errors
+                    textOutput.Text = btHelper.strException;
+
+                }
 
             }
             else
