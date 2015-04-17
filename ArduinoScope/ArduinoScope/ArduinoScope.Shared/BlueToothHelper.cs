@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Bluetooth.Rfcomm;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
+using Windows.Networking.Proximity;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
@@ -32,11 +33,18 @@ namespace ArduinoScope
         {
             strException = "";
 
+            // Tell PeerFinder that we're a pair to anyone that has been paried with us over BT
+            PeerFinder.AlternateIdentities["Bluetooth:PAIRED"] = "";
+
+            // Testing - I think this is needed to ensure the HC-05 shows up in the list
+            var devices = await PeerFinder.FindAllPeersAsync();
+
             // Only force the user to select a device once
             if( _serviceInfo == null)
             {
                 this.State = BluetoothConnectionState.Enumerating;
                 var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+
                 PopupMenu menu = new PopupMenu();
                 foreach (var serviceInfo in serviceInfoCollection)
                     menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));

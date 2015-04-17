@@ -350,6 +350,13 @@ namespace ArduinoScope
             UpdateTraces();
         }
 
+        public static Rect GetElementRect(FrameworkElement element)
+        {
+            GeneralTransform buttonTransform = element.TransformToVisual(null);
+            Point point = buttonTransform.TransformPoint(new Point());
+            return new Rect(point, new Size(element.ActualWidth, element.ActualHeight));
+        }
+
         private async void btnStartAcq_Click(object sender, RoutedEventArgs e)
         {
 
@@ -367,9 +374,8 @@ namespace ArduinoScope
                 // Arduino bluetooth
                 try
                 {
-                    //displays a PopupMenu above the ConnectButton - uses debug window
-                    Rect rect = new Rect(100, 100, 100, 100);
-                    await btHelper.EnumerateDevicesAsync(rect);
+                    // Displays a PopupMenu above the ConnectButton - uses debug window
+                    await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
                     textOutput.Text = btHelper.strException;
                     await btHelper.ConnectToServiceAsync();
                     textOutput.Text = btHelper.strException;
