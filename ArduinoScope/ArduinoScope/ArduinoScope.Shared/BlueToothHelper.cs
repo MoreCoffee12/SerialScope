@@ -34,7 +34,7 @@ namespace ArduinoScope
             strException = "";
 
             // The Bluetooth connects intermittently unless the bluetooth settings is launched
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
+            //await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
 
             this.State = BluetoothConnectionState.Enumerating;
             var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
@@ -45,6 +45,27 @@ namespace ArduinoScope
                 {
                     _serviceInfo = serviceInfoDevice;
                 }
+            }
+
+            if( _serviceInfo == null)
+            {
+
+                strException += "First connection attempt failed\n";
+
+                // The Bluetooth connects intermittently unless the bluetooth settings is launched
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
+
+                this.State = BluetoothConnectionState.Enumerating;
+                serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+
+                foreach (var serviceInfoDevice in serviceInfoCollection)
+                {
+                    if (serviceInfoDevice.Name.Contains("HC"))
+                    {
+                        _serviceInfo = serviceInfoDevice;
+                    }
+                }
+
             }
         }
 
@@ -87,11 +108,9 @@ namespace ArduinoScope
             {
                 // Initialize the target Bluetooth RFCOMM device service
                 s = new StreamSocket();
-                await Task.Delay(100);
                 _connectAction = s.ConnectAsync(_rfcommService.ConnectionHostName, _rfcommService.ConnectionServiceName);
                 await _connectAction;
 
-                this.State = BluetoothConnectionState.Connected;
             }
             catch (TaskCanceledException)
             {
@@ -110,6 +129,7 @@ namespace ArduinoScope
             try
             {
                 input = new DataReader(s.InputStream);
+                this.State = BluetoothConnectionState.Connected;
 
             }
             catch (Exception ex)
@@ -133,7 +153,6 @@ namespace ArduinoScope
                 input = null;
 
             }
-            await Task.Delay(100);
             lock (this)
             {
                 if (s != null)
@@ -143,14 +162,11 @@ namespace ArduinoScope
                 }
 
             }
-            await Task.Delay(100);
             if (_connectService != null)
             {
                 _connectService = null;
             }
-            await Task.Delay(100);
             this.State = BluetoothConnectionState.Disconnected;
-            await Task.Delay(100);
         }
 
 
