@@ -49,8 +49,8 @@
                 <RowDefinition Height="*" x:Name="_CRTRow" />
             </Grid.RowDefinitions>
 
-            <Image x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill"/>
-            <Grid x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" >
+            <Image x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
+            <Grid x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" Margin="20,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -75,6 +75,13 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
             </Grid>
+
+            <TextBlock x:Name ="tbCh1VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
+            </TextBlock>
+            <TextBlock x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
+            </TextBlock>
+
+
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls">
@@ -90,7 +97,7 @@
 
             <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectVerticalControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10" StrokeThickness="2.5"/>
 
-            <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="VerticalControlsGrid" VerticalAlignment="Top"  HorizontalAlignment="Left" Margin="10" >
+            <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="VerticalControlsGrid" VerticalAlignment="Stretch"  HorizontalAlignment="Left" Margin="10" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -100,16 +107,16 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="0" x:Name="btnCh1OffsetPlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1OffsetPlus_Click" />
                 <Rectangle Grid.Row="0" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="0" x:Name="btnCh1OffsetMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1OffsetMinus_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <Rectangle Grid.Row="2" Grid.Column="0"  x:Name="rectCh1button"  RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF1EC725"/>
@@ -117,7 +124,7 @@
 
                 <Button Grid.Row="3" Grid.Column="0" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
                 <Rectangle Grid.Row="3" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="4" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="4" Grid.Column="0" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  />
                 <Rectangle Grid.Row="4" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  Text="P  o   s   i   t   i   o   n  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5">
@@ -132,12 +139,12 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <Button Grid.Row="0" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="2" x:Name="btnCh2OffsetPlus"  Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh2OffsetPlus_Click_1" />
                 <Rectangle Grid.Row="0" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="2"  x:Name="btnCh2OffsetMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh2OffsetMinus_Click"  />
                 <Rectangle Grid.Row="1" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
-                <Rectangle   Grid.Row="2" Grid.Column="2" x:Name="rectCh2button" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF0DE0F5"/>
+                <Rectangle  Grid.Row="2" Grid.Column="2" x:Name="rectCh2button" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF0DE0F5"/>
                 <Button Grid.Row="2" Grid.Column="2"  x:Name="btnCh2" Content="2" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,3" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Foreground="#FF010101" Click="btnCh2_Click" />
 
                 <Button Grid.Row="3" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />

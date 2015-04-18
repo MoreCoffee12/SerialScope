@@ -49,6 +49,9 @@ SurfaceImageSource(pixelWidth, pixelHeight, true)
 
 	_iMarkerIndex = -1;
 
+    _fCh1VertOffset = 0.0f;
+    _fCh2VertOffset = 0.0f;
+
 	Application::Current->Suspending += ref new SuspendingEventHandler(this, &LineGraph::OnSuspending);
 }
 
@@ -202,6 +205,17 @@ void LineGraph::setArray(const Platform::Array<float>^ padata)
 
 }
 
+
+void LineGraph::setCh1VertOffset(float VertOffset)
+{
+    _fCh1VertOffset = VertOffset;
+}
+
+void LineGraph::setCh2VertOffset(float VertOffset)
+{
+    _fCh2VertOffset = VertOffset;
+}
+
 void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2)
 {
 	int idxData;
@@ -250,8 +264,8 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 		}
 		else 
 		{
-			lineVerts[i].pos.y = data[idxData];
-			lineVerts[i+1].pos.y = data[idxData+1];
+            lineVerts[i].pos.y = data[idxData] + _fCh1VertOffset;
+            lineVerts[i + 1].pos.y = data[idxData + 1] + _fCh1VertOffset;
 		}
 
 	}
@@ -278,8 +292,8 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 		}
 		else
 		{
-			lineVerts[i].pos.y = data[idxData];
-			lineVerts[i+1].pos.y = data[idxData+1];
+            lineVerts[i].pos.y = data[idxData] + _fCh2VertOffset;
+            lineVerts[i + 1].pos.y = data[idxData + 1] + _fCh2VertOffset;
 		}
 
 	}

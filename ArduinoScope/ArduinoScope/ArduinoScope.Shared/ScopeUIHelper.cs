@@ -44,6 +44,10 @@ namespace ArduinoScope
             iGridRowCount = 0;
             iGridColCount = 0;
 
+            // Default CRT behavior
+            CRTMargin_Vert = 0;
+            CRTMargin_Horz = 0;
+
         }
 
         // Helper function to plot the lines on the scope grid
@@ -70,7 +74,8 @@ namespace ArduinoScope
         public void Initialize(Grid ScopeGrid,
             TextBlock tbCh1VertDiv, TextBlock tbCh1VertDivValue, TextBlock tbCh1VertDivEU,
             TextBlock tbCh2VertDiv, TextBlock tbCh2VertDivValue, TextBlock tbCh2VertDivEU,
-            Rectangle rectCh1button)
+            Rectangle rectCh1button, Rectangle rectCh2button,
+            TextBlock tbCh1VertTick, TextBlock tbCh2VertTick)
         {
             // Features from the grid, defined in XAML
             iGridRowCount = ScopeGrid.RowDefinitions.Count;
@@ -84,12 +89,14 @@ namespace ArduinoScope
             tbCh1VertDiv.Foreground = Brush1;
             tbCh1VertDivValue.Foreground = Brush1;
             tbCh1VertDivEU.Foreground = Brush1;
+            tbCh1VertTick.Foreground = Brush1;
 
             SolidColorBrush Brush2 = new SolidColorBrush();
             Brush2.Color = clrTrace2;
             tbCh2VertDiv.Foreground = Brush2;
             tbCh2VertDivValue.Foreground = Brush2;
             tbCh2VertDivEU.Foreground = Brush2;
+            tbCh2VertTick.Foreground = Brush2;
 
             // Render the horizontal lines for the oscilliscope screen
             for (int iRows = 0; iRows < iGridRowCount; iRows++)
@@ -128,9 +135,11 @@ namespace ArduinoScope
 
             // Render vertical controls
             rectCh1button.Fill = new SolidColorBrush(clrTrace1);
+            rectCh2button.Fill = new SolidColorBrush(clrTrace2);
 
 
         }
+
         #endregion
 
         #region Access Methods
@@ -256,6 +265,30 @@ namespace ArduinoScope
             }
         }
 
+        public double CRTMargin_Vert
+        {
+            get
+            {
+                return _CRTMargin_Vert;
+            }
+            set
+            {
+                _CRTMargin_Vert = value;
+            }
+        }
+
+        public double CRTMargin_Horz
+        {
+            get
+            {
+                return _CRTMargin_Horz;
+            }
+            set
+            {
+                _CRTMargin_Horz = value;
+            }
+        }
+
         #endregion
 
         #region Private Fields
@@ -273,6 +306,9 @@ namespace ArduinoScope
 
         private Color _clrTrace1;
         private Color _clrTrace2;
+
+        private double _CRTMargin_Vert;
+        private double _CRTMargin_Horz;
 
         #endregion
 

@@ -57,7 +57,11 @@ namespace VisualizationTools
 		// Set Y-limits on what is plotted
 		void setYLim(float yMin, float yMax);
 
-	private protected:
+        // Set the vertical offset
+        void setCh1VertOffset(float VertOffset);
+        void setCh2VertOffset(float VertOffset);
+    
+    private protected:
 		void BeginDraw();
 		void EndDraw();
 		void Clear(Windows::UI::Color color);
@@ -71,6 +75,9 @@ namespace VisualizationTools
 
 		void _makeMarkers();
 		int _iMarkerIndex;
+
+        float _fCh1VertOffset;
+        float _fCh2VertOffset;
 
 		VertexPositionColor * lineVerts;
 		float * data;

@@ -45,6 +45,8 @@ namespace ArduinoScope
 
             // Initialize the helper functions for the scope user interface (UI)
             uihelper = new ScopeUIHelper();
+            uihelper.CRTMargin_Vert = 50;
+            uihelper.CRTMargin_Horz = 25;
 
             // The sampling frequency here must match that configured in the Arduino firmware
             fSamplingFreq_Hz = 500;
@@ -88,6 +90,11 @@ namespace ArduinoScope
             fDivVert2 = 1.0f;
             bTrace1Active = true;
             bTrace2Active = true;
+            fCh1VertOffset = 0.0f;
+            fCh2VertOffset = 0.0f;
+            fCh1VertTick_Y = 0.0f;
+            fCh2VertTick_Y = 0.0f;
+
 
             // Update scope
             UpdateTraces();
@@ -96,8 +103,8 @@ namespace ArduinoScope
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            double dCRT_Horz = CRTGrid.ActualWidth-25;
-            double dCRT_Vert = CRTGrid.ActualHeight-50;
+            double dCRT_Vert = CRTGrid.ActualHeight - uihelper.CRTMargin_Vert;
+            double dCRT_Horz = CRTGrid.ActualWidth - uihelper.CRTMargin_Horz;
 
             LineGraphScope1.Width = dCRT_Horz;
             LineGraphScope1.Height = dCRT_Vert;
@@ -109,7 +116,8 @@ namespace ArduinoScope
             uihelper.Initialize(ScopeGrid,
             tbCh1VertDiv, tbCh1VertDivValue, tbCh1VertDivEU,
             tbCh2VertDiv, tbCh2VertDivValue, tbCh2VertDivEU,
-            rectCh1button);
+            rectCh1button, rectCh2button,
+            tbCh1VertTick, tbCh2VertTick);
 
             // Initialize the buffer for the frame timebase and set the color
             graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 255.0f, 0.0f, 0.5f + uihelper.fOffset, 0.5f + uihelper.fOffset);
@@ -177,7 +185,59 @@ namespace ArduinoScope
             }
 
 
+            // Update vertical tick markers
+            UpdateVertTicks();
+
             return true;
+        }
+
+        private void UpdateVertTicks()
+        {
+            int iVert = 0;
+            float fCRTUpper = Convert.ToSingle(uihelper.CRTMargin_Vert / 2);
+
+            if (tbCh1VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            {
+                tbCh1VertTick.Text = "1→";
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / Convert.ToSingle(uihelper.iGridRowCount)));
+
+                if (iVert > Convert.ToInt32(LineGraphScope1.Height))
+                {
+                    iVert = Convert.ToInt32(LineGraphScope1.Height);
+                    tbCh1VertTick.Text = "1↓";
+                }
+                if (iVert < 0)
+                {
+                    iVert = 0;
+                    tbCh1VertTick.Text = "1↑";
+                }
+
+                iVert = iVert + Convert.ToInt32(fCRTUpper - Convert.ToSingle(tbCh1VertTick.ActualHeight / 2));
+                tbCh1VertTick.Margin = new Thickness(0, iVert, 0, 0);
+            }
+
+
+
+            if (tbCh2VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            {
+                tbCh2VertTick.Text = "2→";
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / Convert.ToSingle(uihelper.iGridRowCount)));
+                if (iVert > Convert.ToInt32(LineGraphScope1.Height))
+                {
+                    iVert = Convert.ToInt32(LineGraphScope1.Height);
+                    tbCh2VertTick.Text = "2↓";
+                }
+                if (iVert < 0)
+                {
+                    iVert = 0;
+                    tbCh2VertTick.Text = "2↑";
+                }
+
+                iVert = iVert + Convert.ToInt32(fCRTUpper - Convert.ToSingle(tbCh1VertTick.ActualHeight / 2));
+                tbCh2VertTick.Margin = new Thickness(0, iVert, 0, 0);
+            }
+
+
         }
 
         // Read in iBuffLength number of samples
@@ -262,7 +322,6 @@ namespace ArduinoScope
 
             // Made it this far so status is ok
             rectBTOK.Fill = new SolidColorBrush(Colors.Green);
-            //rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
 
             // Loop so long as the collect data button is enabled
             while (bCollectData)
@@ -301,6 +360,7 @@ namespace ArduinoScope
 
         private void UpdateTraces()
         {
+
             // Update the plots
             if (bTrace1Active && bTrace2Active)
             {
@@ -319,6 +379,45 @@ namespace ArduinoScope
                 graphScope1.setArray(dataNull, dataNull);
             }
 
+            setCh1Visible(bTrace1Active);
+            setCh2Visible(bTrace2Active);
+
+        }
+
+        private void setCh1Visible(bool bIsVisible)
+        {
+            if (bIsVisible)
+            {
+                tbCh1VertDiv.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh1VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                tbCh1VertDiv.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh1VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+        }
+
+        private void setCh2Visible(bool bIsVisible)
+        {
+            if (bIsVisible)
+            {
+                tbCh2VertDiv.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh2VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                tbCh2VertDiv.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh2VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
         }
 
         private void btnCh1_Click(object sender, RoutedEventArgs e)
@@ -326,9 +425,50 @@ namespace ArduinoScope
             bTrace1Active = !bTrace1Active;
         }
 
+        private void btnCh1OffsetPlus_Click(object sender, RoutedEventArgs e)
+        {
+            if( bTrace1Active)
+            {
+                ++fCh1VertOffset;
+                graphScope1.setCh1VertOffset(fCh1VertOffset);
+                UpdateVertTicks();
+
+            }
+        }
+
+        private void btnCh1OffsetMinus_Click(object sender, RoutedEventArgs e)
+        {
+            if( bTrace1Active)
+            {
+                --fCh1VertOffset;
+                graphScope1.setCh1VertOffset(fCh1VertOffset);
+                UpdateVertTicks();
+            }
+        }
+
         private void btnCh2_Click(object sender, RoutedEventArgs e)
         {
             bTrace2Active = !bTrace2Active;
+        }
+
+        private void btnCh2OffsetPlus_Click_1(object sender, RoutedEventArgs e)
+        {
+            if(bTrace2Active)
+            {
+                ++fCh2VertOffset;
+                graphScope1.setCh2VertOffset(fCh2VertOffset);
+                UpdateVertTicks();
+            }
+        }
+
+        private void btnCh2OffsetMinus_Click(object sender, RoutedEventArgs e)
+        {
+            if(bTrace2Active)
+            {
+                --fCh2VertOffset;
+                graphScope1.setCh2VertOffset(fCh2VertOffset);
+                UpdateVertTicks();
+            }
         }
 
         private void ResetLEDs()
@@ -408,16 +548,20 @@ namespace ArduinoScope
 
         // graphs, controls, and variables related to plotting
         ScopeUIHelper uihelper;
-        private VisualizationTools.LineGraph graphScope1;
-        private float[] dataScope1;
-        private float fScope1Scale;
-        private float fDivVert1;
-        private bool bTrace1Active;
-        private float[] dataScope2;
-        private float fScope2Scale;
-        private float fDivVert2;
-        private bool bTrace2Active;
-        private float[] dataNull;
+        VisualizationTools.LineGraph graphScope1;
+        float[] dataScope1;
+        float fScope1Scale;
+        float fDivVert1;
+        float fCh1VertTick_Y;
+        float fCh1VertOffset;
+        bool bTrace1Active;
+        float[] dataScope2;
+        float fScope2Scale;
+        float fDivVert2;
+        float fCh2VertTick_Y;
+        float fCh2VertOffset;
+        bool bTrace2Active;
+        float[] dataNull;
 
         // Buffer and controls for the data from the instrumentation
         private float fSamplingFreq_Hz;
