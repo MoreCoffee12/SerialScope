@@ -260,9 +260,6 @@ namespace ArduinoScope
         {
             bool bTemp;
 
-            // Construct a dataReader so we can read junk in
-            btHelper.input = new DataReader(btHelper.s.InputStream);
-
             // Made it this far so status is ok
             rectBTOK.Fill = new SolidColorBrush(Colors.Green);
             //rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
@@ -374,21 +371,14 @@ namespace ArduinoScope
                 // Arduino bluetooth
                 if ( btHelper.State != BluetoothConnectionState.Connected )
                 {
-                    try
+                    // Displays a PopupMenu above the ConnectButton - uses debug window
+                    await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
+                    textOutput.Text = btHelper.strException;
+                    await btHelper.ConnectToServiceAsync();
+                    textOutput.Text = btHelper.strException;
+                    if (btHelper.State == BluetoothConnectionState.Connected)
                     {
-                        // Displays a PopupMenu above the ConnectButton - uses debug window
-                        await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
-                        textOutput.Text = btHelper.strException;
-                        await btHelper.ConnectToServiceAsync();
-                        textOutput.Text = btHelper.strException;
-                        if (btHelper.State == BluetoothConnectionState.Connected)
-                        {
-                            ReadData();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        this.textOutput.Text = "Exception:  " + ex.ToString();
+                        ReadData();
                     }
 
                     // Update with any errors

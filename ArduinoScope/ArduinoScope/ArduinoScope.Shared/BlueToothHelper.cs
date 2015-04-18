@@ -33,21 +33,18 @@ namespace ArduinoScope
         {
             strException = "";
 
-            // Neat little line to open the bluetooth settings
+            // The Bluetooth connects intermittently unless the bluetooth settings is launched
             await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
 
-            // Only force the user to select a device once
-            if( _serviceInfo == null)
-            {
-                this.State = BluetoothConnectionState.Enumerating;
-                var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
+            this.State = BluetoothConnectionState.Enumerating;
+            var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
 
-                PopupMenu menu = new PopupMenu();
-                foreach (var serviceInfo in serviceInfoCollection)
-                    menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));
-                var result = await menu.ShowForSelectionAsync(invokerRect);
-                if (result == null)
-                    this.State = BluetoothConnectionState.Disconnected;
+            foreach (var serviceInfoDevice in serviceInfoCollection)
+            {
+                if(serviceInfoDevice.Name.Contains("HC"))
+                {
+                    _serviceInfo = serviceInfoDevice;
+                }
             }
         }
 
@@ -56,6 +53,7 @@ namespace ArduinoScope
         {
             if(_serviceInfo == null)
             {
+                strException = "Failed to find a valid service.  Does the Bluetooth device have the correct name?";
                 return;
             }
 
@@ -63,10 +61,9 @@ namespace ArduinoScope
             try
             {
                 // Initialize the target Bluetooth RFCOMM device service
-                _connectService = await RfcommDeviceService.FromIdAsync(_serviceInfo.Id);
-                await Task.Delay(100);
-
-                if (_connectService == null)
+                _connectService = RfcommDeviceService.FromIdAsync(_serviceInfo.Id);
+                _rfcommService = await _connectService;
+                if (_rfcommService == null)
                 {
                     strException = "Access to the device is denied because the application was not granted access";
                     return;
@@ -89,12 +86,10 @@ namespace ArduinoScope
             try
             {
                 // Initialize the target Bluetooth RFCOMM device service
-                lock (this)
-                {
-                    s = new StreamSocket();
-                }
+                s = new StreamSocket();
                 await Task.Delay(100);
-                await s.ConnectAsync(_connectService.ConnectionHostName, _connectService.ConnectionServiceName);
+                _connectAction = s.ConnectAsync(_rfcommService.ConnectionHostName, _rfcommService.ConnectionServiceName);
+                await _connectAction;
 
                 this.State = BluetoothConnectionState.Connected;
             }
@@ -109,8 +104,22 @@ namespace ArduinoScope
                 strException += ex.ToString();
                 OnExceptionOccuredEvent(this, ex);
             }
-            strException = "Connected to " + _serviceInfo.Name + " " +_connectService.ConnectionHostName;
+            strException = "Connected to " + _serviceInfo.Name + " " +_rfcommService.ConnectionHostName + ".\n";
 
+            // Construct a dataReader so we can read data in
+            try
+            {
+                input = new DataReader(s.InputStream);
+
+            }
+            catch (Exception ex)
+            {
+                this.State = BluetoothConnectionState.Disconnected;
+                strException += "DataReader (InputStream) Failed";
+                strException += ex.ToString();
+                OnExceptionOccuredEvent(this, ex);
+            }
+            strException += "Input stream open.";
         
         }
 
@@ -214,7 +223,9 @@ namespace ArduinoScope
         private StreamSocket _s;
         private DataReader _input;
         private DataWriter _output;
-        private RfcommDeviceService _connectService;
+        private IAsyncOperation<RfcommDeviceService> _connectService;
+        private IAsyncAction _connectAction;
+        private RfcommDeviceService _rfcommService;
         private String _StrException;
         DeviceInformation _serviceInfo;
 
