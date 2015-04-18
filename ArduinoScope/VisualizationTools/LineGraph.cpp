@@ -197,6 +197,16 @@ void LineGraph::setYLim(float yMin, float yMax) {
 	unlockBuffers();
 }
 
+float LineGraph::getYLimMin()
+{
+    return this->yMin;
+}
+
+float LineGraph::getYLimMax()
+{
+    return this->yMax;
+}
+
 void LineGraph::setArray(const Platform::Array<float>^ padata) 
 {
 

@@ -17,5 +17,6 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BlueToothHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScopeUIHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VerticalControlHelper.cs" />
   </ItemGroup>
 </Project>

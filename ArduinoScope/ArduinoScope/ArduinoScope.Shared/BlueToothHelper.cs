@@ -51,7 +51,6 @@ namespace ArduinoScope
             {
 
                 strException += "First connection attempt failed\n";
-                await Task.Delay(200);
 
                 // The Bluetooth connects intermittently unless the bluetooth settings is launched
                 await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));

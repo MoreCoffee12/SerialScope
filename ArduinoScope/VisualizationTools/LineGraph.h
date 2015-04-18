@@ -56,6 +56,8 @@ namespace VisualizationTools
 
 		// Set Y-limits on what is plotted
 		void setYLim(float yMin, float yMax);
+        float getYLimMin();
+        float getYLimMax();
 
         // Set the vertical offset
         void setCh1VertOffset(float VertOffset);

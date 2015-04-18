@@ -47,6 +47,7 @@ namespace ArduinoScope
             uihelper = new ScopeUIHelper();
             uihelper.CRTMargin_Vert = 50;
             uihelper.CRTMargin_Horz = 25;
+            vcHelper = new VerticalControlHelper();
 
             // The sampling frequency here must match that configured in the Arduino firmware
             fSamplingFreq_Hz = 500;
@@ -164,8 +165,9 @@ namespace ArduinoScope
 
         private bool bUpdateScopeParams()
         {
-            // Set the limits of the graph correctly
-            graphScope1.setYLim(0.0f, Convert.ToSingle(uihelper.iGridRowCount));
+            // Set the limits of the graph in the image
+            float fTemp = (vcHelper.fGetVertDiv_mV() / 1000.0f) * Convert.ToSingle(uihelper.iGridRowCount);
+            graphScope1.setYLim(0.0f, fTemp);
 
             // Update the scope vertical divisions scale factor
             tbCh1VertDivValue.Text = fDivVert1.ToString("F2", CultureInfo.InvariantCulture);
@@ -195,11 +197,17 @@ namespace ArduinoScope
         {
             int iVert = 0;
             float fCRTUpper = Convert.ToSingle(uihelper.CRTMargin_Vert / 2);
+            float fScopeLimits = graphScope1.getYLimMax() - graphScope1.getYLimMin();
+
+            if( fScopeLimits < 1e-6)
+            {
+                return;
+            }
 
             if (tbCh1VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
                 tbCh1VertTick.Text = "1→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / Convert.ToSingle(uihelper.iGridRowCount)));
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
 
                 if (iVert > Convert.ToInt32(LineGraphScope1.Height))
                 {
@@ -221,7 +229,7 @@ namespace ArduinoScope
             if (tbCh2VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
                 tbCh2VertTick.Text = "2→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / Convert.ToSingle(uihelper.iGridRowCount)));
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
                 if (iVert > Convert.ToInt32(LineGraphScope1.Height))
                 {
                     iVert = Convert.ToInt32(LineGraphScope1.Height);
@@ -446,6 +454,11 @@ namespace ArduinoScope
             }
         }
 
+        private void btnCh1ScalePlus_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void btnCh2_Click(object sender, RoutedEventArgs e)
         {
             bTrace2Active = !bTrace2Active;
@@ -562,6 +575,7 @@ namespace ArduinoScope
         float fCh2VertOffset;
         bool bTrace2Active;
         float[] dataNull;
+        VerticalControlHelper vcHelper;
 
         // Buffer and controls for the data from the instrumentation
         private float fSamplingFreq_Hz;
@@ -582,7 +596,6 @@ namespace ArduinoScope
         DataBus.MinSegBus mbus;
 
         #endregion
-
 
 
     }
