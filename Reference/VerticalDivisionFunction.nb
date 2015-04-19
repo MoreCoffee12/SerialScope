@@ -1,0 +1,166 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      5086,        157]
+NotebookOptionsPosition[      4327,        127]
+NotebookOutlinePosition[      4675,        142]
+CellTagsIndexPosition[      4632,        139]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"Remove", "[", "\"\<Global`*\>\"", "]"}], ";"}], " "}]], "Input"],
+
+Cell["The function to calculate the divisions based on the index:", "Text",
+ CellChangeTimes->{{3.6383747111400576`*^9, 3.638374725564895*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fGetVertDiv", "[", "idx_", "]"}], ":=", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"Mod", "[", 
+        RowBox[{"idx", ",", "3"}], "]"}], ")"}], "2"], "+", "1"}], ")"}], "*", 
+   SuperscriptBox["10", 
+    RowBox[{"Floor", "[", 
+     RowBox[{"idx", "/", "3"}], "]"}]]}]}]], "Input",
+ CellChangeTimes->{{3.638374752626461*^9, 3.6383747913447094`*^9}, {
+  3.638375104763908*^9, 3.6383751440891905`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"fGetVertDiv", "[", "4", "]"}]], "Input",
+ CellChangeTimes->{{3.638374794566896*^9, 3.638374816153149*^9}}],
+
+Cell[BoxData["20"], "Output",
+ CellChangeTimes->{{3.6383748030913897`*^9, 3.6383748165781727`*^9}, {
+  3.638375134784656*^9, 3.6383751464253254`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"idxTestSequence", " ", "=", " ", 
+  RowBox[{"{", 
+   RowBox[{
+   "4", ",", "5", ",", "6", ",", "7", ",", "8", ",", "9", ",", "10", ",", 
+    "11", ",", "12", ",", "13", ",", "14"}], "}"}]}], "\[IndentingNewLine]", 
+ RowBox[{"N", "[", 
+  RowBox[{"fGetVertDiv", "[", "idxTestSequence", "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.638374823305565*^9, 3.638374885692187*^9}, {
+  3.6383756831524973`*^9, 3.6383756864956856`*^9}, {3.6384422953496876`*^9, 
+  3.6384423019500713`*^9}, {3.638443028407259*^9, 3.6384430500075073`*^9}, {
+  3.6384436652782307`*^9, 3.638443671837612*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "4", ",", "5", ",", "6", ",", "7", ",", "8", ",", "9", ",", "10", ",", "11",
+    ",", "12", ",", "13", ",", "14"}], "}"}]], "Output",
+ CellChangeTimes->{{3.638374847247961*^9, 3.638374886413235*^9}, 
+   3.638375148791463*^9, 3.638375686968713*^9, {3.6384422970517864`*^9, 
+   3.6384423025111027`*^9}, {3.638443031585437*^9, 3.6384430505045404`*^9}, {
+   3.638443666258294*^9, 3.6384436728486776`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "20.`", ",", "50.`", ",", "100.`", ",", "200.`", ",", "500.`", ",", 
+   "1000.`", ",", "2000.`", ",", "5000.`", ",", "10000.`", ",", "20000.`", 
+   ",", "50000.`"}], "}"}]], "Output",
+ CellChangeTimes->{{3.638374847247961*^9, 3.638374886413235*^9}, 
+   3.638375148791463*^9, 3.638375686968713*^9, {3.6384422970517864`*^9, 
+   3.6384423025111027`*^9}, {3.638443031585437*^9, 3.6384430505045404`*^9}, {
+   3.638443666258294*^9, 3.6384436728516707`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"idxTest", " ", "=", " ", "10"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"fBase", "=", 
+  RowBox[{"Mod", "[", 
+   RowBox[{"idxTest", ",", "3"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"fExp", " ", "=", " ", 
+  RowBox[{"Floor", "[", 
+   RowBox[{"idxTest", "/", "3"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"fRetrun", " ", "=", " ", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"fBase", " ", "fBase"}], " ", "+", " ", "1"}], ")"}], " ", "*", 
+   " ", 
+   RowBox[{"(", 
+    SuperscriptBox["10", "fExp"], ")"}]}]}]}], "Input",
+ CellChangeTimes->{{3.6384423600674458`*^9, 3.6384423807356524`*^9}, {
+  3.6384424146176205`*^9, 3.6384424832996073`*^9}}],
+
+Cell[BoxData["1"], "Output",
+ CellChangeTimes->{
+  3.638442382375746*^9, {3.6384424167777386`*^9, 3.63844248379663*^9}}],
+
+Cell[BoxData["3"], "Output",
+ CellChangeTimes->{
+  3.638442382375746*^9, {3.6384424167777386`*^9, 3.6384424838066297`*^9}}],
+
+Cell[BoxData["2000"], "Output",
+ CellChangeTimes->{
+  3.638442382375746*^9, {3.6384424167777386`*^9, 3.6384424838076305`*^9}}]
+}, Open  ]]
+},
+WindowSize->{1643, 887},
+WindowMargins->{{Automatic, 110}, {Automatic, 101}},
+FrontEndVersion->"10.0 for Microsoft Windows (64-bit) (December 4, 2014)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 111, 3, 31, "Input"],
+Cell[671, 25, 143, 1, 30, "Text"],
+Cell[817, 28, 490, 14, 33, "Input"],
+Cell[CellGroupData[{
+Cell[1332, 46, 130, 2, 31, "Input"],
+Cell[1465, 50, 150, 2, 31, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1652, 57, 604, 11, 52, "Input"],
+Cell[2259, 70, 443, 8, 31, "Output"],
+Cell[2705, 80, 493, 9, 64, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3235, 94, 698, 18, 94, "Input"],
+Cell[3936, 114, 120, 2, 31, "Output"],
+Cell[4059, 118, 123, 2, 31, "Output"],
+Cell[4185, 122, 126, 2, 31, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
