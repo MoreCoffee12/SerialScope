@@ -414,6 +414,11 @@ namespace ArduinoScope
                 tbCh1VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                rectCh1OffsetPlus.Fill = null;
+                rectCh1OffsetMinus.Fill = null;
+                rectCh1ScalePlus.Fill = null;
+                rectCh1ScaleMinus.Fill = null;
             }
             else
             {
@@ -421,6 +426,11 @@ namespace ArduinoScope
                 tbCh1VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                rectCh1OffsetPlus.Fill = btnCh1OffsetPlus.Foreground;
+                rectCh1OffsetMinus.Fill = btnCh1OffsetMinus.Foreground;
+                rectCh1ScalePlus.Fill = btnCh1ScalePlus.Foreground;
+                rectCh1ScaleMinus.Fill = btnCh1ScaleMinus.Foreground;
             }
         }
 
@@ -432,6 +442,12 @@ namespace ArduinoScope
                 tbCh2VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+
+                rectCh2OffsetPlus.Fill = null;
+                rectCh2OffsetMinus.Fill = null;
+                rectCh2ScalePlus.Fill = null;
+                rectCh2ScaleMinus.Fill = null;
+
             }
             else
             {
@@ -439,6 +455,12 @@ namespace ArduinoScope
                 tbCh2VertDivValue.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+
+                rectCh2OffsetPlus.Fill = btnCh2OffsetPlus.Foreground;
+                rectCh2OffsetMinus.Fill = btnCh2OffsetMinus.Foreground;
+                rectCh2ScalePlus.Fill = btnCh2ScalePlus.Foreground;
+                rectCh2ScaleMinus.Fill = btnCh2ScaleMinus.Foreground;
+
             }
         }
 
@@ -530,6 +552,7 @@ namespace ArduinoScope
                 bUpdateScopeParams();
             }
         }
+
 
         private void ResetLEDs()
         {
