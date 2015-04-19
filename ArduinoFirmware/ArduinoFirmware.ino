@@ -64,8 +64,8 @@ void setup()
   TCCR0A = 0;   // Set entire TCCR0A register to 0
   TCCR0B = 0;   // Same for TCCR0B
   // Set compare match register for 500Hz increment
-  OCR0A = 124;  // = (16*10^6) / (500*256) - 1 (must be < 256)
-//  OCR0A = 248;  // = (16*10^6) / (500*256) - 1 (must be < 256)
+  OCR0A = 99;  // = (16*10^6) / (500*256) - 1 (must be < 256)
+//  OCR0A = 124;  // = (16*10^6) / (500*256) - 1 (must be < 256)
   // Turn on the CTC mode
   TCCR0A |= (1 << WGM01);
   // Set CS01 and CS00 bits for 256 prescaler
@@ -105,13 +105,6 @@ ISR(TIMER0_COMPA_vect){
     iBytesReturned = 0;
     iAddress++;
     mbus.ToByteArray(iAddress, iUnsignedShortArray, ADCChannels*2, maxbuffer, &cBuff[0], &iBytesReturned);
-    for (iIdx = 0; iIdx<iBytesReturned; iIdx++)
-    {
-      // Uncomment this line to write to the serial port. Useful
-      // only for debugging
-      //Serial.write(cBuff[iIdx]);
-      BTSerial.write(cBuff[iIdx]);
-    }
     bOutput = false;
   }
   else
@@ -119,6 +112,13 @@ ISR(TIMER0_COMPA_vect){
     iUnsignedShortArray[0] = analogRead(analogPinCh1);
     iUnsignedShortArray[1] = analogRead(analogPinCh2);
     bOutput = true;
+    for (iIdx = 0; iIdx<iBytesReturned; iIdx++)
+    {
+      // Uncomment this line to write to the serial port. Useful
+      // only for debugging
+      //Serial.write(cBuff[iIdx]);
+      BTSerial.write(cBuff[iIdx]);
+    }
   }
 
 }

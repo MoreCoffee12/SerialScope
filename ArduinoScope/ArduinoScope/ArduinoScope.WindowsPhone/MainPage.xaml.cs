@@ -48,9 +48,10 @@ namespace ArduinoScope
             uihelper.CRTMargin_Vert = 50;
             uihelper.CRTMargin_Horz = 25;
             vcHelper = new VerticalControlHelper();
+            tHelper = new TriggerHelper();
 
             // The sampling frequency here must match that configured in the Arduino firmware
-            fSamplingFreq_Hz = 500;
+            fSamplingFreq_Hz = 625;
 
             // Initialize the data bus
             mbus = new MinSegBus();
@@ -61,7 +62,7 @@ namespace ArduinoScope
             iStreamSampleCount = 2;
             iShortCount = iChannelCount * iStreamSampleCount;
             iFrameSize = mbus.iGetFrameCount_Short(iShortCount);
-            iBuffLength = 1000;
+            iBuffLength = Convert.ToUInt32(fSamplingFreq_Hz)*2;
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
@@ -403,7 +404,31 @@ namespace ArduinoScope
 
             setCh1Visible(bTrace1Active);
             setCh2Visible(bTrace2Active);
+            setTriggerProps();
 
+        }
+
+        private void setTriggerProps()
+        {
+            if(tHelper.State == TriggerState.Scan)
+            {
+                setRectGray(true, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
+                setRectGray(true, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
+            }
+        }
+
+        private void setRectGray(bool bIsGray, Rectangle rect, Brush rectBrush)
+        {
+            if (bIsGray)
+            {
+                rect.Fill = rectBrush;
+                rect.Opacity = 0.5;
+            }
+            else
+            {
+                rect.Fill = null;
+                rect.Opacity = 1.0;
+            }
         }
 
         private void setCh1Visible(bool bIsVisible)
@@ -415,10 +440,6 @@ namespace ArduinoScope
                 tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                rectCh1OffsetPlus.Fill = null;
-                rectCh1OffsetMinus.Fill = null;
-                rectCh1ScalePlus.Fill = null;
-                rectCh1ScaleMinus.Fill = null;
             }
             else
             {
@@ -427,11 +448,12 @@ namespace ArduinoScope
                 tbCh1VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh1VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-                rectCh1OffsetPlus.Fill = btnCh1OffsetPlus.Foreground;
-                rectCh1OffsetMinus.Fill = btnCh1OffsetMinus.Foreground;
-                rectCh1ScalePlus.Fill = btnCh1ScalePlus.Foreground;
-                rectCh1ScaleMinus.Fill = btnCh1ScaleMinus.Foreground;
             }
+
+            setRectGray(!bIsVisible, rectCh1OffsetPlus, btnCh1OffsetPlus.Foreground);
+            setRectGray(!bIsVisible, rectCh1OffsetMinus, btnCh1OffsetMinus.Foreground);
+            setRectGray(!bIsVisible, rectCh1ScalePlus, btnCh1ScalePlus.Foreground);
+            setRectGray(!bIsVisible, rectCh1ScaleMinus, btnCh1ScaleMinus.Foreground);
         }
 
         private void setCh2Visible(bool bIsVisible)
@@ -443,11 +465,6 @@ namespace ArduinoScope
                 tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
                 tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                rectCh2OffsetPlus.Fill = null;
-                rectCh2OffsetMinus.Fill = null;
-                rectCh2ScalePlus.Fill = null;
-                rectCh2ScaleMinus.Fill = null;
-
             }
             else
             {
@@ -456,12 +473,12 @@ namespace ArduinoScope
                 tbCh2VertDivEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
                 tbCh2VertTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 
-                rectCh2OffsetPlus.Fill = btnCh2OffsetPlus.Foreground;
-                rectCh2OffsetMinus.Fill = btnCh2OffsetMinus.Foreground;
-                rectCh2ScalePlus.Fill = btnCh2ScalePlus.Foreground;
-                rectCh2ScaleMinus.Fill = btnCh2ScaleMinus.Foreground;
-
             }
+
+            setRectGray(!bIsVisible, rectCh2OffsetPlus, btnCh2OffsetPlus.Foreground);
+            setRectGray(!bIsVisible, rectCh2OffsetMinus, btnCh2OffsetMinus.Foreground);
+            setRectGray(!bIsVisible, rectCh2ScalePlus, btnCh2ScalePlus.Foreground);
+            setRectGray(!bIsVisible, rectCh2ScaleMinus, btnCh2ScaleMinus.Foreground);
         }
 
         private void btnCh1_Click(object sender, RoutedEventArgs e)
@@ -640,6 +657,7 @@ namespace ArduinoScope
         bool bTrace2Active;
         float[] dataNull;
         VerticalControlHelper vcHelper;
+        TriggerHelper tHelper;
 
         // Buffer and controls for the data from the instrumentation
         private float fSamplingFreq_Hz;
