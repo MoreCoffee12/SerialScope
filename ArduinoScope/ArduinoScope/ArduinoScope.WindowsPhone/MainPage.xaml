@@ -28,16 +28,16 @@
 
         <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
 
-        <TextBlock x:Name="textOutput" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Height="38" Text="Output window" />
+        <TextBlock x:Name="textOutput" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"  Text="Output window" />
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Top" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Center"  TextAlignment="Right" Width="50"/>
+        <Rectangle Grid.Row="1" Grid.Column="2" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,14,35,0" TextWrapping="Wrap" Text="Valid Packet" VerticalAlignment="Top" Height="20" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,14,10,0" Stroke="Black" VerticalAlignment="Top" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Packet OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="5,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,28,35,0" TextWrapping="Wrap" Text="Packet Sequence OK" VerticalAlignment="Top" Height="20" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,28,10,0" Stroke="Black" VerticalAlignment="Top" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="Sequence OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
         <Border  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  BorderBrush="#FFFF00" BorderThickness="0"/>
 
@@ -84,25 +84,31 @@
 
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls">
+        <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls" Margin="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40" />
+                <RowDefinition Height="1" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="5" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="157*" />
+                <ColumnDefinition Width="137*" />
             </Grid.ColumnDefinitions>
 
-            <Rectangle Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectTriggerControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,0" StrokeThickness="2.5"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="rectHorizControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,5,10.334,0" StrokeThickness="2.5"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectHorzLabel"   Height="12" Width="40"  VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="132,0,116.334,0" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Horz" VerticalAlignment="Top" FontWeight="Bold" Margin="139,0,123.334,0"  />
 
-            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectVerticalControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10" StrokeThickness="2.5"/>
+            <Rectangle Grid.Row="3" Grid.Column="0"  x:Name="rectVerticalControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,5,9.667,9.667" StrokeThickness="2.5"/>
+            <Rectangle Grid.Row="3" Grid.Column="0" x:Name="rectVertLabel"   Height="12" Width="40"  VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="56,0,55.667,0" />
+            <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Vertical" VerticalAlignment="Top" FontWeight="Bold" Margin="56,0,56.667,0" />
 
-            <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="VerticalControlsGrid" VerticalAlignment="Stretch"  HorizontalAlignment="Left" Margin="10" >
+            <Border Grid.Row="3" Grid.Column="0" BorderBrush="#FFFF00" BorderThickness="0"/>
+            <Grid Grid.Row="3" Grid.Column="0" x:Name="VerticalControlsGrid" Margin="10,10,10,10" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -152,9 +158,16 @@
                 <Button Grid.Row="4" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh2ScaleMinus_Click" />
                 <Rectangle Grid.Row="4" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
+
             </Grid>
 
+            <Rectangle Grid.Row="3" Grid.Column="1"  x:Name="rectTriggerControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10.333,5,9.334,9.667" StrokeThickness="2.5" Grid.ColumnSpan="2"/>
+            <Rectangle Grid.Row="3" Grid.Column="1" x:Name="rectTrigLabel"   Height="12" Width="40"  VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="55.333,0,41.334,0" />
+            <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Trigger" VerticalAlignment="Top" FontWeight="Bold" Margin="57.333,0,41.334,0"  />
+
         </Grid>
+
+
         <TextBlock Grid.Row="3" Grid.Column="0" x:Name ="tbCh1VertDiv" HorizontalAlignment="Left" Margin="0,0,45,0" TextWrapping="Wrap" Text="CH1" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="25"/>
         <TextBlock Grid.Row="3" Grid.Column="0" x:Name ="tbCh1VertDivValue" HorizontalAlignment="Left" Margin="27,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="30"/>
         <TextBlock Grid.Row="3" Grid.Column="0" x:Name ="tbCh1VertDivEU" HorizontalAlignment="Left" Margin="57,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30"/>

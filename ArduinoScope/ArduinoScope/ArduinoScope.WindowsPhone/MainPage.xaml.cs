@@ -472,7 +472,7 @@ namespace ArduinoScope
         {
             if (bTrace1Active)
             {
-                ++vcHelper.iCh1VertDivIdx;
+                --vcHelper.iCh1VertDivIdx;
                 bUpdateScopeParams();
             }
         }
@@ -481,28 +481,12 @@ namespace ArduinoScope
         {
             if (bTrace1Active)
             {
-                --vcHelper.iCh1VertDivIdx;
+                ++vcHelper.iCh1VertDivIdx;
                 bUpdateScopeParams();
             }
         }
 
-        private void btnCh2ScalePlus_Click(object sender, RoutedEventArgs e)
-        {
-            if (bTrace2Active)
-            {
-                ++vcHelper.iCh2VertDivIdx;
-                bUpdateScopeParams();
-            }
-        }
 
-        private void btnCh2ScaleMinus_Click(object sender, RoutedEventArgs e)
-        {
-            if (bTrace2Active)
-            {
-                --vcHelper.iCh2VertDivIdx;
-                bUpdateScopeParams();
-            }
-        }
 
         private void btnCh2_Click(object sender, RoutedEventArgs e)
         {
@@ -526,6 +510,24 @@ namespace ArduinoScope
                 --vcHelper.fCh2VertOffset;
                 graphScope1.setCh2VertOffset(vcHelper.fCh2VertOffset);
                 UpdateVertTicks();
+            }
+        }
+
+        private void btnCh2ScalePlus_Click(object sender, RoutedEventArgs e)
+        {
+            if (bTrace2Active)
+            {
+                --vcHelper.iCh2VertDivIdx;
+                bUpdateScopeParams();
+            }
+        }
+
+        private void btnCh2ScaleMinus_Click(object sender, RoutedEventArgs e)
+        {
+            if (bTrace2Active)
+            {
+                ++vcHelper.iCh2VertDivIdx;
+                bUpdateScopeParams();
             }
         }
 
