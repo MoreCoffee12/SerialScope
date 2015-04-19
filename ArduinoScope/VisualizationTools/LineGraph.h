@@ -63,6 +63,10 @@ namespace VisualizationTools
         void setCh1VertOffset(float VertOffset);
         void setCh2VertOffset(float VertOffset);
     
+        // Set the channel scale factor
+        void setCh1Scale(float fCh1Scale);
+        void setCh2Scale(float fCh2Scale);
+
     private protected:
 		void BeginDraw();
 		void EndDraw();
@@ -80,6 +84,9 @@ namespace VisualizationTools
 
         float _fCh1VertOffset;
         float _fCh2VertOffset;
+
+        float _fCh1Scale;
+        float _fCh2Scale;
 
 		VertexPositionColor * lineVerts;
 		float * data;

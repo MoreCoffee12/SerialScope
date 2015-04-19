@@ -83,19 +83,12 @@ namespace ArduinoScope
             }
 
             // Scale factors
-            fScope1Scale = 5.0f / 1024.0f;
-            fScope2Scale = 5.0f / 1024.0f;
+            fScope1ScaleADC = 5.0f / 1024.0f;
+            fScope2ScaleADC = 5.0f / 1024.0f;
 
             // Default scope parameters
-            fDivVert1 = 1.0f;
-            fDivVert2 = 1.0f;
             bTrace1Active = true;
             bTrace2Active = true;
-            fCh1VertOffset = 0.0f;
-            fCh2VertOffset = 0.0f;
-            fCh1VertTick_Y = 0.0f;
-            fCh2VertTick_Y = 0.0f;
-
 
             // Update scope
             UpdateTraces();
@@ -166,12 +159,33 @@ namespace ArduinoScope
         private bool bUpdateScopeParams()
         {
             // Set the limits of the graph in the image
-            float fTemp = (vcHelper.fGetVertDiv_mV() / 1000.0f) * Convert.ToSingle(uihelper.iGridRowCount);
-            graphScope1.setYLim(0.0f, fTemp);
+            graphScope1.setYLim(0.0f, Convert.ToSingle(uihelper.iGridRowCount));
+
+            // Set the individual trace scale factors
+            graphScope1.setCh1Scale( 1.0f/vcHelper.fGetCh1VertDiv_V());
+            graphScope1.setCh2Scale(1.0f / vcHelper.fGetCh2VertDiv_V());
 
             // Update the scope vertical divisions scale factor
-            tbCh1VertDivValue.Text = fDivVert1.ToString("F2", CultureInfo.InvariantCulture);
-            tbCh2VertDivValue.Text = fDivVert2.ToString("F2", CultureInfo.InvariantCulture);
+            if( vcHelper.fGetCh1VertDiv_V() < 1.0f)
+            {
+                tbCh1VertDivValue.Text = (vcHelper.fGetCh1VertDiv_V() * 1000.0f).ToString("F0", CultureInfo.InvariantCulture);
+                tbCh1VertDivEU.Text = "mV";
+            }
+            else
+            {
+                tbCh1VertDivValue.Text = vcHelper.fGetCh1VertDiv_V().ToString("F2", CultureInfo.InvariantCulture);
+                tbCh1VertDivEU.Text = "V";
+            }
+            if (vcHelper.fGetCh2VertDiv_V() < 1.0f)
+            {
+                tbCh2VertDivValue.Text = (vcHelper.fGetCh2VertDiv_V() * 1000.0f).ToString("F0", CultureInfo.InvariantCulture);
+                tbCh2VertDivEU.Text = "mV";
+            }
+            else
+            {
+                tbCh2VertDivValue.Text = vcHelper.fGetCh2VertDiv_V().ToString("F2", CultureInfo.InvariantCulture);
+                tbCh2VertDivEU.Text = "V";
+            }
 
             // Update the horizontal divisions
             float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(uihelper.iGridColCount));
@@ -207,7 +221,7 @@ namespace ArduinoScope
             if (tbCh1VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
                 tbCh1VertTick.Text = "1→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - vcHelper.fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
 
                 if (iVert > Convert.ToInt32(LineGraphScope1.Height))
                 {
@@ -229,7 +243,7 @@ namespace ArduinoScope
             if (tbCh2VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
                 tbCh2VertTick.Text = "2→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
+                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - vcHelper.fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
                 if (iVert > Convert.ToInt32(LineGraphScope1.Height))
                 {
                     iVert = Convert.ToInt32(LineGraphScope1.Height);
@@ -297,15 +311,15 @@ namespace ArduinoScope
                     idxData = idxData % iBuffLength;
 
                     // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1Scale;
-                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2Scale;
+                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC;
+                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC;
 
                     ++idxData;
                     idxData = idxData % iBuffLength;
 
                     // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1Scale;
-                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[3]) * fScope2Scale;
+                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1ScaleADC;
+                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[3]) * fScope2ScaleADC;
 
                     // Reset the character counter
                     idxCharCount = 0;
@@ -437,8 +451,8 @@ namespace ArduinoScope
         {
             if( bTrace1Active)
             {
-                ++fCh1VertOffset;
-                graphScope1.setCh1VertOffset(fCh1VertOffset);
+                ++vcHelper.fCh1VertOffset;
+                graphScope1.setCh1VertOffset(vcHelper.fCh1VertOffset);
                 UpdateVertTicks();
 
             }
@@ -448,15 +462,46 @@ namespace ArduinoScope
         {
             if( bTrace1Active)
             {
-                --fCh1VertOffset;
-                graphScope1.setCh1VertOffset(fCh1VertOffset);
+                --vcHelper.fCh1VertOffset;
+                graphScope1.setCh1VertOffset(vcHelper.fCh1VertOffset);
                 UpdateVertTicks();
             }
         }
 
         private void btnCh1ScalePlus_Click(object sender, RoutedEventArgs e)
         {
+            if (bTrace1Active)
+            {
+                ++vcHelper.iCh1VertDivIdx;
+                bUpdateScopeParams();
+            }
+        }
 
+        private void btnCh1ScaleMinus_Click(object sender, RoutedEventArgs e)
+        {
+            if (bTrace1Active)
+            {
+                --vcHelper.iCh1VertDivIdx;
+                bUpdateScopeParams();
+            }
+        }
+
+        private void btnCh2ScalePlus_Click(object sender, RoutedEventArgs e)
+        {
+            if (bTrace2Active)
+            {
+                ++vcHelper.iCh2VertDivIdx;
+                bUpdateScopeParams();
+            }
+        }
+
+        private void btnCh2ScaleMinus_Click(object sender, RoutedEventArgs e)
+        {
+            if (bTrace2Active)
+            {
+                --vcHelper.iCh2VertDivIdx;
+                bUpdateScopeParams();
+            }
         }
 
         private void btnCh2_Click(object sender, RoutedEventArgs e)
@@ -468,8 +513,8 @@ namespace ArduinoScope
         {
             if(bTrace2Active)
             {
-                ++fCh2VertOffset;
-                graphScope1.setCh2VertOffset(fCh2VertOffset);
+                ++vcHelper.fCh2VertOffset;
+                graphScope1.setCh2VertOffset(vcHelper.fCh2VertOffset);
                 UpdateVertTicks();
             }
         }
@@ -478,8 +523,8 @@ namespace ArduinoScope
         {
             if(bTrace2Active)
             {
-                --fCh2VertOffset;
-                graphScope1.setCh2VertOffset(fCh2VertOffset);
+                --vcHelper.fCh2VertOffset;
+                graphScope1.setCh2VertOffset(vcHelper.fCh2VertOffset);
                 UpdateVertTicks();
             }
         }
@@ -563,16 +608,10 @@ namespace ArduinoScope
         ScopeUIHelper uihelper;
         VisualizationTools.LineGraph graphScope1;
         float[] dataScope1;
-        float fScope1Scale;
-        float fDivVert1;
-        float fCh1VertTick_Y;
-        float fCh1VertOffset;
+        float fScope1ScaleADC;
         bool bTrace1Active;
         float[] dataScope2;
-        float fScope2Scale;
-        float fDivVert2;
-        float fCh2VertTick_Y;
-        float fCh2VertOffset;
+        float fScope2ScaleADC;
         bool bTrace2Active;
         float[] dataNull;
         VerticalControlHelper vcHelper;

@@ -124,7 +124,7 @@
 
                 <Button Grid.Row="3" Grid.Column="0" x:Name="btnCh1ScalePlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1ScalePlus_Click" />
                 <Rectangle Grid.Row="3" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="4" Grid.Column="0" x:Name="btnCh1ScaleMinus"  Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  />
+                <Button Grid.Row="4" Grid.Column="0" x:Name="btnCh1ScaleMinus"  Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1ScaleMinus_Click" />
                 <Rectangle Grid.Row="4" Grid.Column="0" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  Text="P&#13;o&#13;s&#13;i&#13;t&#13;i&#13;o&#13;n" TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">
@@ -147,9 +147,9 @@
                 <Rectangle  Grid.Row="2" Grid.Column="2" x:Name="rectCh2button" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2" Fill="#FF0DE0F5"/>
                 <Button Grid.Row="2" Grid.Column="2"  x:Name="btnCh2" Content="2" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,0,0,3" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Foreground="#FF010101" Click="btnCh2_Click" />
 
-                <Button Grid.Row="3" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="3" Grid.Column="2" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh2ScalePlus_Click" />
                 <Rectangle Grid.Row="3" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="4" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="4" Grid.Column="2" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh2ScaleMinus_Click" />
                 <Rectangle Grid.Row="4" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
             </Grid>
