@@ -63,9 +63,6 @@ namespace ArduinoScope
             iStreamSampleCount = 2;
             iShortCount = iChannelCount * iStreamSampleCount;
             iFrameSize = mbus.iGetFrameCount_Short(iShortCount);
-            iBuffLength = Convert.ToUInt32(fSamplingFreq_Hz * hcHelper.fGetHorzDiv_s()*Convert.ToDouble(ScopeGrid.ColumnDefinitions.Count));
-            iBuffData = new int[iChannelCount * iBuffLength];
-            Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
             iStreamBuffLength = 128;
             idxData = 0;
@@ -74,13 +71,14 @@ namespace ArduinoScope
             iUnsignedShortArray = new UInt16[iShortCount];
 
             // Data buffers
-            dataScope1 = new float[iBuffLength];
-            dataScope2 = new float[iBuffLength];
-            dataNull = new float[iBuffLength];
-            for (int idx = 0; idx < iBuffLength; idx++)
+            iScopeDataLength = Convert.ToUInt32(fSamplingFreq_Hz * hcHelper.fGetHorzDiv_s() * Convert.ToDouble(ScopeGrid.ColumnDefinitions.Count));
+            dataScope1 = new float[iScopeDataLength];
+            dataScope2 = new float[iScopeDataLength];
+            dataNull = new float[iScopeDataLength];
+            for (int idx = 0; idx < iScopeDataLength; idx++)
             {
-                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
-                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iBuffLength))));
+                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iScopeDataLength))));
+                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iScopeDataLength))));
                 dataNull[idx] = -100.0f;
             }
 
@@ -94,7 +92,7 @@ namespace ArduinoScope
 
             // Update scope
             UpdateTraces();
-            graphScope1.setMarkIndex(Convert.ToInt32(iBuffLength / 2));
+            graphScope1.setMarkIndex(Convert.ToInt32(iScopeDataLength / 2));
         }
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -190,7 +188,7 @@ namespace ArduinoScope
             }
 
             // Update the horizontal divisions
-            float fDivRaw = Convert.ToSingle(iBuffLength) / (fSamplingFreq_Hz * Convert.ToSingle(uihelper.iGridColCount));
+            float fDivRaw = Convert.ToSingle(iScopeDataLength) / (fSamplingFreq_Hz * Convert.ToSingle(uihelper.iGridColCount));
             if (fDivRaw < 1)
             {
                 tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
@@ -309,15 +307,13 @@ namespace ArduinoScope
                     }
 
                     // Point to the next location in the buffer
-                    ++idxData;
-                    idxData = idxData % iBuffLength;
+                    iNextDataIdx();
 
                     // Fill the spaces in the buffer with data
                     dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC;
                     dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC;
 
-                    ++idxData;
-                    idxData = idxData % iBuffLength;
+                    iNextDataIdx();
 
                     // Fill the spaces in the buffer with data
                     dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1ScaleADC;
@@ -338,6 +334,12 @@ namespace ArduinoScope
 
             // Success, return a true
             return true;
+        }
+
+        private void iNextDataIdx()
+        {
+            ++idxData;
+            idxData = idxData % iScopeDataLength;
         }
 
         private async void ReadData()
@@ -650,6 +652,7 @@ namespace ArduinoScope
         // graphs, controls, and variables related to plotting
         ScopeUIHelper uihelper;
         VisualizationTools.LineGraph graphScope1;
+        uint iScopeDataLength;
         float[] dataScope1;
         float fScope1ScaleADC;
         bool bTrace1Active;
@@ -664,13 +667,11 @@ namespace ArduinoScope
         // Buffer and controls for the data from the instrumentation
         private float fSamplingFreq_Hz;
         private bool bCollectData;
-        uint iBuffLength;
         UInt32 iStreamBuffLength;
         uint iChannelCount;
         uint iStreamSampleCount;
         uint iShortCount;
         uint iFrameSize;
-        int[] iBuffData;
         uint idxData;
         uint idxCharCount;
         byte byteAddress;

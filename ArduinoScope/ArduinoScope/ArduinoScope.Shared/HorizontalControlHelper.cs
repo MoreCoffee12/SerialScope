@@ -30,6 +30,11 @@ namespace ArduinoScope
 
         }
 
+        public float fGetLongestHorzDiv_s()
+        {
+            return ( _iDivTable[_iDivTable.Length - 1] ) / 1000.0f;
+        }
+
         public float fGetHorzDiv_s()
         {
             return fGetHorzDiv_ms() / 1000.0f;
