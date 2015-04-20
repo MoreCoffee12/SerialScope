@@ -97,7 +97,7 @@
             </Grid.ColumnDefinitions>
 
             <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="rectHorizControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,5,10,0" StrokeThickness="2.5"/>
-            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectHorzLabel"   Height="12" Width="55" HorizontalAlignment="Center" VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="0,0,0,0" />
+            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" x:Name="rectHorzLabel"   Height="12" Width="58" HorizontalAlignment="Center" VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="0,0,0,0" />
             <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Horizontal" VerticalAlignment="Top" FontWeight="Bold" TextAlignment="Center"   />
 
             <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  BorderBrush="#FFFF00" BorderThickness="0"/>

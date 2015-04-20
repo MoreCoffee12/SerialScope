@@ -16,6 +16,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)BlueToothHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HorizontalControlHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ScopeUIHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TriggerHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VerticalControlHelper.cs" />

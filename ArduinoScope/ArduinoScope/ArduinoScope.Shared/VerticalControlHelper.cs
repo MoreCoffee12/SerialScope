@@ -39,6 +39,10 @@ namespace ArduinoScope
             return ( ( fBase * fBase + 1.0f) * Convert.ToSingle( Math.Pow(10, dExp) ) );
         }
 
+        #endregion
+
+        #region Private Methods
+
         private int iBoundIndex(int VertDivIdx)
         {
 

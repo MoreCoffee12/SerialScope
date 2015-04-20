@@ -48,6 +48,7 @@ namespace ArduinoScope
             uihelper.CRTMargin_Vert = 50;
             uihelper.CRTMargin_Horz = 25;
             vcHelper = new VerticalControlHelper();
+            hcHelper = new HorizontalControlHelper();
             tHelper = new TriggerHelper();
 
             // The sampling frequency here must match that configured in the Arduino firmware
@@ -62,7 +63,7 @@ namespace ArduinoScope
             iStreamSampleCount = 2;
             iShortCount = iChannelCount * iStreamSampleCount;
             iFrameSize = mbus.iGetFrameCount_Short(iShortCount);
-            iBuffLength = Convert.ToUInt32(fSamplingFreq_Hz)*2;
+            iBuffLength = Convert.ToUInt32(fSamplingFreq_Hz * hcHelper.fGetHorzDiv_s()*Convert.ToDouble(ScopeGrid.ColumnDefinitions.Count));
             iBuffData = new int[iChannelCount * iBuffLength];
             Array.Clear(iBuffData, 0, iBuffData.Length);
             idxData = 0;
@@ -657,6 +658,7 @@ namespace ArduinoScope
         bool bTrace2Active;
         float[] dataNull;
         VerticalControlHelper vcHelper;
+        HorizontalControlHelper hcHelper;
         TriggerHelper tHelper;
 
         // Buffer and controls for the data from the instrumentation
