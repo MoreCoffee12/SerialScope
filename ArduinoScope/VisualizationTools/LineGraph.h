@@ -36,7 +36,8 @@ namespace VisualizationTools
 
 		// Set entire array to new data
 		void setArray(const Platform::Array<float>^ data);
-		void setArray(const Platform::Array<float>^ data, const Platform::Array<float>^ data2);
+        void setArray(const Platform::Array<float>^ data, const Platform::Array<float>^ data2);
+        void setArray(const Platform::Array<float>^ data, const Platform::Array<float>^ data2, unsigned int iStart, unsigned int iEnd);
 
 		// Get entire internal array stored so far
 		Platform::Array<float>^ getArray();

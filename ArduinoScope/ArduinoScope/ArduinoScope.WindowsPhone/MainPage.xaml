@@ -126,9 +126,9 @@
                 <Rectangle Grid.Row="1" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"  HorizontalAlignment="Center" Text="Scale" VerticalAlignment="Top"  TextAlignment="Center" />
-                <Button Grid.Row="1" Grid.Column="3" x:Name="btnCh1HorzScalePlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="3" x:Name="btnCh1HorzScalePlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1HorzScalePlus_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="3" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="4" x:Name="btnCh1HorzScaleMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="4" x:Name="btnCh1HorzScaleMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1HorzScaleMinus_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="4" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
             </Grid> 

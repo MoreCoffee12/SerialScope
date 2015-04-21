@@ -241,6 +241,11 @@ void LineGraph::setCh2Scale(float fCh2Scale)
 
 void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2)
 {
+    setArray(padata, padata2, 0, padata->Length);
+}
+
+void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::Array<float>^ padata2, unsigned int iStart, unsigned int iEnd)
+{
 	int idxData;
 
 	// The two arrays have to have to the same length!
@@ -251,9 +256,9 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 
 	// Recreate lineVerts, if need be
 	lockBuffers();
-	if (padata->Length != this->N/4) 
+	if ( (iEnd-iStart) != this->N/4) 
 	{
-		this->N = padata->Length*4;
+        this->N = (iEnd - iStart)* 4;
 		if (this->lineVerts)
 		{
 			delete[] this->lineVerts;

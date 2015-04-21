@@ -49,10 +49,11 @@ namespace ArduinoScope
             uihelper.CRTMargin_Horz = 25;
             vcHelper = new VerticalControlHelper();
             hcHelper = new HorizontalControlHelper();
+            hcHelper.iDivisionCount = ScopeGrid.ColumnDefinitions.Count;
             tHelper = new TriggerHelper();
 
             // The sampling frequency here must match that configured in the Arduino firmware
-            fSamplingFreq_Hz = 625;
+            hcHelper.fSamplingFreq_Hz = 625;
 
             // Initialize the data bus
             mbus = new MinSegBus();
@@ -71,14 +72,14 @@ namespace ArduinoScope
             iUnsignedShortArray = new UInt16[iShortCount];
 
             // Data buffers
-            iScopeDataLength = Convert.ToUInt32(fSamplingFreq_Hz * hcHelper.fGetHorzDiv_s() * Convert.ToDouble(ScopeGrid.ColumnDefinitions.Count));
+            iScopeDataLength = hcHelper.iGetScopeDataLength();
             dataScope1 = new float[iScopeDataLength];
             dataScope2 = new float[iScopeDataLength];
             dataNull = new float[iScopeDataLength];
             for (int idx = 0; idx < iScopeDataLength; idx++)
             {
-                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iScopeDataLength))));
-                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(iScopeDataLength))));
+                dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(hcHelper.iGetCRTDataLength()))));
+                dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(hcHelper.iGetCRTDataLength()))));
                 dataNull[idx] = -100.0f;
             }
 
@@ -188,7 +189,18 @@ namespace ArduinoScope
             }
 
             // Update the horizontal divisions
-            float fDivRaw = Convert.ToSingle(iScopeDataLength) / (fSamplingFreq_Hz * Convert.ToSingle(uihelper.iGridColCount));
+            UpdateHorzDiv();
+
+            // Update vertical tick markers
+            UpdateVertTicks();
+
+            return true;
+        }
+
+        private void UpdateHorzDiv()
+        {
+            // Update the horizontal divisions
+            float fDivRaw = hcHelper.fGetDivRaw();
             if (fDivRaw < 1)
             {
                 tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
@@ -200,11 +212,6 @@ namespace ArduinoScope
                 tbHorzDivEU.Text = "s";
             }
 
-
-            // Update vertical tick markers
-            UpdateVertTicks();
-
-            return true;
         }
 
         private void UpdateVertTicks()
@@ -339,7 +346,7 @@ namespace ArduinoScope
         private void iNextDataIdx()
         {
             ++idxData;
-            idxData = idxData % iScopeDataLength;
+            idxData = idxData % hcHelper.iGetCRTDataLength();
         }
 
         private async void ReadData()
@@ -387,22 +394,26 @@ namespace ArduinoScope
         private void UpdateTraces()
         {
 
+            // Calculate the portion of data to display
+            iCRTDataStart = 0;
+            iCRTDataEnd = hcHelper.iGetCRTDataLength();
+
             // Update the plots
             if (bTrace1Active && bTrace2Active)
             {
-                graphScope1.setArray(dataScope1, dataScope2);
+                graphScope1.setArray(dataScope1, dataScope2, iCRTDataStart, iCRTDataEnd);
             }
             if (bTrace1Active && !bTrace2Active)
             {
-                graphScope1.setArray(dataScope1, dataNull);
+                graphScope1.setArray(dataScope1, dataNull, iCRTDataStart, iCRTDataEnd);
             }
             if (!bTrace1Active && bTrace2Active)
             {
-                graphScope1.setArray(dataNull, dataScope2);
+                graphScope1.setArray(dataNull, dataScope2, iCRTDataStart, iCRTDataEnd);
             }
             if (!bTrace1Active && !bTrace2Active)
             {
-                graphScope1.setArray(dataNull, dataNull);
+                graphScope1.setArray(dataNull, dataNull, iCRTDataStart, iCRTDataEnd);
             }
 
             setCh1Visible(bTrace1Active);
@@ -484,6 +495,27 @@ namespace ArduinoScope
             setRectGray(!bIsVisible, rectCh2ScaleMinus, btnCh2ScaleMinus.Foreground);
         }
 
+        private void ClearDataArrays()
+        {
+            Array.Clear(dataScope1, 0, dataScope1.Length);
+            Array.Clear(dataScope2, 0, dataScope2.Length);
+            idxData = 0;
+        }
+
+        private void btnCh1HorzScalePlus_Click(object sender, RoutedEventArgs e)
+        {
+            --hcHelper.iHorzDivIdx;
+            ClearDataArrays();
+            UpdateHorzDiv();
+        }
+
+        private void btnCh1HorzScaleMinus_Click(object sender, RoutedEventArgs e)
+        {
+            ++hcHelper.iHorzDivIdx;
+            ClearDataArrays();
+            UpdateHorzDiv();
+        }
+
         private void btnCh1_Click(object sender, RoutedEventArgs e)
         {
             bTrace1Active = !bTrace1Active;
@@ -527,7 +559,6 @@ namespace ArduinoScope
                 bUpdateScopeParams();
             }
         }
-
 
 
         private void btnCh2_Click(object sender, RoutedEventArgs e)
@@ -660,12 +691,13 @@ namespace ArduinoScope
         float fScope2ScaleADC;
         bool bTrace2Active;
         float[] dataNull;
+        uint iCRTDataStart;
+        uint iCRTDataEnd;
         VerticalControlHelper vcHelper;
         HorizontalControlHelper hcHelper;
         TriggerHelper tHelper;
 
         // Buffer and controls for the data from the instrumentation
-        private float fSamplingFreq_Hz;
         private bool bCollectData;
         UInt32 iStreamBuffLength;
         uint iChannelCount;
