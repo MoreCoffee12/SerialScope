@@ -98,7 +98,7 @@ namespace ArduinoScope
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            double dCRT_Vert = CRTGrid.ActualHeight - uihelper.CRTMargin_Vert;
+            double dCRT_Vert = _CRTRow.ActualHeight - uihelper.CRTMargin_Vert;
             double dCRT_Horz = CRTGrid.ActualWidth - uihelper.CRTMargin_Horz;
 
             LineGraphScope1.Width = dCRT_Horz;

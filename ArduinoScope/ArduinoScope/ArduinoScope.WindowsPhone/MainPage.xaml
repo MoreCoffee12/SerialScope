@@ -18,39 +18,44 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0.85*" />
+            <ColumnDefinition Width="0.85*" />
+            <ColumnDefinition Width="0.85*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="txtHeader" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="ArduinoScope" VerticalAlignment="Top" FontSize="36" Width="230"/>
 
-        <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
+        <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
 
         <TextBlock x:Name="textOutput" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"  Text="Output window" />
 
-        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Center"  TextAlignment="Right" Width="50"/>
-        <Rectangle Grid.Row="1" Grid.Column="2" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Center"  TextAlignment="Right" Width="50"/>
+        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Packet OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="5,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Packet OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="4" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="5,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="Sequence OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="Sequence OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="4" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <Border  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  BorderBrush="#FFFF00" BorderThickness="0"/>
+        <Border  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"  BorderBrush="#FFFF00" BorderThickness="0"/>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="CRTGrid" >
+        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" x:Name="CRTGrid" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" x:Name="_CRTCol" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" x:Name="_CRTRow" />
+                <RowDefinition Height="15" x:Name="_CRTTextRow" />
+                <RowDefinition Height="*" x:Name="_CRTRow"/>
             </Grid.RowDefinitions>
 
-            <Image x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
-            <Grid x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" Margin="20,0,0,0" >
+            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,2,20,0" TextWrapping="Wrap" Text="-Trigger Mode-" VerticalAlignment="Center"  TextAlignment="Right" />
+            <Rectangle Grid.Row="0" Grid.Column="0" x:Name="rectTriggerOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+
+            <Image Grid.Column="0" Grid.Row="1" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
+            <Grid Grid.Column="0" Grid.Row="1"  x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" Margin="20,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -76,15 +81,15 @@
                 </Grid.RowDefinitions>
             </Grid>
 
-            <TextBlock x:Name ="tbCh1VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
+            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh1VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
-            <TextBlock x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
+            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
 
 
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls" Margin="0">
+        <Grid Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls" Margin="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1" />
                 <RowDefinition Height="*" />
@@ -134,8 +139,8 @@
             </Grid> 
                 
             <Rectangle Grid.Row="3" Grid.Column="0"  x:Name="rectVerticalControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,5,9.667,9.667" StrokeThickness="2.5"/>
-            <Rectangle Grid.Row="3" Grid.Column="0" x:Name="rectVertLabel"   Height="12" Width="40"  VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" Margin="56,0,55.667,0" />
-            <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Vertical" VerticalAlignment="Top" FontWeight="Bold" Margin="56,0,56.667,0" />
+            <Rectangle Grid.Row="3" Grid.Column="0" x:Name="rectVertLabel"   Height="12" Width="40"  VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center" Text="Vertical" VerticalAlignment="Top" FontWeight="Bold" />
 
             <Border Grid.Row="3" Grid.Column="0" BorderBrush="#FFFF00" BorderThickness="0"/>
             <Grid Grid.Row="3" Grid.Column="0" x:Name="VertControlsGrid" Margin="10,10,10,10" >
@@ -214,7 +219,7 @@
         <TextBlock Grid.Row="4" Grid.Column="0" x:Name ="tbCh2VertDivEU" HorizontalAlignment="Left" Margin="57,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Bottom"  Height="20" TextAlignment="Left" Width="30"/>
 
 
-        <TextBlock Grid.Row="4" Grid.Column="1" x:Name ="tbDateTime" HorizontalAlignment="Left" Margin="0,0,45,0" TextWrapping="Wrap" Text="DD-MMM-YY HH:SS" VerticalAlignment="Bottom"  Height="20" TextAlignment="Left" Width="110"/>
+        <TextBlock Grid.Row="4" Grid.Column="1" x:Name ="tbDateTime" HorizontalAlignment="Left" TextWrapping="Wrap" Text="DD-MMM-YY HH:SS" VerticalAlignment="Top" TextAlignment="Left" />
 
 
 
