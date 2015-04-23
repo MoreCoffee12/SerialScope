@@ -51,7 +51,7 @@
                 <RowDefinition Height="*" x:Name="_CRTRow"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="0,2,20,0" TextWrapping="Wrap" Text="-Trigger Mode-" VerticalAlignment="Center"  TextAlignment="Right" />
+            <TextBlock Grid.Row="0" Grid.Column="0" x:Name="txtTriggerMode"  HorizontalAlignment="Right" Margin="0,2,20,0" TextWrapping="Wrap" Text="-Trigger Mode-" VerticalAlignment="Center"  TextAlignment="Right" />
             <Rectangle Grid.Row="0" Grid.Column="0" x:Name="rectTriggerOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
             <Image Grid.Column="0" Grid.Row="1" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
@@ -98,7 +98,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="157*" />
-                <ColumnDefinition Width="137*" />
+                <ColumnDefinition Width="117*" />
             </Grid.ColumnDefinitions>
 
             <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="rectHorizControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10,5,10,0" StrokeThickness="2.5"/>
@@ -127,8 +127,8 @@
                 <Rectangle Grid.Row="1" Grid.Column="1" x:Name="rectHorzOffsetRight" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Text="Zero" VerticalAlignment="Top"  TextAlignment="Center" />
-                <Button Grid.Row="1" Grid.Column="2" x:Name="btnCh1HorzZero" Content="SET" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  />
-                <Rectangle Grid.Row="1" Grid.Column="2" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+                <Button Grid.Row="1" Grid.Column="2" x:Name="btnHorzToZero" Content="SET" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  />
+                <Rectangle Grid.Row="1" Grid.Column="2" x:Name="rectHorzToZero" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"  HorizontalAlignment="Center" Text="Scale" VerticalAlignment="Top"  TextAlignment="Center" />
                 <Button Grid.Row="1" Grid.Column="3" x:Name="btnCh1HorzScalePlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnCh1HorzScalePlus_Click" />
@@ -145,9 +145,9 @@
             <Border Grid.Row="3" Grid.Column="0" BorderBrush="#FFFF00" BorderThickness="0"/>
             <Grid Grid.Row="3" Grid.Column="0" x:Name="VertControlsGrid" Margin="10,10,10,10" >
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.8*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="0.8*" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
@@ -202,6 +202,57 @@
             <Rectangle Grid.Row="3" Grid.Column="1"  x:Name="rectTriggerControls" RadiusX="10" RadiusY="10" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="10.333,5,9.334,9.667" StrokeThickness="2.5" Grid.ColumnSpan="2"/>
             <Rectangle Grid.Row="3" Grid.Column="1" x:Name="rectTrigLabel"   Height="12" Width="43" HorizontalAlignment="Center" VerticalAlignment="Top" Fill="{ThemeResource AppBarBackgroundThemeBrush}" />
             <TextBlock Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Trigger" VerticalAlignment="Top" FontWeight="Bold"  />
+
+            <Border Grid.Row="3" Grid.Column="1" BorderBrush="#FFFF00" BorderThickness="0"/>
+            <Grid Grid.Row="3" Grid.Column="1" x:Name="TriggerControlsGrid" Margin="10,10,10,10" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"  Text="L  e   v   e   l   " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <Button Grid.Row="0" Grid.Column="1" x:Name="btnTriggerLevelPlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="0" Grid.Column="1" x:Name="rectTriggerLevelPlus" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+                <Button Grid.Row="1" Grid.Column="1" x:Name="btnTriggerLevelMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="1" Grid.Column="1"  x:Name="rectTriggerLevelMinus" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0"  Text="S   r   c  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <Button Grid.Row="2" Grid.Column="1" x:Name="btnTriggerSource" Content="SRC" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="2" Grid.Column="1"  x:Name="rectTriggerSource" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0"  Text="S   l   o   p   e  " HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10" TextWrapping="Wrap" TextTrimming="CharacterEllipsis">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <Button Grid.Row="3" Grid.Column="1" x:Name="btnTriggerSlope" Content="Falling" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Rectangle Grid.Row="3" Grid.Column="1"  x:Name="rectTriggerSlope" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0"  Text="M   o   d   e  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">
+                    <TextBlock.RenderTransform>
+                        <CompositeTransform ScaleY="0.9"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+                <Button Grid.Row="4" Grid.Column="1" x:Name="btnTriggerMode" Content="Norm" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnTriggerMode_Click" />
+                <Rectangle Grid.Row="4" Grid.Column="1"  x:Name="rectTriggerMode" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
+
+            </Grid>
 
         </Grid>
 

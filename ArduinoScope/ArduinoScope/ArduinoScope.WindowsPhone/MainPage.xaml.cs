@@ -101,10 +101,10 @@ namespace ArduinoScope
             double dCRT_Vert = _CRTRow.ActualHeight - uihelper.CRTMargin_Vert;
             double dCRT_Horz = CRTGrid.ActualWidth - uihelper.CRTMargin_Horz;
 
-            LineGraphScope1.Width = dCRT_Horz;
+            LineGraphScope1.Width = dCRT_Horz-1;
             LineGraphScope1.Height = dCRT_Vert;
             
-            ScopeGrid.Width = dCRT_Horz;
+            ScopeGrid.Width = dCRT_Horz-1;
             ScopeGrid.Height = dCRT_Vert;
 
             // Initialize the UI
@@ -194,7 +194,37 @@ namespace ArduinoScope
             // Update vertical tick markers
             UpdateVertTicks();
 
+            // Update trigger status
+            UpdateTrigger();
+
             return true;
+        }
+
+        private void UpdateTrigger()
+        {
+            txtTriggerMode.Text = tHelper.TriggerModeText();
+            btnTriggerMode.Content = tHelper.TriggerModeText();
+
+            if (tHelper.Mode == TriggerMode.Scan)
+            {
+                setRectGray(true, rectTriggerOK, btnHorzOffsetLeft.Foreground);
+                setRectGray(true, rectTriggerSlope, btnTriggerSlope.Foreground);
+                setRectGray(true, rectHorzToZero, btnHorzToZero.Foreground);    
+
+                setRectGray(true, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
+                setRectGray(true, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
+            }
+            else
+            {
+                setRectGray(false, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
+                setRectGray(false, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
+                setRectGray(false, rectHorzToZero, btnHorzToZero.Foreground);    
+
+                setRectGray(false, rectTriggerOK, btnHorzOffsetLeft.Foreground);
+                setRectGray(false, rectTriggerSlope, btnTriggerSlope.Foreground);
+            }
+
+
         }
 
         private void UpdateHorzDiv()
@@ -418,17 +448,7 @@ namespace ArduinoScope
 
             setCh1Visible(bTrace1Active);
             setCh2Visible(bTrace2Active);
-            setTriggerProps();
 
-        }
-
-        private void setTriggerProps()
-        {
-            if(tHelper.State == TriggerState.Scan)
-            {
-                setRectGray(true, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
-                setRectGray(true, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
-            }
         }
 
         private void setRectGray(bool bIsGray, Rectangle rect, Brush rectBrush)
@@ -604,6 +624,21 @@ namespace ArduinoScope
             }
         }
 
+        private void btnTriggerMode_Click(object sender, RoutedEventArgs e)
+        {
+
+            if( tHelper.Mode == TriggerMode.Normal)
+            {
+                tHelper.Mode = TriggerMode.Scan;
+            }
+            else
+            {
+                tHelper.Mode = TriggerMode.Normal;
+            }
+
+            UpdateTrigger();
+
+        }
 
         private void ResetLEDs()
         {
