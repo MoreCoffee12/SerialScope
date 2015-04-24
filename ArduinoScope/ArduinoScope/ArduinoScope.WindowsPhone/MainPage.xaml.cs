@@ -45,8 +45,8 @@ namespace ArduinoScope
 
             // Initialize the helper functions for the scope user interface (UI)
             uihelper = new ScopeUIHelper();
-            uihelper.CRTMargin_Vert = 50;
-            uihelper.CRTMargin_Horz = 25;
+            uihelper.CRTMargin_Vert = 20;
+            uihelper.CRTMargin_Horz = 20;
             vcHelper = new VerticalControlHelper();
             hcHelper = new HorizontalControlHelper();
             hcHelper.iDivisionCount = ScopeGrid.ColumnDefinitions.Count;
@@ -224,6 +224,41 @@ namespace ArduinoScope
                 setRectGray(false, rectTriggerSlope, btnTriggerSlope.Foreground);
             }
 
+            tbTriggerSource.Text = tHelper.TriggerSourceText().ToUpper();
+            switch (tHelper.Source)
+            {
+                case TriggerSource.Ch1:
+                    SolidColorBrush brushTrigger1 = new SolidColorBrush();
+                    brushTrigger1.Color = uihelper.clrTrace1;
+                    tbTriggerSource.Foreground = brushTrigger1;
+                    tbTriggerSlope.Foreground = brushTrigger1;
+                    tbTriggerLevel.Foreground = brushTrigger1;
+                    tbTriggerLevelEU.Foreground = brushTrigger1;
+                    tbTriggerTick.Foreground = brushTrigger1;
+                    break;
+
+                case TriggerSource.Ch2:
+                    SolidColorBrush brushTrigger2 = new SolidColorBrush();
+                    brushTrigger2.Color = uihelper.clrTrace2;
+                    tbTriggerSource.Foreground = brushTrigger2;
+                    tbTriggerSlope.Foreground = brushTrigger2;
+                    tbTriggerLevel.Foreground = brushTrigger2;
+                    tbTriggerLevelEU.Foreground = brushTrigger2;
+                    tbTriggerTick.Foreground = brushTrigger2;
+                    break;
+
+                case TriggerSource.Ext:
+                    tbTriggerSource.Foreground = txtHeader.Foreground;
+                    tbTriggerSlope.Foreground = txtHeader.Foreground;
+                    tbTriggerLevel.Foreground = txtHeader.Foreground;
+                    tbTriggerLevelEU.Foreground = txtHeader.Foreground;
+                    tbTriggerTick.Foreground = txtHeader.Foreground;
+                    break;
+
+                default:
+                    break;
+
+            }
 
         }
 
@@ -539,6 +574,7 @@ namespace ArduinoScope
         private void btnCh1_Click(object sender, RoutedEventArgs e)
         {
             bTrace1Active = !bTrace1Active;
+            UpdateTraces();
         }
 
         private void btnCh1OffsetPlus_Click(object sender, RoutedEventArgs e)
@@ -584,6 +620,7 @@ namespace ArduinoScope
         private void btnCh2_Click(object sender, RoutedEventArgs e)
         {
             bTrace2Active = !bTrace2Active;
+            UpdateTraces();
         }
 
         private void btnCh2OffsetPlus_Click_1(object sender, RoutedEventArgs e)
@@ -627,15 +664,15 @@ namespace ArduinoScope
         private void btnTriggerMode_Click(object sender, RoutedEventArgs e)
         {
 
-            if( tHelper.Mode == TriggerMode.Normal)
-            {
-                tHelper.Mode = TriggerMode.Scan;
-            }
-            else
-            {
-                tHelper.Mode = TriggerMode.Normal;
-            }
+            tHelper.Mode = tHelper.NextMode();
+            UpdateTrigger();
 
+        }
+
+        private void btnTriggerSource_Click(object sender, RoutedEventArgs e)
+        {
+
+            tHelper.Source = tHelper.NextSource();
             UpdateTrigger();
 
         }

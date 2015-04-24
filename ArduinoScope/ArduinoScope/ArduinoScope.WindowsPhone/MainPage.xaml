@@ -21,24 +21,25 @@
             <ColumnDefinition Width="0.85*" />
             <ColumnDefinition Width="0.85*" />
             <ColumnDefinition Width="0.85*" />
+            <ColumnDefinition Width="0.08*" />
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="txtHeader" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="ArduinoScope" VerticalAlignment="Top" FontSize="36" Width="230"/>
 
-        <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
+        <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
 
         <TextBlock x:Name="textOutput" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top"  Text="Output window" />
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Left" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Center"  TextAlignment="Right" Width="50"/>
-        <Rectangle Grid.Row="1" Grid.Column="3" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Left" Margin="0,0,35,0" TextWrapping="Wrap" Text="BT is OK" VerticalAlignment="Center"  TextAlignment="Right" Width="50"/>
+        <Rectangle Grid.Row="1" Grid.Column="4" x:Name="rectBTOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Packet OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="4" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="5,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Packet OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="5" x:Name="rectFrameOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="5,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-        <TextBlock Grid.Row="1" Grid.Column="4" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="Sequence OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
-        <Rectangle Grid.Row="1" Grid.Column="4" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+        <TextBlock Grid.Row="1" Grid.Column="5" HorizontalAlignment="Right" Margin="0,0,35,0" TextWrapping="Wrap" Text="Sequence OK" VerticalAlignment="Center" TextAlignment="Right" Width="100"/>
+        <Rectangle Grid.Row="1" Grid.Column="5" x:Name="rectFrameSequence" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="0,0,10,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
         <Border  Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"  BorderBrush="#FFFF00" BorderThickness="0"/>
 
@@ -85,11 +86,13 @@
             </TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
+            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbTriggerTick" HorizontalAlignment="Right" TextWrapping="Wrap" Text="←" VerticalAlignment="Top"  TextAlignment="Right" Width="20" FontWeight="Bold">
+            </TextBlock>
 
 
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls" Margin="0">
+        <Grid Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Grid.RowSpan="3" x:Name="GridControls" Margin="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1" />
                 <RowDefinition Height="*" />
@@ -233,7 +236,7 @@
                         <CompositeTransform ScaleY="0.9"/>
                     </TextBlock.RenderTransform>
                 </TextBlock>
-                <Button Grid.Row="2" Grid.Column="1" x:Name="btnTriggerSource" Content="SRC" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="2" Grid.Column="1" x:Name="btnTriggerSource" Content="SRC" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnTriggerSource_Click" />
                 <Rectangle Grid.Row="2" Grid.Column="1"  x:Name="rectTriggerSource" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="3" Grid.Column="0"  Text="S   l   o   p   e  " HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10" TextWrapping="Wrap" TextTrimming="CharacterEllipsis">
@@ -265,12 +268,21 @@
         <TextBlock Grid.Row="3" Grid.Column="1" x:Name ="tbHorzDivValue" HorizontalAlignment="Left" Margin="7,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="30"/>
         <TextBlock Grid.Row="3" Grid.Column="1" x:Name ="tbHorzDivEU" HorizontalAlignment="Left" Margin="37,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30"/>
 
+        <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerSource" HorizontalAlignment="Left" Margin="0,0,45,0" TextWrapping="Wrap" Text="CH1" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="25"/>
+        <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerSlope" HorizontalAlignment="Left" Margin="23,0,45,0" TextWrapping="Wrap" Text="∫" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30" RenderTransformOrigin="0.5,0.5">
+            <TextBlock.RenderTransform>
+                <CompositeTransform/>
+            </TextBlock.RenderTransform>
+        </TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerLevel" HorizontalAlignment="Left" Margin="27,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="30"/>
+        <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerLevelEU" HorizontalAlignment="Left" Margin="57,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30"/>
+
         <TextBlock Grid.Row="4" Grid.Column="0" x:Name ="tbCh2VertDiv" HorizontalAlignment="Left" Margin="0,0,45,0" TextWrapping="Wrap" Text="CH2" VerticalAlignment="Bottom"  Height="20" TextAlignment="Left" Width="25"/>
         <TextBlock Grid.Row="4" Grid.Column="0"  x:Name ="tbCh2VertDivValue" HorizontalAlignment="Left" Margin="27,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="bottom"  Height="20" TextAlignment="Right" Width="30"/>
         <TextBlock Grid.Row="4" Grid.Column="0" x:Name ="tbCh2VertDivEU" HorizontalAlignment="Left" Margin="57,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Bottom"  Height="20" TextAlignment="Left" Width="30"/>
 
 
-        <TextBlock Grid.Row="4" Grid.Column="1" x:Name ="tbDateTime" HorizontalAlignment="Left" TextWrapping="Wrap" Text="DD-MMM-YY HH:SS" VerticalAlignment="Top" TextAlignment="Left" />
+        <TextBlock Grid.Row="4" Grid.Column="1" x:Name ="tbDateTime" HorizontalAlignment="Left" TextWrapping="Wrap" Text="DD-MMM-YY HH:SS" VerticalAlignment="Top"  Height="20" TextAlignment="Left" />
 
 
 

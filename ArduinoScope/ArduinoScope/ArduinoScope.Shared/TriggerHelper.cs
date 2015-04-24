@@ -12,6 +12,7 @@ namespace ArduinoScope
         {
             this.Source = TriggerSource.Ch1;
             this.Mode = TriggerMode.Scan;
+            fTriggerLevel = 1.0f;
         }
         
         #endregion
@@ -34,8 +35,8 @@ namespace ArduinoScope
         {
             switch (Source)
             {
-                case TriggerSource.Extern:
-                    return "Extern";
+                case TriggerSource.Ext:
+                    return "Ext";
                     break;
 
                 case TriggerSource.Ch1:
@@ -54,7 +55,22 @@ namespace ArduinoScope
 
             return "";
         }
-        
+
+        public TriggerSource NextSource()
+        {
+            switch (Source)
+            {
+                case TriggerSource.Ch1:
+                    return TriggerSource.Ch2;
+                case TriggerSource.Ch2:
+                    return TriggerSource.Ext;
+                case TriggerSource.Ext:
+                    return TriggerSource.Ch1;
+                default:
+                    return TriggerSource.Ch1;
+            }
+        }
+
         public TriggerMode Mode
         {
             get
@@ -65,6 +81,20 @@ namespace ArduinoScope
             set
             {
                 _Mode = value;
+            }
+        }
+
+
+        public TriggerMode NextMode()
+        {
+            switch (Mode)
+            {
+                case TriggerMode.Normal:
+                    return TriggerMode.Scan;
+                case TriggerMode.Scan:
+                    return TriggerMode.Normal;
+                default:
+                    return TriggerMode.Normal;
             }
         }
 
@@ -89,6 +119,18 @@ namespace ArduinoScope
             return "";
         }
 
+        public float fTriggerLevel
+        {
+            get
+            {
+                return _fTriggerLevel;
+            }
+            set
+            {
+                _fTriggerLevel = value;
+            }
+        }
+
         #endregion
 
         #region Private Fields
@@ -96,12 +138,14 @@ namespace ArduinoScope
         private TriggerSource _Source;
         private TriggerMode _Mode;
 
+        private float _fTriggerLevel;
+
         #endregion
     }
 
     public enum TriggerSource
     {
-        Extern,
+        Ext,
         Ch1,
         Ch2
     }
