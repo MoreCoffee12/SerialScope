@@ -195,21 +195,31 @@ namespace ArduinoScope
             UpdateVertTicks();
 
             // Update trigger status
-            UpdateTrigger();
+            UpdateTriggerUI();
 
             return true;
         }
 
+        // These trigger controls are updated based on the data stream
         private void UpdateTrigger()
         {
-            txtTriggerMode.Text = tHelper.TriggerModeText();
-            btnTriggerMode.Content = tHelper.TriggerModeText();
+            txtTriggerMode.Text = tHelper.TriggerStatusText();
+            btnTriggerMode.Content = tHelper.TriggerStatusText();
+
+        }
+
+        // These trigger controls are updated when the user makes a 
+        // change to the scope settings
+        private void UpdateTriggerUI()
+        {
+
+            UpdateTrigger();
 
             if (tHelper.Mode == TriggerMode.Scan)
             {
                 setRectGray(true, rectTriggerOK, btnHorzOffsetLeft.Foreground);
                 setRectGray(true, rectTriggerSlope, btnTriggerSlope.Foreground);
-                setRectGray(true, rectHorzToZero, btnHorzToZero.Foreground);    
+                setRectGray(true, rectHorzToZero, btnHorzToZero.Foreground);
 
                 setRectGray(true, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
                 setRectGray(true, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
@@ -218,7 +228,7 @@ namespace ArduinoScope
             {
                 setRectGray(false, rectHorzOffsetLeft, btnHorzOffsetLeft.Foreground);
                 setRectGray(false, rectHorzOffsetRight, btnHorzOffsetRight.Foreground);
-                setRectGray(false, rectHorzToZero, btnHorzToZero.Foreground);    
+                setRectGray(false, rectHorzToZero, btnHorzToZero.Foreground);
 
                 setRectGray(false, rectTriggerOK, btnHorzOffsetLeft.Foreground);
                 setRectGray(false, rectTriggerSlope, btnTriggerSlope.Foreground);
@@ -665,7 +675,7 @@ namespace ArduinoScope
         {
 
             tHelper.Mode = tHelper.NextMode();
-            UpdateTrigger();
+            UpdateTriggerUI();
 
         }
 
@@ -673,7 +683,7 @@ namespace ArduinoScope
         {
 
             tHelper.Source = tHelper.NextSource();
-            UpdateTrigger();
+            UpdateTriggerUI();
 
         }
 

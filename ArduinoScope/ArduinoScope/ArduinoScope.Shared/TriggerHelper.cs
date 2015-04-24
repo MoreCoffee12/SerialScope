@@ -37,23 +37,18 @@ namespace ArduinoScope
             {
                 case TriggerSource.Ext:
                     return "Ext";
-                    break;
 
                 case TriggerSource.Ch1:
                     return "Ch1";
-                    break;
 
                 case TriggerSource.Ch2:
                     return "Ch2";
-                    break;
 
                 default:
                     return "";
-                    break;
                     
             }
 
-            return "";
         }
 
         public TriggerSource NextSource()
@@ -81,6 +76,7 @@ namespace ArduinoScope
             set
             {
                 _Mode = value;
+                UpdateMode();
             }
         }
 
@@ -104,19 +100,15 @@ namespace ArduinoScope
             {
                 case TriggerMode.Normal:
                     return "Normal";
-                    break;
 
                 case TriggerMode.Scan:
                     return "Scan";
-                    break;
 
                 default:
                     return "";
-                    break;
 
             }
 
-            return "";
         }
 
         public float fTriggerLevel
@@ -131,12 +123,73 @@ namespace ArduinoScope
             }
         }
 
+        public TriggerStatus Status
+        {
+            get
+            {
+                return _Status;
+            }
+            set
+            {
+                _Status = value;
+            }
+        }
+
+        public String TriggerStatusText()
+        {
+            switch (Status)
+            {
+                case TriggerStatus.Armed:
+                    return "Armed";
+
+                case TriggerStatus.Ready:
+                    return "Ready";
+
+                case TriggerStatus.Trigd:
+                    return "Trig'd";
+
+                case TriggerStatus.Stop:
+                    return "Stop";
+
+                case TriggerStatus.Scan:
+                    return "Scan";
+
+                default:
+                    return "";
+
+            }
+
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private void UpdateMode()
+        {
+            switch( Mode)
+            {
+                case TriggerMode.Scan:
+                    Status = TriggerStatus.Scan;
+                    break;
+                case TriggerMode.Normal:
+                    Status = TriggerStatus.Armed;
+                    break;
+                default:
+                    Status = TriggerStatus.Scan;
+                    break;
+            }
+
+            return;
+        }
+
         #endregion
 
         #region Private Fields
 
         private TriggerSource _Source;
         private TriggerMode _Mode;
+        private TriggerStatus _Status;
 
         private float _fTriggerLevel;
 
@@ -153,6 +206,15 @@ namespace ArduinoScope
     public enum TriggerMode
     {
         Normal,
+        Scan
+    }
+
+    public enum TriggerStatus
+    {
+        Armed,
+        Ready,
+        Trigd,
+        Stop,
         Scan
     }
 }
