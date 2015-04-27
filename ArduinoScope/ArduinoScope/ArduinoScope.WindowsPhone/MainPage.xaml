@@ -56,7 +56,7 @@
             <Rectangle Grid.Row="0" Grid.Column="0" x:Name="rectTriggerOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
             <Image Grid.Column="0" Grid.Row="1" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
-            <Grid Grid.Column="0" Grid.Row="1"  x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="1" Margin="20,0,0,0" >
+            <Grid Grid.Column="0" Grid.Row="1"  x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="2" Margin="20,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -86,7 +86,7 @@
             </TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
-            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbTriggerTick" HorizontalAlignment="Right" TextWrapping="Wrap" Text="←" VerticalAlignment="Top"  TextAlignment="Right" Width="20" FontWeight="Bold">
+            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbTriggerTick" HorizontalAlignment="Right" TextWrapping="Wrap" Text="←" VerticalAlignment="Top"  TextAlignment="Right" Width="20"  Canvas.ZIndex="3" FontWeight="Bold" FontSize="16" >
             </TextBlock>
 
 

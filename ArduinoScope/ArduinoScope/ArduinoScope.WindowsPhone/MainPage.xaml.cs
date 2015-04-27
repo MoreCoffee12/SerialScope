@@ -51,6 +51,7 @@ namespace ArduinoScope
             hcHelper = new HorizontalControlHelper();
             hcHelper.iDivisionCount = ScopeGrid.ColumnDefinitions.Count;
             tHelper = new TriggerHelper();
+            tHelper.fTriggerLevel = 1.0f;
 
             // The sampling frequency here must match that configured in the Arduino firmware
             hcHelper.fSamplingFreq_Hz = 625;
@@ -163,8 +164,8 @@ namespace ArduinoScope
             graphScope1.setYLim(0.0f, Convert.ToSingle(uihelper.iGridRowCount));
 
             // Set the individual trace scale factors
-            graphScope1.setCh1Scale( 1.0f/vcHelper.fGetCh1VertDiv_V());
-            graphScope1.setCh2Scale(1.0f / vcHelper.fGetCh2VertDiv_V());
+            graphScope1.setCh1Scale( 1.0f / vcHelper.fGetCh1VertDiv_V());
+            graphScope1.setCh2Scale (1.0f / vcHelper.fGetCh2VertDiv_V());
 
             // Update the scope vertical divisions scale factor
             if( vcHelper.fGetCh1VertDiv_V() < 1.0f)
@@ -204,7 +205,6 @@ namespace ArduinoScope
         private void UpdateTrigger()
         {
             txtTriggerMode.Text = tHelper.TriggerStatusText();
-            btnTriggerMode.Content = tHelper.TriggerStatusText();
 
         }
 
@@ -215,6 +215,7 @@ namespace ArduinoScope
 
             UpdateTrigger();
 
+            btnTriggerMode.Content = tHelper.TriggerModeText();
             if (tHelper.Mode == TriggerMode.Scan)
             {
                 setRectGray(true, rectTriggerOK, btnHorzOffsetLeft.Foreground);
@@ -234,7 +235,7 @@ namespace ArduinoScope
                 setRectGray(false, rectTriggerSlope, btnTriggerSlope.Foreground);
             }
 
-            tbTriggerSource.Text = tHelper.TriggerSourceText().ToUpper();
+            btnTriggerSource.Content = tHelper.TriggerSourceText().ToUpper();
             switch (tHelper.Source)
             {
                 case TriggerSource.Ch1:
@@ -270,6 +271,8 @@ namespace ArduinoScope
 
             }
 
+            UpdateTriggerTick();
+
         }
 
         private void UpdateHorzDiv()
@@ -289,58 +292,77 @@ namespace ArduinoScope
 
         }
 
-        private void UpdateVertTicks()
+        private void UpdateTickPosition( String strDefault, String strHigh, String strLow, TextBlock tbTick, float fOffset_Volts )
         {
-            int iVert = 0;
+
             float fCRTUpper = Convert.ToSingle(uihelper.CRTMargin_Vert / 2);
             float fScopeLimits = graphScope1.getYLimMax() - graphScope1.getYLimMin();
 
-            if( fScopeLimits < 1e-6)
+            if (fScopeLimits < 1e-6)
             {
                 return;
             }
 
-            if (tbCh1VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
+            if (tbTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
             {
-                tbCh1VertTick.Text = "1→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - vcHelper.fCh1VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
+                tbTick.Text = strDefault;
+                int iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - fOffset_Volts) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
 
                 if (iVert > Convert.ToInt32(LineGraphScope1.Height))
                 {
                     iVert = Convert.ToInt32(LineGraphScope1.Height);
-                    tbCh1VertTick.Text = "1↓";
+                    tbTick.Text = strLow;
                 }
                 if (iVert < 0)
                 {
                     iVert = 0;
-                    tbCh1VertTick.Text = "1↑";
+                    tbTick.Text = strHigh;
                 }
 
-                iVert = iVert + Convert.ToInt32(fCRTUpper - Convert.ToSingle(tbCh1VertTick.ActualHeight / 2));
-                tbCh1VertTick.Margin = new Thickness(0, iVert, 0, 0);
+                iVert = iVert + Convert.ToInt32(fCRTUpper - Convert.ToSingle(tbTick.ActualHeight / 2));
+                tbTick.Margin = new Thickness(0, iVert, 0, 0);
             }
 
+        }
 
-
-            if (tbCh2VertTick.Visibility == Windows.UI.Xaml.Visibility.Visible)
+        private void UpdateTriggerTick()
+        {
+            switch(tHelper.Mode)
             {
-                tbCh2VertTick.Text = "2→";
-                iVert = Convert.ToInt32((Convert.ToSingle(uihelper.iGridRowCount) - vcHelper.fCh2VertOffset) * (Convert.ToSingle(LineGraphScope1.Height) / fScopeLimits));
-                if (iVert > Convert.ToInt32(LineGraphScope1.Height))
-                {
-                    iVert = Convert.ToInt32(LineGraphScope1.Height);
-                    tbCh2VertTick.Text = "2↓";
-                }
-                if (iVert < 0)
-                {
-                    iVert = 0;
-                    tbCh2VertTick.Text = "2↑";
-                }
+                case TriggerMode.Normal:
 
-                iVert = iVert + Convert.ToInt32(fCRTUpper - Convert.ToSingle(tbCh1VertTick.ActualHeight / 2));
-                tbCh2VertTick.Margin = new Thickness(0, iVert, 0, 0);
+                    switch(tHelper.Source)
+                    {
+                        case TriggerSource.Ch1:
+                            tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel / vcHelper.fGetCh1VertDiv_V()) + vcHelper.fCh1VertOffset));
+                            break;
+                        case TriggerSource.Ch2:
+                            tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel / vcHelper.fGetCh2VertDiv_V()) + vcHelper.fCh2VertOffset));
+                            break;
+                        case TriggerSource.Ext:
+                            tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case TriggerMode.Scan:
+                    tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                    break;
+                default:
+                    break;
+
             }
+        }
 
+        private void UpdateVertTicks()
+        {
+
+            UpdateTickPosition("1→", "1↑", "1↓", tbCh1VertTick, vcHelper.fCh1VertOffset);
+            UpdateTickPosition("2→", "2↑", "2↓", tbCh2VertTick, vcHelper.fCh2VertOffset);
+            UpdateTriggerTick();
 
         }
 
