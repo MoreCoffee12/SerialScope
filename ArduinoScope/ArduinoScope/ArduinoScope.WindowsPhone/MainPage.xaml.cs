@@ -215,7 +215,7 @@ namespace ArduinoScope
 
             UpdateTrigger();
 
-            btnTriggerMode.Content = tHelper.TriggerModeText();
+            btnTriggerMode.Content = tHelper.TriggerModeText().ToUpper();
             if (tHelper.Mode == TriggerMode.Scan)
             {
                 setRectGray(true, rectTriggerOK, btnHorzOffsetLeft.Foreground);
@@ -269,6 +269,11 @@ namespace ArduinoScope
                 default:
                     break;
 
+            }
+
+            if( rectTriggerSlope.ActualWidth < 80)
+            {
+                btnTriggerSlope.Content = tHelper.TriggerSlopeText().Substring(0, 3).ToUpper() + "...";
             }
 
             UpdateTriggerTick();
@@ -708,6 +713,13 @@ namespace ArduinoScope
             UpdateTriggerUI();
 
         }
+
+        private void btnTriggerSlope_Click(object sender, RoutedEventArgs e)
+        {
+            tHelper.Slope = tHelper.NextSlope();
+            UpdateTriggerUI();
+        }
+
 
         private void ResetLEDs()
         {

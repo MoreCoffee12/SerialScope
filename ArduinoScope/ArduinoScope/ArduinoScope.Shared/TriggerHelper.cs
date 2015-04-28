@@ -99,7 +99,7 @@ namespace ArduinoScope
             switch (Mode)
             {
                 case TriggerMode.Normal:
-                    return "Normal";
+                    return "Norm";
 
                 case TriggerMode.Scan:
                     return "Scan";
@@ -161,6 +161,49 @@ namespace ArduinoScope
 
         }
 
+        public TriggerSlope Slope
+        {
+            get
+            {
+                return _Slope;
+            }
+            set
+            {
+                _Slope = value;
+            }
+        }
+
+        public String TriggerSlopeText()
+        {
+            switch(Slope)
+            {
+                case TriggerSlope.Falling:
+                    return "Falling";
+
+                case TriggerSlope.Rising:
+                    return "Rising";
+
+                default:
+                    return "";
+            }
+
+        }
+
+        public TriggerSlope NextSlope()
+        {
+            switch (Slope)
+            {
+                case TriggerSlope.Rising:
+                    return TriggerSlope.Falling;
+                case TriggerSlope.Falling:
+                    return TriggerSlope.Rising;
+                default:
+                    return TriggerSlope.Rising;
+            }
+        }
+
+
+        
         #endregion
 
         #region Private methods
@@ -190,6 +233,7 @@ namespace ArduinoScope
         private TriggerSource _Source;
         private TriggerMode _Mode;
         private TriggerStatus _Status;
+        private TriggerSlope _Slope;
 
         private float _fTriggerLevel;
 
@@ -216,5 +260,11 @@ namespace ArduinoScope
         Trigd,
         Stop,
         Scan
+    }
+
+    public enum TriggerSlope
+    {
+        Rising,
+        Falling
     }
 }

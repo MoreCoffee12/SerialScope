@@ -244,7 +244,7 @@
                         <CompositeTransform ScaleY="0.9"/>
                     </TextBlock.RenderTransform>
                 </TextBlock>
-                <Button Grid.Row="3" Grid.Column="1" x:Name="btnTriggerSlope" Content="Falling" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="3" Grid.Column="1" x:Name="btnTriggerSlope" Content="Rising" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnTriggerSlope_Click" />
                 <Rectangle Grid.Row="3" Grid.Column="1"  x:Name="rectTriggerSlope" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="4" Grid.Column="0"  Text="M   o   d   e  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">
