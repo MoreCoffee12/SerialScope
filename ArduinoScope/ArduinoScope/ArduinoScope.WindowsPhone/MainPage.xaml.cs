@@ -721,13 +721,37 @@ namespace ArduinoScope
 
         private void btnTriggerLevelPlus_Click(object sender, RoutedEventArgs e)
         {
-             tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V + (hcHelper.fGetDivRaw() / 4);
-             UpdateTriggerUI();
+            switch (tHelper.Source)
+            {
+                case TriggerSource.Ch1:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V + (vcHelper.fGetCh1VertDiv_V() / 4);
+                    break;
+                case TriggerSource.Ch2:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V + (vcHelper.fGetCh2VertDiv_V() / 4);
+                    break;
+                case TriggerSource.Ext:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V + 0.1f;
+                    break;
+
+            }
+            UpdateTriggerUI();
         }
 
         private void btnTriggerLevelMinus_Click(object sender, RoutedEventArgs e)
         {
-            tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V - (hcHelper.fGetDivRaw() / 4);
+            switch (tHelper.Source)
+            {
+                case TriggerSource.Ch1:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V - (vcHelper.fGetCh1VertDiv_V() / 4);
+                    break;
+                case TriggerSource.Ch2:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V - (vcHelper.fGetCh2VertDiv_V() / 4);
+                    break;
+                case TriggerSource.Ext:
+                    tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V - 0.1f;
+                    break;
+
+            }
             UpdateTriggerUI();
         }
 
