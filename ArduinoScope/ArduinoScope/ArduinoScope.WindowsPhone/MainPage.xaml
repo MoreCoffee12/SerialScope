@@ -226,9 +226,9 @@
                         <CompositeTransform ScaleY="0.9"/>
                     </TextBlock.RenderTransform>
                 </TextBlock>
-                <Button Grid.Row="0" Grid.Column="1" x:Name="btnTriggerLevelPlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="0" Grid.Column="1" x:Name="btnTriggerLevelPlus" Content="+" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnTriggerLevelPlus_Click" />
                 <Rectangle Grid.Row="0" Grid.Column="1" x:Name="rectTriggerLevelPlus" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="1" x:Name="btnTriggerLevelMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="1" x:Name="btnTriggerLevelMinus" Content="-" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  Click="btnTriggerLevelMinus_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="1"  x:Name="rectTriggerLevelMinus" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0"  Text="S   r   c  " TextWrapping="Wrap" HorizontalAlignment="Center"  Width="15"  VerticalAlignment="Center" TextAlignment="Center" Margin="2.5,0" RenderTransformOrigin="0.5,0.5" FontSize="10">

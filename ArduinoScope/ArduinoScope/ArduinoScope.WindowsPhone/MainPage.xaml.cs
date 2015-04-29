@@ -51,7 +51,8 @@ namespace ArduinoScope
             hcHelper = new HorizontalControlHelper();
             hcHelper.iDivisionCount = ScopeGrid.ColumnDefinitions.Count;
             tHelper = new TriggerHelper();
-            tHelper.fTriggerLevel = 1.0f;
+            tHelper.fTriggerLevel_V = 1.0f;
+            tHelper.bTriggerSet = false;
 
             // The sampling frequency here must match that configured in the Arduino firmware
             hcHelper.fSamplingFreq_Hz = 625;
@@ -158,6 +159,21 @@ namespace ArduinoScope
             return true;
         }
 
+        private void UpdateTextBlockVoltage(TextBlock tbTextBlock, TextBlock tbTextBlockEU, float fVolts)
+        {
+            // Update the scope vertical divisions scale factor
+            if (fVolts < 1.0f)
+            {
+                tbTextBlock.Text = (fVolts * 1000.0f).ToString("F0", CultureInfo.InvariantCulture);
+                tbTextBlockEU.Text = "mV";
+            }
+            else
+            {
+                tbTextBlock.Text = fVolts.ToString("F2", CultureInfo.InvariantCulture);
+                tbTextBlockEU.Text = "V";
+            }
+        }
+
         private bool bUpdateScopeParams()
         {
             // Set the limits of the graph in the image
@@ -168,27 +184,9 @@ namespace ArduinoScope
             graphScope1.setCh2Scale (1.0f / vcHelper.fGetCh2VertDiv_V());
 
             // Update the scope vertical divisions scale factor
-            if( vcHelper.fGetCh1VertDiv_V() < 1.0f)
-            {
-                tbCh1VertDivValue.Text = (vcHelper.fGetCh1VertDiv_V() * 1000.0f).ToString("F0", CultureInfo.InvariantCulture);
-                tbCh1VertDivEU.Text = "mV";
-            }
-            else
-            {
-                tbCh1VertDivValue.Text = vcHelper.fGetCh1VertDiv_V().ToString("F2", CultureInfo.InvariantCulture);
-                tbCh1VertDivEU.Text = "V";
-            }
-            if (vcHelper.fGetCh2VertDiv_V() < 1.0f)
-            {
-                tbCh2VertDivValue.Text = (vcHelper.fGetCh2VertDiv_V() * 1000.0f).ToString("F0", CultureInfo.InvariantCulture);
-                tbCh2VertDivEU.Text = "mV";
-            }
-            else
-            {
-                tbCh2VertDivValue.Text = vcHelper.fGetCh2VertDiv_V().ToString("F2", CultureInfo.InvariantCulture);
-                tbCh2VertDivEU.Text = "V";
-            }
-
+            UpdateTextBlockVoltage(tbCh1VertDivValue, tbCh1VertDivEU, vcHelper.fGetCh1VertDiv_V());
+            UpdateTextBlockVoltage(tbCh2VertDivValue, tbCh2VertDivEU, vcHelper.fGetCh2VertDiv_V());
+ 
             // Update the horizontal divisions
             UpdateHorzDiv();
 
@@ -298,6 +296,7 @@ namespace ArduinoScope
                 tbTriggerSlope.TextAlignment = TextAlignment.Right;
             }
 
+            UpdateTextBlockVoltage(tbTriggerLevel, tbTriggerLevelEU, tHelper.fTriggerLevel_V);
             UpdateTriggerTick();
 
         }
@@ -362,11 +361,11 @@ namespace ArduinoScope
                     {
                         case TriggerSource.Ch1:
                             tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel / vcHelper.fGetCh1VertDiv_V()) + vcHelper.fCh1VertOffset));
+                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel_V / vcHelper.fGetCh1VertDiv_V()) + vcHelper.fCh1VertOffset));
                             break;
                         case TriggerSource.Ch2:
                             tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel / vcHelper.fGetCh2VertDiv_V()) + vcHelper.fCh2VertOffset));
+                            UpdateTickPosition("←", "↑", "↓", tbTriggerTick, ((tHelper.fTriggerLevel_V / vcHelper.fGetCh2VertDiv_V()) + vcHelper.fCh2VertOffset));
                             break;
                         case TriggerSource.Ext:
                             tbTriggerTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
@@ -720,6 +719,18 @@ namespace ArduinoScope
             }
         }
 
+        private void btnTriggerLevelPlus_Click(object sender, RoutedEventArgs e)
+        {
+             tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V + (hcHelper.fGetDivRaw() / 4);
+             UpdateTriggerUI();
+        }
+
+        private void btnTriggerLevelMinus_Click(object sender, RoutedEventArgs e)
+        {
+            tHelper.fTriggerLevel_V = tHelper.fTriggerLevel_V - (hcHelper.fGetDivRaw() / 4);
+            UpdateTriggerUI();
+        }
+
         private void btnTriggerMode_Click(object sender, RoutedEventArgs e)
         {
 
@@ -851,6 +862,7 @@ namespace ArduinoScope
         DataBus.MinSegBus mbus;
 
         #endregion
+
 
 
     }

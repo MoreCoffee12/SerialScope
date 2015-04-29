@@ -12,7 +12,8 @@ namespace ArduinoScope
         {
             this.Source = TriggerSource.Ch1;
             this.Mode = TriggerMode.Scan;
-            fTriggerLevel = 1.0f;
+            fTriggerLevel_V = 1.0f;
+            bTriggerSet = false;
         }
         
         #endregion
@@ -111,15 +112,15 @@ namespace ArduinoScope
 
         }
 
-        public float fTriggerLevel
+        public float fTriggerLevel_V
         {
             get
             {
-                return _fTriggerLevel;
+                return _fTriggerLevel_V;
             }
             set
             {
-                _fTriggerLevel = value;
+                _fTriggerLevel_V = value;
             }
         }
 
@@ -202,7 +203,17 @@ namespace ArduinoScope
             }
         }
 
-
+        public bool bTriggerSet
+        {
+            get
+            {
+                return _bTriggerSet;
+            }
+            set
+            {
+                _bTriggerSet = value;
+            }
+        }
         
         #endregion
 
@@ -235,7 +246,8 @@ namespace ArduinoScope
         private TriggerStatus _Status;
         private TriggerSlope _Slope;
 
-        private float _fTriggerLevel;
+        private float _fTriggerLevel_V;
+        private bool _bTriggerSet;
 
         #endregion
     }
