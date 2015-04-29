@@ -271,7 +271,7 @@
         <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerSource" HorizontalAlignment="Left" Margin="0,0,45,0" TextWrapping="Wrap" Text="CH1" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="25"/>
         <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerSlope" HorizontalAlignment="Left" Margin="23,0,45,0" TextWrapping="Wrap" Text="∫" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30" RenderTransformOrigin="0.5,0.5">
             <TextBlock.RenderTransform>
-                <CompositeTransform/>
+                <CompositeTransform ScaleX="-1"/>
             </TextBlock.RenderTransform>
         </TextBlock>
         <TextBlock Grid.Row="3" Grid.Column="2" x:Name ="tbTriggerLevel" HorizontalAlignment="Left" Margin="27,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="30"/>

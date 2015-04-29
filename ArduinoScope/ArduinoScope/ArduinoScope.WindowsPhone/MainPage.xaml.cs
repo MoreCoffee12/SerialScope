@@ -275,6 +275,28 @@ namespace ArduinoScope
             {
                 btnTriggerSlope.Content = tHelper.TriggerSlopeText().Substring(0, 3).ToUpper() + "...";
             }
+            else
+            {
+                btnTriggerSlope.Content = tHelper.TriggerSlopeText().ToUpper();
+            }
+            if ( tHelper.Slope == TriggerSlope.Rising )
+            {
+                ScaleTransform scaleTemp = new ScaleTransform();
+                scaleTemp.ScaleX = 1;
+                TransformGroup tgTemp = new TransformGroup();
+                tgTemp.Children.Add(scaleTemp);
+                tbTriggerSlope.RenderTransform = tgTemp;
+                tbTriggerSlope.TextAlignment = TextAlignment.Left;
+            }
+            else
+            {
+                ScaleTransform scaleTemp = new ScaleTransform();
+                scaleTemp.ScaleX = -1;
+                TransformGroup tgTemp = new TransformGroup();
+                tgTemp.Children.Add(scaleTemp);
+                tbTriggerSlope.RenderTransform = tgTemp;
+                tbTriggerSlope.TextAlignment = TextAlignment.Right;
+            }
 
             UpdateTriggerTick();
 
