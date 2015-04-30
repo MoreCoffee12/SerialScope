@@ -69,6 +69,7 @@ namespace ArduinoScope
             idxData = 0;
             iStreamBuffLength = 128;
             idxData = 0;
+            idxData_MinCount = 0;
             idxCharCount = 0;
             byteAddress = 0;
             iUnsignedShortArray = new UInt16[iShortCount];
@@ -91,7 +92,9 @@ namespace ArduinoScope
 
             // Default scope parameters
             bTrace1Active = true;
+            bTrace1Acquiring = false;
             bTrace2Active = true;
+            bTrace2Acquiring = false;
 
             // Update scope
             UpdateTraces();
@@ -117,12 +120,12 @@ namespace ArduinoScope
             tbCh1VertTick, tbCh2VertTick);
 
             // Initialize the buffer for the frame timebase and set the color
-            graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 255.0f, 0.0f, 0.5f + uihelper.fOffset, 0.5f + uihelper.fOffset);
             graphScope1.setColorBackground(uihelper.fR, uihelper.fG, uihelper.fB, 0.0f);
 
             // Configure the line plots scaling based on the grid
             bUpdateScopeParams();
             bUpdateDateTime();
+            UpdateTriggerUI();
 
             // Also hook the Rendering cycle up to the CompositionTarget Rendering event so we draw frames when we're supposed to
             CompositionTarget.Rendering += graphScope1.Render;
@@ -148,6 +151,16 @@ namespace ArduinoScope
         }
 
         # region Private Methods
+
+        private void SetTraceActive()
+        {
+            graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 255.0f, Convert.ToSingle(uihelper.clrTrace2.R) / 255.0f, Convert.ToSingle(uihelper.clrTrace2.G) / 255.0f, Convert.ToSingle(uihelper.clrTrace2.B) / 255.0f);
+        }
+
+        private void SetTraceAcquiring()
+        {
+            graphScope1.setColor(Convert.ToSingle(uihelper.clrTrace1.R) / 128.0f, Convert.ToSingle(uihelper.clrTrace1.G) / 128.0f, Convert.ToSingle(uihelper.clrTrace1.B) / 128.0f, Convert.ToSingle(uihelper.clrTrace2.R) / 128.0f, Convert.ToSingle(uihelper.clrTrace2.G) / 128.0f, Convert.ToSingle(uihelper.clrTrace2.B) / 128.0f);
+        }
 
         private bool bUpdateDateTime()
         {
@@ -203,6 +216,19 @@ namespace ArduinoScope
         private void UpdateTrigger()
         {
             txtTriggerMode.Text = tHelper.TriggerStatusText();
+            switch(tHelper.Mode)
+            {
+                case TriggerMode.Normal:
+                    bTrace1Acquiring = true;
+                    bTrace2Acquiring = true;
+                    break;
+                case TriggerMode.Scan:
+                    bTrace1Acquiring = false;
+                    bTrace2Acquiring = false;
+                    break;
+                default:
+                    break;
+            }
 
         }
 
@@ -305,6 +331,7 @@ namespace ArduinoScope
         {
             // Update the horizontal divisions
             float fDivRaw = hcHelper.fGetDivRaw();
+            idxData_MinCount = Convert.ToUInt32(hcHelper.fGetDivRaw()*hcHelper.fSamplingFreq_Hz);
             if (fDivRaw < 1)
             {
                 tbHorzDivValue.Text = (fDivRaw * 1000).ToString("F0", CultureInfo.InvariantCulture);
@@ -520,6 +547,15 @@ namespace ArduinoScope
             // Calculate the portion of data to display
             iCRTDataStart = 0;
             iCRTDataEnd = hcHelper.iGetCRTDataLength();
+
+            if( bTrace1Acquiring || bTrace2Acquiring )
+            {
+                SetTraceAcquiring();
+            }
+            else
+            {
+                SetTraceActive();
+            }
 
             // Update the plots
             if (bTrace1Active && bTrace2Active)
@@ -860,9 +896,11 @@ namespace ArduinoScope
         float[] dataScope1;
         float fScope1ScaleADC;
         bool bTrace1Active;
+        bool bTrace1Acquiring;
         float[] dataScope2;
         float fScope2ScaleADC;
         bool bTrace2Active;
+        bool bTrace2Acquiring;
         float[] dataNull;
         uint iCRTDataStart;
         uint iCRTDataEnd;
@@ -878,6 +916,7 @@ namespace ArduinoScope
         uint iShortCount;
         uint iFrameSize;
         uint idxData;
+        uint idxData_MinCount;
         uint idxCharCount;
         byte byteAddress;
         UInt16[] iUnsignedShortArray;
