@@ -14,6 +14,34 @@ namespace ArduinoScope
             this.Mode = TriggerMode.Scan;
             fTriggerLevel_V = 1.0f;
             bTriggerSet = false;
+            bAcquiring = false;
+            idxTrigger = 0;
+        }
+
+        public void NewDataPoints(float fCh1_V, float fCh2_V, float fExt_V, uint idxCurrent)
+        {
+            if( Mode == TriggerMode.Normal)
+            {
+                switch (Status)
+                {
+                    case TriggerStatus.Ready:
+                        if( Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
+                        {
+                            TriggerSet(idxCurrent);
+                        }
+                        if( Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V )
+                        {
+                            TriggerSet(idxCurrent);
+                        }
+                        break;
+                    case TriggerStatus.Trigd:
+                        break;
+                    case TriggerStatus.Stop:
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         
         #endregion
@@ -214,10 +242,41 @@ namespace ArduinoScope
                 _bTriggerSet = value;
             }
         }
+
+        public bool bAcquiring
+        {
+            get
+            {
+                return _bAcquiring;
+            }
+
+            set
+            {
+                _bAcquiring = value;
+            }
+        }
+
+        public uint idxTrigger
+        {
+            get
+            {
+                return _idxTrigger;   
+            }
+            set
+            {
+                _idxTrigger = value;
+            }
+        }
         
         #endregion
 
         #region Private methods
+
+        private void TriggerSet(uint idxCurrent)
+        {
+            Status = TriggerStatus.Trigd;
+            idxTrigger = idxCurrent;
+        }
 
         private void UpdateMode()
         {
@@ -248,6 +307,10 @@ namespace ArduinoScope
 
         private float _fTriggerLevel_V;
         private bool _bTriggerSet;
+        private bool _bAcquiring;
+
+        private uint _idxTrigger;
+
 
         #endregion
     }

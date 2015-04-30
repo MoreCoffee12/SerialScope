@@ -53,6 +53,7 @@ namespace ArduinoScope
             tHelper = new TriggerHelper();
             tHelper.fTriggerLevel_V = 1.0f;
             tHelper.bTriggerSet = false;
+            tHelper.bAcquiring = false;
 
             // The sampling frequency here must match that configured in the Arduino firmware
             hcHelper.fSamplingFreq_Hz = 625;
@@ -92,9 +93,7 @@ namespace ArduinoScope
 
             // Default scope parameters
             bTrace1Active = true;
-            bTrace1Acquiring = false;
             bTrace2Active = true;
-            bTrace2Acquiring = false;
 
             // Update scope
             UpdateTraces();
@@ -219,12 +218,26 @@ namespace ArduinoScope
             switch(tHelper.Mode)
             {
                 case TriggerMode.Normal:
-                    bTrace1Acquiring = true;
-                    bTrace2Acquiring = true;
+                    if( idxData > idxData_MinCount)
+                    {
+                        if( tHelper.Status == TriggerStatus.Armed)
+                        {
+                            tHelper.Status = TriggerStatus.Ready;
+                            tHelper.bAcquiring = true;
+                        }
+                    }
+                    else
+                    {
+                        tHelper.Status = TriggerStatus.Armed;
+                        tHelper.bAcquiring = true;
+                    }
+                    if( tHelper.Status == TriggerStatus.Trigd)
+                    {
+                        tHelper.bAcquiring = false;
+                    }
                     break;
                 case TriggerMode.Scan:
-                    bTrace1Acquiring = false;
-                    bTrace2Acquiring = false;
+                    tHelper.bAcquiring = false;
                     break;
                 default:
                     break;
@@ -463,18 +476,9 @@ namespace ArduinoScope
                         byteAddress = Convert.ToByte(mbus.iGetAddress());
                     }
 
-                    // Point to the next location in the buffer
-                    iNextDataIdx();
 
-                    // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC;
-                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC;
-
-                    iNextDataIdx();
-
-                    // Fill the spaces in the buffer with data
-                    dataScope1[idxData] = Convert.ToSingle(iUnsignedShortArray[2]) * fScope1ScaleADC;
-                    dataScope2[idxData] = Convert.ToSingle(iUnsignedShortArray[3]) * fScope2ScaleADC;
+                    AddScopeData( Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC, Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC);
+                    AddScopeData(Convert.ToSingle(iUnsignedShortArray[2]) * fScope1ScaleADC, Convert.ToSingle(iUnsignedShortArray[3]) * fScope2ScaleADC);
 
                     // Reset the character counter
                     idxCharCount = 0;
@@ -491,6 +495,20 @@ namespace ArduinoScope
 
             // Success, return a true
             return true;
+        }
+
+        private void AddScopeData(float fCh1, float fCh2)
+        {
+            // Point to the next location in the buffer
+            iNextDataIdx();
+
+            // Fill the spaces in the buffer with data
+            dataScope1[idxData] = fCh1;
+            dataScope2[idxData] = fCh2;
+
+            // Pass the new points into the trigger helper class
+            tHelper.NewDataPoints(fCh1, fCh2, 0.0f, idxData);
+
         }
 
         private void iNextDataIdx()
@@ -514,10 +532,13 @@ namespace ArduinoScope
                 if (bTemp == true)
                 {
 
+                    // Update trigger state
+                    UpdateTrigger();
+
                     // Append that line to our TextOutput
                     try
                     {
-                        if (bCollectData)
+                        if (bCollectData  && !tHelper.bAcquiring )
                         {
                             // Update the blank space and plot the data
                             graphScope1.setMarkIndex(Convert.ToInt32(idxData));
@@ -548,13 +569,14 @@ namespace ArduinoScope
             iCRTDataStart = 0;
             iCRTDataEnd = hcHelper.iGetCRTDataLength();
 
-            if( bTrace1Acquiring || bTrace2Acquiring )
+            if( tHelper.bAcquiring )
             {
                 SetTraceAcquiring();
             }
             else
             {
                 SetTraceActive();
+
             }
 
             // Update the plots
@@ -896,11 +918,9 @@ namespace ArduinoScope
         float[] dataScope1;
         float fScope1ScaleADC;
         bool bTrace1Active;
-        bool bTrace1Acquiring;
         float[] dataScope2;
         float fScope2ScaleADC;
         bool bTrace2Active;
-        bool bTrace2Acquiring;
         float[] dataNull;
         uint iCRTDataStart;
         uint iCRTDataEnd;
