@@ -12,11 +12,14 @@ namespace ArduinoScope
         public HorizontalControlHelper()
         {
             iHorzDivIdx = 3;
+            iHorzPosIdx = 0;
             iDivisionCount = 1;
 
             fHorzOffset = 0.0f;
 
             fSamplingFreq_Hz = 100;
+
+            dHorzPosTickWidth = 0;
 
             // Look-up table for horizontal divisions, units are ms.
             _iDivTable[0] = 10.0f;
@@ -127,6 +130,30 @@ namespace ArduinoScope
             }
         }
 
+        public int iHorzPosIdx
+        {
+            get
+            {
+                return _iHorzPosIdx;
+            }
+            set
+            {
+                _iHorzPosIdx = value;
+            }
+        }
+
+        public double dHorzPosTickWidth
+        {
+            get
+            {
+                return _dHorzPosTickWidth;
+            }
+            set
+            {
+                _dHorzPosTickWidth = value;
+            }
+        }
+
         #endregion
 
         #region Private Methods
@@ -158,6 +185,8 @@ namespace ArduinoScope
         #region Private Field
 
         private int _iHorzDivIdx;
+        private int _iHorzPosIdx;
+        private double _dHorzPosTickWidth;
 
         private float[] _iDivTable = new float[8];
         private uint _iCRTDataLength;

@@ -45,18 +45,23 @@
 
         <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" x:Name="CRTGrid" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" x:Name="_CRTCol" />
+                <ColumnDefinition Width="*" x:Name="_CRTCol1" />
+                <ColumnDefinition Width="*" x:Name="_CRTCol2" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="15" x:Name="_CRTTextRow" />
                 <RowDefinition Height="*" x:Name="_CRTRow"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" x:Name="txtTriggerMode"  HorizontalAlignment="Right" Margin="0,2,20,0" TextWrapping="Wrap" Text="-Trigger Mode-" VerticalAlignment="Center"  TextAlignment="Right" />
-            <Rectangle Grid.Row="0" Grid.Column="0" x:Name="rectTriggerOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Right" Height="15" Margin="55,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" x:Name="txtTriggerMode"  HorizontalAlignment="Left" TextWrapping="Wrap" Text="Trig'd" VerticalAlignment="Center"  Width ="38" TextAlignment="Right" />
+            <Rectangle Grid.Row="0" Grid.Column="0" x:Name="rectTriggerOK" Fill="{StaticResource PhoneForegroundBrush}" HorizontalAlignment="Left" Height="15" Margin="40,0,0,0" Stroke="Black" VerticalAlignment="Center" Width="15"/>
 
-            <Image Grid.Column="0" Grid.Row="1" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
-            <Grid Grid.Column="0" Grid.Row="1"  x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="2" Margin="20,0,0,0" >
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name ="tbHorzPos" HorizontalAlignment="Left" Text="M Pos:" VerticalAlignment="Top"  Height="20" TextAlignment="Left" />
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name ="tbHorzPosValue" HorizontalAlignment="Left" Margin="25,0,45,0" TextWrapping="Wrap" Text="0.00" VerticalAlignment="Top"  Height="20" TextAlignment="Right" Width="30"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" x:Name ="tbHorzPosEU" HorizontalAlignment="Left" Margin="55,0,45,0" TextWrapping="Wrap" Text="V" VerticalAlignment="Top"  Height="20" TextAlignment="Left" Width="30"/>
+
+            <Image Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" x:Name="LineGraphScope1" Height="200" VerticalAlignment="Center" Width="250" HorizontalAlignment="Left" Canvas.ZIndex="1" Stretch="Fill" Margin="20,0,0,0"/>
+            <Grid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" x:Name="ScopeGrid"   Height="200" VerticalAlignment="Center" Width="250"  HorizontalAlignment="Left"  Canvas.ZIndex="2" Margin="20,0,0,0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -80,13 +85,17 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="10"  x:Name ="tbHorzTick" HorizontalAlignment="Left" Text="↓" VerticalAlignment="Top"  TextAlignment="Center" Canvas.ZIndex="4" FontWeight="Bold" FontSize="16" >
+                </TextBlock>
+
             </Grid>
 
             <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh1VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="1→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbCh2VertTick" HorizontalAlignment="Left" TextWrapping="Wrap" Text="2→" VerticalAlignment="Top"  TextAlignment="Right" Width="20">
             </TextBlock>
-            <TextBlock Grid.Column="0" Grid.Row="1" x:Name ="tbTriggerTick" HorizontalAlignment="Right" TextWrapping="Wrap" Text="←" VerticalAlignment="Top"  TextAlignment="Right" Width="20"  Canvas.ZIndex="3" FontWeight="Bold" FontSize="16" >
+            <TextBlock Grid.Column="1" Grid.Row="1" x:Name ="tbTriggerTick" HorizontalAlignment="Right" TextWrapping="Wrap" Text="←" VerticalAlignment="Top"  TextAlignment="Right" Width="20"  Canvas.ZIndex="3" FontWeight="Bold" FontSize="16" >
             </TextBlock>
 
 
@@ -124,13 +133,13 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  HorizontalAlignment="Center" Text="Position" VerticalAlignment="Top"  TextAlignment="Center" />
-                <Button Grid.Row="1" Grid.Column="0" x:Name="btnHorzOffsetLeft" Content="←" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="0" x:Name="btnHorzOffsetLeft" Content="←" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnHorzOffsetLeft_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="0" x:Name="rectHorzOffsetLeft" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
-                <Button Grid.Row="1" Grid.Column="1" x:Name="btnHorzOffsetRight" Content="→" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" />
+                <Button Grid.Row="1" Grid.Column="1" x:Name="btnHorzOffsetRight" Content="→" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center" Click="btnHorzOffsetRight_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="1" x:Name="rectHorzOffsetRight" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Text="Zero" VerticalAlignment="Top"  TextAlignment="Center" />
-                <Button Grid.Row="1" Grid.Column="2" x:Name="btnHorzToZero" Content="SET" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  />
+                <Button Grid.Row="1" Grid.Column="2" x:Name="btnHorzToZero" Content="SET" BorderBrush="{StaticResource ButtonBackgroundThemeBrush}" Padding="0,-3,0,0" MinHeight="50" MinWidth="50" HorizontalAlignment="Center"  Click="btnHorzToZero_Click" />
                 <Rectangle Grid.Row="1" Grid.Column="2" x:Name="rectHorzToZero" RadiusX="5" RadiusY="5" Stroke="{ThemeResource ApplicationForegroundThemeBrush}" Margin="7" StrokeThickness="2"/>
 
                 <TextBlock Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2"  HorizontalAlignment="Center" Text="Scale" VerticalAlignment="Top"  TextAlignment="Center" />

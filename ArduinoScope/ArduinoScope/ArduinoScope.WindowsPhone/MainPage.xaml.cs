@@ -111,6 +111,8 @@ namespace ArduinoScope
             ScopeGrid.Width = dCRT_Horz-1;
             ScopeGrid.Height = dCRT_Vert;
 
+            hcHelper.dHorzPosTickWidth = tbHorzTick.ActualWidth;
+
             // Initialize the UI
             uihelper.Initialize(ScopeGrid,
             tbCh1VertDiv, tbCh1VertDivValue, tbCh1VertDivEU,
@@ -211,6 +213,25 @@ namespace ArduinoScope
             return true;
         }
 
+        // Method to control visibility of horizontal position
+        private void HorzPosVisible(bool bIsVisible)
+        {
+            if(bIsVisible)
+            {
+                tbHorzTick.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbHorzPos.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbHorzPosValue.Visibility = Windows.UI.Xaml.Visibility.Visible;
+                tbHorzPosEU.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            }
+            else
+            {
+                tbHorzTick.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbHorzPos.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbHorzPosValue.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+                tbHorzPosEU.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            }
+        }
+
         // These trigger controls are updated based on the data stream
         private void UpdateTrigger()
         {
@@ -218,6 +239,7 @@ namespace ArduinoScope
             switch(tHelper.Mode)
             {
                 case TriggerMode.Normal:
+                    HorzPosVisible(true);
                     if( idxData > idxData_MinCount)
                     {
                         if( tHelper.Status == TriggerStatus.Armed)
@@ -238,6 +260,7 @@ namespace ArduinoScope
                     break;
                 case TriggerMode.Scan:
                     tHelper.bAcquiring = false;
+                    HorzPosVisible(false);
                     break;
                 default:
                     break;
@@ -355,6 +378,32 @@ namespace ArduinoScope
                 tbHorzDivValue.Text = fDivRaw.ToString("F2", CultureInfo.InvariantCulture);
                 tbHorzDivEU.Text = "s";
             }
+
+            // Update the position marker
+            UpdateHorzPos();
+
+        }
+
+        private void UpdateHorzPos()
+        {
+            // Update the horizontal position, in seconds
+            int iPosIdx = hcHelper.iHorzPosIdx + Convert.ToInt32(hcHelper.iGetCRTDataLength() / 2);
+            float fPosRaw_s = -Convert.ToSingle(hcHelper.iHorzPosIdx) / hcHelper.fSamplingFreq_Hz;
+            if (fPosRaw_s < 1)
+            {
+                tbHorzPosValue.Text = (fPosRaw_s * 1000).ToString("F0", CultureInfo.InvariantCulture);
+                tbHorzPosEU.Text = "ms";
+            }
+            else
+            {
+                tbHorzPosValue.Text = fPosRaw_s.ToString("F2", CultureInfo.InvariantCulture);
+                tbHorzPosEU.Text = "s";
+            }
+
+            // Locate the horizontal tick mark
+            double dHorzTickLocation = -hcHelper.dHorzPosTickWidth/2.0;
+            dHorzTickLocation = dHorzTickLocation + (LineGraphScope1.ActualWidth / Convert.ToDouble(hcHelper.iCRTDataLength)) * Convert.ToDouble(iPosIdx);
+            tbHorzTick.Margin = new Thickness(dHorzTickLocation, 0, 0, 0);
 
         }
 
@@ -687,6 +736,24 @@ namespace ArduinoScope
             UpdateHorzDiv();
         }
 
+        private void btnHorzOffsetLeft_Click(object sender, RoutedEventArgs e)
+        {
+            hcHelper.iHorzPosIdx = hcHelper.iHorzPosIdx - ( Convert.ToInt32(hcHelper.iGetCRTDataLength()) >> 7 );
+            UpdateHorzPos();
+        }
+
+        private void btnHorzOffsetRight_Click(object sender, RoutedEventArgs e)
+        {
+            hcHelper.iHorzPosIdx = hcHelper.iHorzPosIdx + (Convert.ToInt32(hcHelper.iGetCRTDataLength()) >> 7);
+            UpdateHorzPos();
+        }
+
+        private void btnHorzToZero_Click(object sender, RoutedEventArgs e)
+        {
+            hcHelper.iHorzPosIdx = 0;
+            UpdateHorzPos();
+        }
+
         private void btnCh1_Click(object sender, RoutedEventArgs e)
         {
             bTrace1Active = !bTrace1Active;
@@ -945,6 +1012,7 @@ namespace ArduinoScope
         DataBus.MinSegBus mbus;
 
         #endregion
+
 
 
 
