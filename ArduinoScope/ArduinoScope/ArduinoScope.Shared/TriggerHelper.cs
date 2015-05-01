@@ -328,6 +328,15 @@ namespace ArduinoScope
         Scan
     }
 
+    // Armed:  The oscilloscope is acquiring pretrigger data. All
+    //         triggers are ignored in this state.
+    // Ready:  All pretrigger data has been acquired and the
+    //         oscilloscope is ready to accept a trigger.
+    // Trig’d: The oscilloscope has seen a trigger and is acquiring the
+    //         posttrigger data.
+    // Stop:   The oscilloscope has stopped acquiring waveform data.
+    // Scan:   The oscilloscope is acquiring and displaying waveform
+    //         data continuously in scan mode.
     public enum TriggerStatus
     {
         Armed,

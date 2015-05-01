@@ -51,10 +51,6 @@ namespace ArduinoScope
             return _iDivTable[iHorzDivIdx];
         }
 
-        public uint iGetScopeDataLength()
-        {
-            return Convert.ToUInt32(fSamplingFreq_Hz * fGetLongestHorzDiv_s() * Convert.ToDouble(iDivisionCount));
-        }
 
         public uint iGetCRTDataLength()
         {
@@ -115,6 +111,7 @@ namespace ArduinoScope
             {
                 _fSamplingFreq_Hz = value;
                 UpdateCRTDataLength();
+                UpdateScopeDataLength();
             }
         }
 
@@ -127,6 +124,8 @@ namespace ArduinoScope
             set
             {
                 _iDivisionCount = value;
+                UpdateCRTDataLength();
+                UpdateScopeDataLength();
             }
         }
 
@@ -152,6 +151,15 @@ namespace ArduinoScope
             {
                 _dHorzPosTickWidth = value;
             }
+        }
+
+        public uint iScopeDataLength
+        {
+            get
+            {
+                return _iScopeDataLength;
+            }
+
         }
 
         #endregion
@@ -180,6 +188,12 @@ namespace ArduinoScope
             _iCRTDataLength = Convert.ToUInt32(fSamplingFreq_Hz * fGetHorzDiv_s() * Convert.ToDouble(iDivisionCount)) + 1;
         }
 
+        private void UpdateScopeDataLength()
+        {
+            _iScopeDataLength =  Convert.ToUInt32(fSamplingFreq_Hz * fGetLongestHorzDiv_s() * Convert.ToDouble(iDivisionCount));
+        }
+
+
         #endregion
 
         #region Private Field
@@ -190,6 +204,7 @@ namespace ArduinoScope
 
         private float[] _iDivTable = new float[8];
         private uint _iCRTDataLength;
+        private uint _iScopeDataLength;
         private int _iDivisionCount;
 
         float _fHorzOffset;

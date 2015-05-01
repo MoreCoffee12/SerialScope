@@ -76,11 +76,10 @@ namespace ArduinoScope
             iUnsignedShortArray = new UInt16[iShortCount];
 
             // Data buffers
-            iScopeDataLength = hcHelper.iGetScopeDataLength();
-            dataScope1 = new float[iScopeDataLength];
-            dataScope2 = new float[iScopeDataLength];
-            dataNull = new float[iScopeDataLength];
-            for (int idx = 0; idx < iScopeDataLength; idx++)
+            dataScope1 = new float[hcHelper.iScopeDataLength];
+            dataScope2 = new float[hcHelper.iScopeDataLength];
+            dataNull = new float[hcHelper.iScopeDataLength];
+            for (int idx = 0; idx < hcHelper.iScopeDataLength; idx++)
             {
                 dataScope1[idx] = Convert.ToSingle(1.0 + Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(hcHelper.iGetCRTDataLength()))));
                 dataScope2[idx] = Convert.ToSingle(1.0 - Math.Sin(Convert.ToDouble(idx) * (2.0 * Math.PI / Convert.ToDouble(hcHelper.iGetCRTDataLength()))));
@@ -97,7 +96,7 @@ namespace ArduinoScope
 
             // Update scope
             UpdateTraces();
-            graphScope1.setMarkIndex(Convert.ToInt32(iScopeDataLength / 2));
+            graphScope1.setMarkIndex(Convert.ToInt32(hcHelper.iScopeDataLength / 2));
         }
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -235,7 +234,6 @@ namespace ArduinoScope
         // These trigger controls are updated based on the data stream
         private void UpdateTrigger()
         {
-            txtTriggerMode.Text = tHelper.TriggerStatusText();
             switch(tHelper.Mode)
             {
                 case TriggerMode.Normal:
@@ -266,6 +264,8 @@ namespace ArduinoScope
                     break;
             }
 
+            // Update the UI
+            txtTriggerMode.Text = tHelper.TriggerStatusText();
         }
 
         // These trigger controls are updated when the user makes a 
@@ -293,6 +293,8 @@ namespace ArduinoScope
 
                 setRectGray(false, rectTriggerOK, btnHorzOffsetLeft.Foreground);
                 setRectGray(false, rectTriggerSlope, btnTriggerSlope.Foreground);
+
+                UpdateHorzPos();
             }
 
             btnTriggerSource.Content = tHelper.TriggerSourceText().ToUpper();
@@ -615,9 +617,20 @@ namespace ArduinoScope
         {
 
             // Calculate the portion of data to display
-            iCRTDataStart = 0;
-            iCRTDataEnd = hcHelper.iGetCRTDataLength();
-
+            if( tHelper.Mode == TriggerMode.Scan)
+            {
+                iCRTDataStart = 0;
+                iCRTDataEnd = hcHelper.iGetCRTDataLength();
+            }
+            else 
+            {
+                if( tHelper.Status == TriggerStatus.Trigd)
+                {
+                    iCRTDataStart = tHelper.idxTrigger - (hcHelper.iGetCRTDataLength() >> 2);
+                    iCRTDataEnd = tHelper.idxTrigger + (hcHelper.iGetCRTDataLength() >> 2);
+                }
+            }
+            
             if( tHelper.bAcquiring )
             {
                 SetTraceAcquiring();
@@ -981,7 +994,6 @@ namespace ArduinoScope
         // graphs, controls, and variables related to plotting
         ScopeUIHelper uihelper;
         VisualizationTools.LineGraph graphScope1;
-        uint iScopeDataLength;
         float[] dataScope1;
         float fScope1ScaleADC;
         bool bTrace1Active;
