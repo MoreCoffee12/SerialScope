@@ -101,6 +101,14 @@ namespace ArduinoScope
             }
         }
 
+        public uint iCRTDataHalfLength
+        {
+            get
+            {
+                return _iCRTDataHalfLength;
+            }
+        }
+
         public float fSamplingFreq_Hz
         {
             get
@@ -186,6 +194,7 @@ namespace ArduinoScope
         private void UpdateCRTDataLength()
         {
             _iCRTDataLength = Convert.ToUInt32(fSamplingFreq_Hz * fGetHorzDiv_s() * Convert.ToDouble(iDivisionCount)) + 1;
+            _iCRTDataHalfLength = (_iCRTDataLength >> 1);
         }
 
         private void UpdateScopeDataLength()
@@ -204,6 +213,7 @@ namespace ArduinoScope
 
         private float[] _iDivTable = new float[8];
         private uint _iCRTDataLength;
+        private uint _iCRTDataHalfLength;
         private uint _iScopeDataLength;
         private int _iDivisionCount;
 

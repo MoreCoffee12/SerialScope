@@ -558,14 +558,35 @@ namespace ArduinoScope
             dataScope2[idxData] = fCh2;
 
             // Pass the new points into the trigger helper class
-            tHelper.NewDataPoints(fCh1, fCh2, 0.0f, idxData);
+            if( idxData > hcHelper.iCRTDataHalfLength)
+            {
+                if( tHelper.bNewDataPointsSetTrigger(fCh1, fCh2, 0.0f, idxData))
+                {
+                    ClearDataArrays(Convert.ToInt32(idxData));
+                }
+            }
 
         }
 
         private void iNextDataIdx()
         {
             ++idxData;
-            idxData = idxData % hcHelper.iGetCRTDataLength();
+            switch (tHelper.Mode)
+            {
+                case TriggerMode.Scan:
+                    idxData = idxData % hcHelper.iGetCRTDataLength();
+                    break;
+                case TriggerMode.Normal:
+                    if( idxData == 0)
+                    {
+                        ClearDataArrays();
+                        tHelper.Status = TriggerStatus.Armed;
+                    }
+                    idxData = idxData % ( hcHelper.iGetCRTDataLength() << 1);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private async void ReadData()
@@ -626,8 +647,9 @@ namespace ArduinoScope
             {
                 if( tHelper.Status == TriggerStatus.Trigd)
                 {
-                    iCRTDataStart = tHelper.idxTrigger - (hcHelper.iGetCRTDataLength() >> 2);
-                    iCRTDataEnd = tHelper.idxTrigger + (hcHelper.iGetCRTDataLength() >> 2);
+                    iCRTDataStart = Convert.ToUInt32(tHelper.idxTrigger - (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
+                    iCRTDataEnd = Convert.ToUInt32(tHelper.idxTrigger + (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
+                    //this.textOutput.Text = tHelper.idxTrigger.ToString() + "|" + hcHelper.iHorzPosIdx.ToString() + "|" + iCRTDataStart.ToString()  + "|" + iCRTDataEnd.ToString();
                 }
             }
             
@@ -730,9 +752,14 @@ namespace ArduinoScope
 
         private void ClearDataArrays()
         {
-            Array.Clear(dataScope1, 0, dataScope1.Length);
-            Array.Clear(dataScope2, 0, dataScope2.Length);
+            ClearDataArrays(0);
             idxData = 0;
+        }
+
+        private void ClearDataArrays(int idxStart)
+        {
+            Array.Clear(dataScope1, idxStart, dataScope1.Length - idxStart);
+            Array.Clear(dataScope2, idxStart, dataScope1.Length - idxStart);
         }
 
         private void btnCh1HorzScalePlus_Click(object sender, RoutedEventArgs e)
@@ -939,26 +966,44 @@ namespace ArduinoScope
             return new Rect(point, new Size(element.ActualWidth, element.ActualHeight));
         }
 
+        private void UpdateAcquisitionUI()
+        {
+            if( bCollectData)
+            {
+                btnStartAcq.Content = "Stop Acquisition";
+                ResetLEDs();
+                ResetBuffers();
+                this.textOutput.Text = "";
+            }
+            else
+            {
+                btnStartAcq.Content = "Start Acquisition";
+            }
+        }
+
         private async void btnStartAcq_Click(object sender, RoutedEventArgs e)
         {
 
             // Toggle the data acquisition state and update the controls
             bCollectData = !bCollectData;
 
+            UpdateAcquisitionUI();
+
             if (bCollectData)
             {
-
-                btnStartAcq.Content = "Stop Acquisition";
-                ResetLEDs();
-                ResetBuffers();
-                this.textOutput.Text = "";
 
                 // Arduino bluetooth
                 if ( btHelper.State != BluetoothConnectionState.Connected )
                 {
                     // Displays a PopupMenu above the ConnectButton - uses debug window
                     await btHelper.EnumerateDevicesAsync(GetElementRect((FrameworkElement)sender));
-                    textOutput.Text = btHelper.strException;
+                    if( btHelper.State == BluetoothConnectionState.Disconnected)
+                    {
+                        textOutput.Text = btHelper.strException;
+                        bCollectData = false;
+                        UpdateAcquisitionUI();
+                        return;
+                    }
                     await btHelper.ConnectToServiceAsync();
                     textOutput.Text = btHelper.strException;
                     if (btHelper.State == BluetoothConnectionState.Connected)
@@ -972,15 +1017,6 @@ namespace ArduinoScope
                 }
 
             }
-            else
-            {
-
-                textOutput.Text = "";
-                btnStartAcq.Content = "Start Acquisition";
-                textOutput.Text = btHelper.strException;
-
-            }
-
 
         }
 

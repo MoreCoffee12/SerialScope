@@ -39,12 +39,17 @@ namespace ArduinoScope
             this.State = BluetoothConnectionState.Enumerating;
             var serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
 
-            foreach (var serviceInfoDevice in serviceInfoCollection)
+
+            PopupMenu menu = new PopupMenu();
+            foreach (var serviceInfo in serviceInfoCollection)
+                menu.Commands.Add(new UICommand(serviceInfo.Name, new UICommandInvokedHandler(delegate(IUICommand command) { _serviceInfo = (DeviceInformation)command.Id; }), serviceInfo));
+            var result = await menu.ShowForSelectionAsync(invokerRect);
+            if (result == null)
             {
-                if(serviceInfoDevice.Name.Contains("HC"))
-                {
-                    _serviceInfo = serviceInfoDevice;
-                }
+                // The Bluetooth connects intermittently unless the bluetooth settings is launched
+                await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
+
+                this.State = BluetoothConnectionState.Disconnected;
             }
 
             if( _serviceInfo == null)
@@ -55,16 +60,8 @@ namespace ArduinoScope
                 // The Bluetooth connects intermittently unless the bluetooth settings is launched
                 await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings-bluetooth:"));
 
-                this.State = BluetoothConnectionState.Enumerating;
-                serviceInfoCollection = await DeviceInformation.FindAllAsync(RfcommDeviceService.GetDeviceSelector(RfcommServiceId.SerialPort));
-
-                foreach (var serviceInfoDevice in serviceInfoCollection)
-                {
-                    if (serviceInfoDevice.Name.Contains("HC"))
-                    {
-                        _serviceInfo = serviceInfoDevice;
-                    }
-                }
+                // Update the state
+                this.State = BluetoothConnectionState.Disconnected;
 
             }
         }

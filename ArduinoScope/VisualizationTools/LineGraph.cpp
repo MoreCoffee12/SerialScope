@@ -249,7 +249,7 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 	int idxData;
 
 	// The two arrays have to have to the same length!
-	if (padata->Length != padata2->Length)
+	if (padata->Length != padata2->Length  || iEnd-iStart > padata->Length)
 	{
 		return;
 	}
@@ -274,7 +274,7 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 	// Copy data over
 	for (unsigned int i = 0; i<this->N/2-1; i=i+2)
 	{
-		idxData = i / 2;
+		idxData = iStart+(i / 2);
 		float * data = padata->Data;
 		// Check for NaN and +- Inf
 		if (_isnan(data[idxData]) || !_finite(data[idxData]))
@@ -301,7 +301,7 @@ void LineGraph::setArray(const Platform::Array<float>^ padata, const Platform::A
 
 	for (unsigned int i = this->N / 2; i<this->N -1; i=i+2)
 	{
-		idxData = (i - this->N / 2)/2;
+		idxData = iStart+((i - this->N / 2)/2);
 		float * data = padata2->Data;
 		// Check for NaN and +- Inf
 		if (_isnan(data[idxData]) || !_finite(data[idxData]))

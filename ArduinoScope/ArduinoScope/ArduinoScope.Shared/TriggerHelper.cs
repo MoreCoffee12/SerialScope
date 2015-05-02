@@ -18,7 +18,7 @@ namespace ArduinoScope
             idxTrigger = 0;
         }
 
-        public void NewDataPoints(float fCh1_V, float fCh2_V, float fExt_V, uint idxCurrent)
+        public bool bNewDataPointsSetTrigger(float fCh1_V, float fCh2_V, float fExt_V, uint idxCurrent)
         {
             if( Mode == TriggerMode.Normal)
             {
@@ -28,10 +28,12 @@ namespace ArduinoScope
                         if( Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
                         {
                             TriggerSet(idxCurrent);
+                            return true;
                         }
                         if( Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V )
                         {
                             TriggerSet(idxCurrent);
+                            return true;
                         }
                         break;
                     case TriggerStatus.Trigd:
@@ -42,6 +44,8 @@ namespace ArduinoScope
                         break;
                 }
             }
+
+            return false;
         }
         
         #endregion
