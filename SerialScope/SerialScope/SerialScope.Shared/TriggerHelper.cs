@@ -27,12 +27,12 @@ namespace SerialScope
                     case TriggerStatus.Ready:
                         if( Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
                         {
-                            TriggerSet(idxCurrent);
+                            _TriggerSet(idxCurrent);
                             return true;
                         }
                         if( Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V )
                         {
-                            TriggerSet(idxCurrent);
+                            _TriggerSet(idxCurrent);
                             return true;
                         }
                         break;
@@ -48,6 +48,11 @@ namespace SerialScope
             return false;
         }
         
+        public void ResetTrigger()
+        {
+            Status = TriggerStatus.Armed;
+            idxTrigger = 0;
+        }
         #endregion
 
         #region Access Methods
@@ -276,7 +281,7 @@ namespace SerialScope
 
         #region Private methods
 
-        private void TriggerSet(uint idxCurrent)
+        private void _TriggerSet(uint idxCurrent)
         {
             Status = TriggerStatus.Trigd;
             idxTrigger = idxCurrent;

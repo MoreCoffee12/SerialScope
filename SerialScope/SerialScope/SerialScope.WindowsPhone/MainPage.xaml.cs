@@ -243,6 +243,7 @@ namespace SerialScope
                         if( tHelper.Status == TriggerStatus.Armed)
                         {
                             tHelper.Status = TriggerStatus.Ready;
+                            rectTriggerOK.Fill = new SolidColorBrush(Colors.Yellow);
                             tHelper.bAcquiring = true;
                         }
                     }
@@ -254,6 +255,7 @@ namespace SerialScope
                     if( tHelper.Status == TriggerStatus.Trigd)
                     {
                         tHelper.bAcquiring = false;
+                        rectTriggerOK.Fill = new SolidColorBrush(Colors.Green);
                     }
                     break;
                 case TriggerMode.Scan:
@@ -383,6 +385,7 @@ namespace SerialScope
 
             // Update the position marker
             UpdateHorzPos();
+            UpdateTraces();
 
         }
 
@@ -558,7 +561,7 @@ namespace SerialScope
             dataScope2[idxData] = fCh2;
 
             // Pass the new points into the trigger helper class
-            if( idxData > hcHelper.iCRTDataHalfLength)
+            if (idxData > hcHelper.iCRTDataHalfLength && idxData < (hcHelper.iCRTDataHalfLength * 3))
             {
                 if( tHelper.bNewDataPointsSetTrigger(fCh1, fCh2, 0.0f, idxData))
                 {
@@ -580,7 +583,7 @@ namespace SerialScope
                     if( idxData == 0)
                     {
                         ClearDataArrays();
-                        tHelper.Status = TriggerStatus.Armed;
+                        tHelper.ResetTrigger();
                     }
                     idxData = idxData % ( hcHelper.iGetCRTDataLength() << 1);
                     break;
@@ -606,6 +609,7 @@ namespace SerialScope
 
                     // Update trigger state
                     UpdateTrigger();
+                    UpdateTracesAcquiring();
 
                     // Append that line to our TextOutput
                     try
@@ -634,6 +638,19 @@ namespace SerialScope
 
         }
 
+        private void UpdateTracesAcquiring()
+        {
+            if (tHelper.bAcquiring)
+            {
+                SetTraceAcquiring();
+            }
+            else
+            {
+                SetTraceActive();
+            }
+
+        }
+
         private void UpdateTraces()
         {
 
@@ -645,25 +662,17 @@ namespace SerialScope
             }
             else 
             {
-                if( tHelper.Status == TriggerStatus.Trigd)
+                if( tHelper.Status == TriggerStatus.Trigd  || tHelper.Status == TriggerStatus.Ready)
                 {
                     iCRTDataStart = Convert.ToUInt32(tHelper.idxTrigger - (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
                     iCRTDataEnd = Convert.ToUInt32(tHelper.idxTrigger + (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
-                    //this.textOutput.Text = tHelper.idxTrigger.ToString() + "|" + hcHelper.iHorzPosIdx.ToString() + "|" + iCRTDataStart.ToString()  + "|" + iCRTDataEnd.ToString();
+                    this.textOutput.Text = tHelper.idxTrigger.ToString() + "|" + hcHelper.iHorzPosIdx.ToString() + "|" + iCRTDataStart.ToString()  + "|" + iCRTDataEnd.ToString();
                 }
             }
-            
-            if( tHelper.bAcquiring )
-            {
-                SetTraceAcquiring();
-            }
-            else
-            {
-                SetTraceActive();
 
-            }
+            UpdateTracesAcquiring();
 
-            // Update the plots
+                // Update the plots
             if (bTrace1Active && bTrace2Active)
             {
                 graphScope1.setArray(dataScope1, dataScope2, iCRTDataStart, iCRTDataEnd);
