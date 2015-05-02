@@ -25,12 +25,22 @@ namespace SerialScope
                 switch (Status)
                 {
                     case TriggerStatus.Ready:
-                        if( Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
+                        if( Slope == TriggerSlope.Rising && Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
                         {
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if( Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V )
+                        if( Slope == TriggerSlope.Falling && Source == TriggerSource.Ch1 && fCh1_V < fTriggerLevel_V )
+                        {
+                            _TriggerSet(idxCurrent);
+                            return true;
+                        }
+                        if (Slope == TriggerSlope.Rising && Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V)
+                        {
+                            _TriggerSet(idxCurrent);
+                            return true;
+                        }
+                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch2 && fCh2_V < fTriggerLevel_V)
                         {
                             _TriggerSet(idxCurrent);
                             return true;
