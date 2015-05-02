@@ -9,7 +9,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Popups;
 
 
-namespace ArduinoScope
+namespace SerialScope
 {
     public class BluetoothHelper
     {

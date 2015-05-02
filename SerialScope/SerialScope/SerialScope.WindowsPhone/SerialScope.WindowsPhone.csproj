@@ -7,8 +7,8 @@
     <ProjectGuid>{290595B1-ADEB-4DD1-AF5F-4D38C801587B}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ArduinoScope</RootNamespace>
-    <AssemblyName>ArduinoScope.WindowsPhone</AssemblyName>
+    <RootNamespace>SerialScope</RootNamespace>
+    <AssemblyName>SerialScope.WindowsPhone</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
@@ -121,7 +121,7 @@
   <PropertyGroup Condition=" '$(TargetPlatformIdentifier)' == '' ">
     <TargetPlatformIdentifier>WindowsPhoneApp</TargetPlatformIdentifier>
   </PropertyGroup>
-  <Import Project="..\ArduinoScope.Shared\ArduinoScope.Shared.projitems" Label="Shared" />
+  <Import Project="..\SerialScope.Shared\ArduinoScope.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

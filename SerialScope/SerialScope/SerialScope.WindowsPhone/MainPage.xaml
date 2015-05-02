@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="ArduinoScope.MainPage"
+    x:Class="SerialScope.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ArduinoScope"
@@ -26,7 +26,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="txtHeader" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="ArduinoScope" VerticalAlignment="Top" FontSize="36" Width="230"/>
+        <TextBlock x:Name="txtHeader" Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="SerialScope" VerticalAlignment="Top" FontSize="36" Width="230"/>
 
         <Button x:Name="btnStartAcq" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" Content="Start Acquisition" HorizontalAlignment="Stretch" VerticalAlignment="Top" FontFamily="Global User Interface" Click="btnStartAcq_Click" Width="Auto" Margin="10,0"/>
 

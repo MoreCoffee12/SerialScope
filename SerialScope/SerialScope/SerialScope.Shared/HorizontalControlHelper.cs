@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArduinoScope
+namespace SerialScope
 {
     class HorizontalControlHelper
     {
@@ -63,9 +63,7 @@ namespace ArduinoScope
         }
 
         #endregion
-
-
-
+        
         #region Access Methods
 
         public int iHorzDivIdx

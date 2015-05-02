@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ArduinoScope.Windows")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("SerialScope.Windows")]
+[assembly: AssemblyDescription("2-Channel Wireless Oscilloscope using an Arduino Uno")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ArduinoScope.Windows")]
+[assembly: AssemblyProduct("SerialScope.Windows")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

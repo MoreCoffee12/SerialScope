@@ -7,8 +7,8 @@
     <ProjectGuid>{76DAE0CC-A60C-48B4-9EAD-CAEAAEA97ACE}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ArduinoScope</RootNamespace>
-    <AssemblyName>ArduinoScope.Windows</AssemblyName>
+    <RootNamespace>SerialScope</RootNamespace>
+    <AssemblyName>SerialScope.Windows</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>

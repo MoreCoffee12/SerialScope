@@ -15,8 +15,8 @@
     <Resource Language="x-generate" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ArduinoScope.WindowsPhone.App">
-      <m3:VisualElements DisplayName="ArduinoScope" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="ArduinoScope.WindowsPhone" ForegroundText="light" BackgroundColor="transparent">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="SerialScope.WindowsPhone.App">
+      <m3:VisualElements DisplayName="SerialScope" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="2-Channel Wireless Oscilloscope using an Arduino Uno" ForegroundText="light" BackgroundColor="transparent">
         <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png">
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" />

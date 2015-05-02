@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArduinoScope
+namespace SerialScope
 {
     public class VerticalControlHelper
     {
@@ -114,7 +114,6 @@ namespace ArduinoScope
         }
 
         #endregion
-
 
         #region Private Field
 

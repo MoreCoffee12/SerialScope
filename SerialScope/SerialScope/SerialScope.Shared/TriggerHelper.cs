@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ArduinoScope
+namespace SerialScope
 {
     class TriggerHelper
     {
