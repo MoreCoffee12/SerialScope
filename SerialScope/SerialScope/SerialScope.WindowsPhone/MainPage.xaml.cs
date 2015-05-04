@@ -553,6 +553,16 @@ namespace SerialScope
 
         private void AddScopeData(float fCh1, float fCh2)
         {
+
+            // Pass the new points into the trigger helper class
+            if (idxData > hcHelper.iCRTDataHalfLength && idxData < (hcHelper.iCRTDataHalfLength * 3))
+            {
+                if (tHelper.bNewDataPointsSetTrigger(dataScope1[idxData], dataScope1[idxData], fCh1, fCh2, 0.0f, idxData))
+                {
+                    ClearDataArrays(Convert.ToInt32(idxData+1));
+                }
+            }
+
             // Point to the next location in the buffer
             iNextDataIdx();
 
@@ -560,14 +570,6 @@ namespace SerialScope
             dataScope1[idxData] = fCh1;
             dataScope2[idxData] = fCh2;
 
-            // Pass the new points into the trigger helper class
-            if (idxData > hcHelper.iCRTDataHalfLength && idxData < (hcHelper.iCRTDataHalfLength * 3))
-            {
-                if( tHelper.bNewDataPointsSetTrigger(fCh1, fCh2, 0.0f, idxData))
-                {
-                    ClearDataArrays(Convert.ToInt32(idxData));
-                }
-            }
 
         }
 
@@ -666,7 +668,7 @@ namespace SerialScope
                 {
                     iCRTDataStart = Convert.ToUInt32(tHelper.idxTrigger - (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
                     iCRTDataEnd = Convert.ToUInt32(tHelper.idxTrigger + (hcHelper.iGetCRTDataLength() >> 1) - hcHelper.iHorzPosIdx);
-                    this.textOutput.Text = tHelper.idxTrigger.ToString() + "|" + hcHelper.iHorzPosIdx.ToString() + "|" + iCRTDataStart.ToString()  + "|" + iCRTDataEnd.ToString();
+                    //this.textOutput.Text = tHelper.idxTrigger.ToString() + "|" + hcHelper.iHorzPosIdx.ToString() + "|" + iCRTDataStart.ToString()  + "|" + iCRTDataEnd.ToString();
                 }
             }
 

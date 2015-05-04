@@ -18,29 +18,29 @@ namespace SerialScope
             idxTrigger = 0;
         }
 
-        public bool bNewDataPointsSetTrigger(float fCh1_V, float fCh2_V, float fExt_V, uint idxCurrent)
+        public bool bNewDataPointsSetTrigger(float fCh1_V_Last, float fCh2_V_Last, float fCh1_V, float fCh2_V, float fExt_V, uint idxCurrent)
         {
             if( Mode == TriggerMode.Normal)
             {
                 switch (Status)
                 {
                     case TriggerStatus.Ready:
-                        if( Slope == TriggerSlope.Rising && Source == TriggerSource.Ch1 && fCh1_V > fTriggerLevel_V )
+                        if( Slope == TriggerSlope.Rising && Source == TriggerSource.Ch1 && (fCh1_V >= fTriggerLevel_V && fCh1_V_Last < fTriggerLevel_V) )
                         {
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if( Slope == TriggerSlope.Falling && Source == TriggerSource.Ch1 && fCh1_V < fTriggerLevel_V )
+                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch1 && (fCh1_V <= fTriggerLevel_V && fCh1_V_Last > fTriggerLevel_V))
                         {
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if (Slope == TriggerSlope.Rising && Source == TriggerSource.Ch2 && fCh2_V > fTriggerLevel_V)
+                        if (Slope == TriggerSlope.Rising && Source == TriggerSource.Ch2 && (fCh2_V > fTriggerLevel_V && fCh2_V_Last < fTriggerLevel_V))
                         {
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch2 && fCh2_V < fTriggerLevel_V)
+                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch2 && (fCh2_V < fTriggerLevel_V && fCh2_V_Last > fTriggerLevel_V))
                         {
                             _TriggerSet(idxCurrent);
                             return true;
