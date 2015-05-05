@@ -8,7 +8,7 @@
 // This library provides a frame structure
 // for the data.
 #include <minsegbus.h>
-MinSegBus mbus;
+MinSegBus mbus; 
 
 // The SoftwareSerial library is used to provide
 // data to the Bluetooth module.
@@ -63,9 +63,8 @@ void setup()
   // Timer control registers
   TCCR0A = 0;   // Set entire TCCR0A register to 0
   TCCR0B = 0;   // Same for TCCR0B
-  // Set compare match register for 500Hz increment
+  // Set compare match register for 625Hz increment
   OCR0A = 99;  // = (16*10^6) / (500*256) - 1 (must be < 256)
-//  OCR0A = 124;  // = (16*10^6) / (500*256) - 1 (must be < 256)
   // Turn on the CTC mode
   TCCR0A |= (1 << WGM01);
   // Set CS01 and CS00 bits for 256 prescaler
