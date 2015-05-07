@@ -557,7 +557,7 @@ namespace SerialScope
             // Pass the new points into the trigger helper class
             if (idxData > hcHelper.iCRTDataHalfLength && idxData < (hcHelper.iCRTDataHalfLength * 3))
             {
-                if (tHelper.bNewDataPointsSetTrigger(dataScope1[idxData], dataScope1[idxData], fCh1, fCh2, 0.0f, idxData))
+                if (tHelper.bNewDataPointsSetTrigger(dataScope1[idxData], dataScope2[idxData], fCh1, fCh2, 0.0f, idxData))
                 {
                     ClearDataArrays(Convert.ToInt32(idxData+1));
                 }

@@ -35,12 +35,12 @@ namespace SerialScope
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if (Slope == TriggerSlope.Rising && Source == TriggerSource.Ch2 && (fCh2_V > fTriggerLevel_V && fCh2_V_Last < fTriggerLevel_V))
+                        if (Slope == TriggerSlope.Rising && Source == TriggerSource.Ch2 && (fCh2_V >= fTriggerLevel_V && fCh2_V_Last < fTriggerLevel_V))
                         {
                             _TriggerSet(idxCurrent);
                             return true;
                         }
-                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch2 && (fCh2_V < fTriggerLevel_V && fCh2_V_Last > fTriggerLevel_V))
+                        if (Slope == TriggerSlope.Falling && Source == TriggerSource.Ch2 && (fCh2_V <= fTriggerLevel_V && fCh2_V_Last > fTriggerLevel_V))
                         {
                             _TriggerSet(idxCurrent);
                             return true;
