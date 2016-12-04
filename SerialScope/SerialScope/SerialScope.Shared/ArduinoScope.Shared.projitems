@@ -6,7 +6,7 @@
     <SharedGUID>80cf7138-c543-4285-9b3d-d3bf6f28b806</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>ArduinoScope</Import_RootNamespace>
+    <Import_RootNamespace>SerialScope</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml">
