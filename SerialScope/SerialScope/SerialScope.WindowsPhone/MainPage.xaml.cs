@@ -1,36 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Globalization;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Networking.Sockets;
-using Windows.Networking.Proximity;
 using Windows.UI;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using Windows.Graphics.Display;
-using VisualizationTools;
 using DataBus;
-
+using System.Threading;
 
 namespace SerialScope
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : Page, IDisposable
     {
         public MainPage()
         {
@@ -145,9 +132,10 @@ namespace SerialScope
 
         }
 
-        protected override void OnNavigatedFrom(Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        protected override async void OnNavigatedFrom(Windows.UI.Xaml.Navigation.NavigationEventArgs e)
         {
-            btHelper.Disconnect();
+            var btTask = btHelper.Disconnect();
+            await btTask;
         }
 
         # region Private Methods
@@ -489,12 +477,9 @@ namespace SerialScope
         // Read in iBuffLength number of samples
         private async Task<bool> bReadSource(DataReader input)
         {
-            UInt32 k;
-            byte byteInput;
-            uint iErrorCount = 0;
 
             // Read in the data
-            for (k = 0; k < iStreamBuffLength; k++)
+            for (iByteCount = 0; iByteCount < iStreamBuffLength; ++iByteCount)
             {
 
                 // Wait until we have 1 byte available to read
@@ -517,30 +502,34 @@ namespace SerialScope
                 if (iErrorCount == 0 && idxCharCount >= iFrameSize)
                 {
                     // The frame was valid
-                    rectFrameOK.Fill = new SolidColorBrush(Colors.Green);
+                    rectFrameOK.Fill = brushOK;
 
                     // Was it the next one in the sequence?
-                    if( ++byteAddress == Convert.ToByte(mbus.iGetAddress()))
+                    if (++byteAddress == Convert.ToByte(mbus.iGetAddress()))
                     {
-                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Green);
+                        rectFrameSequence.Fill = brushOK;
                     }
                     else
                     {
-                        rectFrameSequence.Fill = new SolidColorBrush(Colors.Red);
+                        rectFrameSequence.Fill = brushError;
                         byteAddress = Convert.ToByte(mbus.iGetAddress());
                     }
 
 
-                    AddScopeData( Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC, Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC);
+                    AddScopeData(Convert.ToSingle(iUnsignedShortArray[0]) * fScope1ScaleADC, Convert.ToSingle(iUnsignedShortArray[1]) * fScope2ScaleADC);
                     AddScopeData(Convert.ToSingle(iUnsignedShortArray[2]) * fScope1ScaleADC, Convert.ToSingle(iUnsignedShortArray[3]) * fScope2ScaleADC);
 
                     // Reset the character counter
                     idxCharCount = 0;
+
+                    // Log the packet
+                    ++iPktNo;
+                    System.Diagnostics.Debug.WriteLine("Logged packet " + iPktNo.ToString());
                 }
 
                 if(idxCharCount>(iFrameSize>>1))
                 {
-                    rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
+                    rectFrameOK.Fill = brushBkgd;
 
                 }
 
@@ -599,7 +588,7 @@ namespace SerialScope
             bool bTemp;
 
             // Made it this far so status is ok
-            rectBTOK.Fill = new SolidColorBrush(Colors.Green);
+            rectBTOK.Fill = brushOK;
 
             // Loop so long as the collect data button is enabled
             while (bCollectData)
@@ -956,9 +945,9 @@ namespace SerialScope
 
         private void ResetLEDs()
         {
-            rectFrameOK.Fill = new SolidColorBrush(Colors.Black);
-            rectBTOK.Fill = new SolidColorBrush(Colors.Black);
-            rectFrameSequence.Fill = new SolidColorBrush(Colors.Black);
+            rectFrameOK.Fill = brushBkgd;
+            rectBTOK.Fill = brushBkgd;
+            rectFrameSequence.Fill = brushBkgd;
 
         }
 
@@ -1031,6 +1020,11 @@ namespace SerialScope
 
         }
 
+        public void Dispose()
+        {
+            mbus.Dispose();
+        }
+
         #endregion
 
         #region private fields
@@ -1053,6 +1047,9 @@ namespace SerialScope
         VerticalControlHelper vcHelper;
         HorizontalControlHelper hcHelper;
         TriggerHelper tHelper;
+        SolidColorBrush brushOK = new SolidColorBrush(Colors.Green);
+        SolidColorBrush brushError = new SolidColorBrush(Colors.Red);
+        SolidColorBrush brushBkgd = new SolidColorBrush(Colors.Black);
 
         // Buffer and controls for the data from the instrumentation
         private bool bCollectData;
@@ -1066,6 +1063,11 @@ namespace SerialScope
         uint idxCharCount;
         byte byteAddress;
         UInt16[] iUnsignedShortArray;
+        uint iErrorCount = 0;
+        byte byteInput;
+        UInt32 iByteCount;
+        uint iPktNo = 0;
+
 
         // Data bus structures used to pull data off of the Arduino
         DataBus.MinSegBus mbus;
